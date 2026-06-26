@@ -1,0 +1,84 @@
+FROM ubuntu:24.04 AS builder
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        autoconf \
+        automake \
+        bison \
+        build-essential \
+        ca-certificates \
+        cmake \
+        curl \
+        file \
+        gettext \
+        git \
+        libgl1-mesa-dev \
+        libglu1-mesa-dev \
+        libgtk-3-dev \
+        libsecret-1-dev \
+        libtool \
+        m4 \
+        nasm \
+        ninja-build \
+        patch \
+        perl \
+        pkg-config \
+        python3 \
+        python3-dev \
+        python3-venv \
+        wayland-protocols \
+        xorg-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /src/preFlight
+COPY . ./
+
+RUN ./build_deps.sh -preset default \
+    && ./build.sh -jobs "$(nproc)" \
+    && mkdir -p /opt/preflight/bin /opt/preflight/resources \
+    && cp build/src/preflight /opt/preflight/bin/preflight \
+    && cp -a resources/. /opt/preflight/resources/
+
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PORT=8090 \
+    PREFLIGHT_API_PREFIX=/api/slicer \
+    PREFLIGHT_BIN=/opt/preflight/bin/preflight \
+    PREFLIGHT_WORK_DIR=/work
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        libcurl4 \
+        libdbus-1-3 \
+        libgl1 \
+        libglu1-mesa \
+        libgtk-3-0 \
+        libsecret-1-0 \
+        libx11-6 \
+        libxext6 \
+        libxi6 \
+        libxrandr2 \
+        libxrender1 \
+        libxtst6 \
+        libxxf86vm1 \
+        python3 \
+        python3-aiohttp \
+        zlib1g \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /opt/preflight /opt/preflight
+COPY slicer_service/ /app/
+
+RUN useradd --create-home --home-dir /home/preflight --shell /usr/sbin/nologin preflight \
+    && mkdir -p /work \
+    && chown -R preflight:preflight /work /home/preflight
+
+USER preflight
+WORKDIR /app
+EXPOSE 8090
+
+CMD ["python3", "/app/app.py"]

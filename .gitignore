@@ -3,3 +3,4 @@
 /build_debug/
 deps/build/
 deps/destdir/
+slicer_service/__pycache__/
