@@ -74,7 +74,7 @@ void LabeledBorderPanel::UpdateColors()
 {
     bool is_dark = wxGetApp().dark_mode();
 
-    m_border_color = is_dark ? wxColour(255, 255, 255) : wxColour(0, 0, 0);
+    m_border_color = UIColors::SectionBorder(); // themed; matches the FlatStaticBox group frames
     m_text_color = is_dark ? UIColors::InputForegroundDark() : UIColors::InputForegroundLight();
     // Use parent's background color so the border panel matches the surrounding page
     m_bg_color = GetParent() ? GetParent()->GetBackgroundColour()

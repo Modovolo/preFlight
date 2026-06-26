@@ -603,10 +603,11 @@ void GLGizmoSVG::on_render_input_window(float x, float y, float bottom_limit)
 
     bool is_opened = true;
     constexpr ImGuiWindowFlags flag = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
-    if (ImGui::Begin(on_get_name().c_str(), &is_opened, flag))
+    // Route through ImGuiPureWrap::begin so the title bar gets the dark-on-accent text the other popups use.
+    if (ImGuiPureWrap::begin(on_get_name(), &is_opened, flag))
         draw_window();
 
-    ImGui::End();
+    ImGuiPureWrap::end();
     if (!is_opened)
         close();
 }

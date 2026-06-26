@@ -14,7 +14,7 @@ from preFlight import MoveType
 
 
 def process(gcode: preFlight.GCode):
-    total_time = gcode.time_estimate.normal
+    total_time = gcode.time_estimate_normal
     if total_time <= 0:
         return
 

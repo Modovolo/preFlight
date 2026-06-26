@@ -24,6 +24,7 @@
 #include "libslic3r/BlacklistedLibraryCheck.hpp"
 #include "libslic3r/Color.hpp"
 #include "format.hpp"
+#include "Widgets/ScrollablePanel.hpp"
 
 #ifdef _WIN32
 // The standard Windows includes.
@@ -166,10 +167,15 @@ SysInfoDialog::SysInfoDialog()
         vsizer->Add(m_html, 1, wxEXPAND | wxBOTTOM, wxGetApp().em_unit());
     }
 
-    // opengl_info
-    m_opengl_info_html = new wxHtmlWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO);
+    // opengl_info: host the HTML (with its native scrollbar disabled) inside a ScrollablePanel so the
+    // scrollbar is our themed custom one instead of the native wxHtmlWindow scrollbar.
+    m_opengl_info_panel = new ScrollablePanel(this, wxID_ANY);
+    m_opengl_info_panel->sys_color_changed();
+    // Explicit initial width so GetInternalRepresentation() reflows/measures the content height meaningfully
+    // (matches the eventual dialog content width closely; the panel viewport height stays fixed below).
+    m_opengl_info_html = new wxHtmlWindow(m_opengl_info_panel->GetContentPanel(), wxID_ANY, wxDefaultPosition,
+                                          wxSize(48 * em, 16 * em), wxHW_SCROLLBAR_NEVER);
     {
-        m_opengl_info_html->SetMinSize(wxSize(-1, 16 * wxGetApp().em_unit()));
         m_opengl_info_html->SetFonts(font.GetFaceName(), font.GetFaceName(), size);
         m_opengl_info_html->SetBorders(wxGetApp().em_unit());
         wxString blacklisted_libraries_message;
@@ -193,7 +199,23 @@ SysInfoDialog::SysInfoDialog()
                                                 Eigen::SimdInstructionSetsInUse());
 
         m_opengl_info_html->SetPage(text);
-        main_sizer->Add(m_opengl_info_html, 1, wxEXPAND | wxBOTTOM, (3 * wxGetApp().em_unit()) / 2);
+
+        // Size the HTML widget to its full content height so the ScrollablePanel can scroll it.
+        int content_height = 16 * wxGetApp().em_unit();
+        if (auto *ir = m_opengl_info_html->GetInternalRepresentation())
+            content_height = ir->GetHeight() + 2 * wxGetApp().em_unit();
+        m_opengl_info_html->SetMinSize(wxSize(-1, content_height));
+
+        auto *html_sizer = new wxBoxSizer(wxVERTICAL);
+        html_sizer->Add(m_opengl_info_html, 1, wxEXPAND);
+        m_opengl_info_panel->SetSizer(html_sizer);
+
+        // Forward the HTML widget's wheel events to the ScrollablePanel so it scrolls our content.
+        m_opengl_info_html->Bind(wxEVT_MOUSEWHEEL,
+                                 [this](wxMouseEvent &evt) { wxPostEvent(m_opengl_info_panel, evt); });
+
+        m_opengl_info_panel->SetMinSize(wxSize(-1, 16 * wxGetApp().em_unit()));
+        main_sizer->Add(m_opengl_info_panel, 1, wxEXPAND | wxBOTTOM, (3 * wxGetApp().em_unit()) / 2);
     }
 
     wxStdDialogButtonSizer *buttons = this->CreateStdDialogButtonSizer(wxOK);
@@ -233,8 +255,18 @@ void SysInfoDialog::on_dpi_changed(const wxRect &suggested_rect)
 
     msw_buttons_rescale(this, em, {wxID_OK, m_btn_copy_to_clipboard->GetId()});
 
-    m_opengl_info_html->SetMinSize(wxSize(-1, 16 * em));
     m_opengl_info_html->SetFonts(font.GetFaceName(), font.GetFaceName(), font_size);
+    // Re-measure the reflowed HTML content height so the ScrollablePanel scrolls the full content.
+    int content_height = 16 * em;
+    if (auto *ir = m_opengl_info_html->GetInternalRepresentation())
+        content_height = ir->GetHeight() + 2 * em;
+    m_opengl_info_html->SetMinSize(wxSize(-1, content_height));
+    if (m_opengl_info_panel)
+    {
+        m_opengl_info_panel->SetMinSize(wxSize(-1, 16 * em));
+        m_opengl_info_panel->GetContentPanel()->Layout();
+        m_opengl_info_panel->UpdateScrollbar();
+    }
     m_opengl_info_html->Refresh();
 
     const wxSize &size = wxSize(65 * em, 55 * em);

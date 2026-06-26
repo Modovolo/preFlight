@@ -1761,10 +1761,15 @@ std::string CoolingBuffer::apply_layer_cooldown(
             bool manual_fan_enabled = m_config.enable_manual_fan_speeds.get_at(m_current_extruder);
             if (manual_fan_enabled || !cooling_enabled)
             {
-                // Manual fan controls enabled or auto-cooling disabled:
-                // Use the requested speed directly, only respecting disable_fan_first_layers
+                // Manual fan controls or auto-cooling disabled: honor the requested speed directly,
+                // gated by disable_fan_first_layers. Keep-fan-always-on still enforces its min_fan_speed
+                // floor (carried in requested_fan_speed_limits.min_speed, already ramp- and
+                // first-layer-aware) so a low override such as the dynamic overhang fan's value for
+                // fully-supported extrusion cannot drive the fan below the always-on minimum. Manual mode
+                // has no always-on floor, so it keeps the exact per-feature speed.
                 int manual_max = (int(layer_id) >= disable_fan_first_layers) ? 100 : 0;
-                fan_speed_new = std::clamp(requested_fan_speed, 0, manual_max);
+                int floor = manual_fan_enabled ? 0 : requested_fan_speed_limits.min_speed;
+                fan_speed_new = std::clamp(requested_fan_speed, floor, manual_max);
             }
             else
             {

@@ -11,13 +11,12 @@ msgstr ""
 "POT-Creation-Date: 2017-05-21 14:25+0200\n"
 "PO-Revision-Date: 2017-08-12 12:53+0300\n"
 "Last-Translator: Kaya Zeren <kayazeren@gmail.com>\n"
-"Language-Team: Turkish (Turkey) (http://www.transifex.com/projects/p/"
-"wxwidgets_unofficial/language/tr_TR/)\n"
+"Language-Team: Turkish (Turkey) (http://www.transifex.com/projects/p/wxwidgets_unofficial/language/tr_TR/)\n"
 "Language: tr_TR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.0.3\n"
 
 #: ../src/common/debugrpt.cpp:586
@@ -129,6 +128,7 @@ msgstr "%i / %u"
 msgid "%ld byte"
 msgid_plural "%ld bytes"
 msgstr[0] "%ld bayt"
+msgstr[1] "%ld bayt"
 
 #: ../src/html/helpwnd.cpp:1033
 #, c-format
@@ -504,7 +504,8 @@ msgstr "&Ağ"
 msgid "&New"
 msgstr "Ye&ni"
 
-#: ../src/aui/tabmdi.cpp:111 ../src/generic/mdig.cpp:100 ../src/msw/mdi.cpp:180
+#: ../src/aui/tabmdi.cpp:111 ../src/generic/mdig.cpp:100
+#: ../src/msw/mdi.cpp:180
 msgid "&Next"
 msgstr "So&nraki"
 
@@ -578,7 +579,8 @@ msgstr "&Konum kipi:"
 msgid "&Preferences"
 msgstr "&Ayarlar"
 
-#: ../src/aui/tabmdi.cpp:112 ../src/generic/mdig.cpp:101 ../src/msw/mdi.cpp:181
+#: ../src/aui/tabmdi.cpp:112 ../src/generic/mdig.cpp:101
+#: ../src/msw/mdi.cpp:181
 msgid "&Previous"
 msgstr "Ö&nceki"
 
@@ -2494,7 +2496,8 @@ msgstr "İş parçacığı sonlandırılamadı."
 #: ../src/common/xtistrm.cpp:166
 #, c-format
 msgid "Create Parameter %s not found in declared RTTI Parameters"
-msgstr "'Create Parameter' %s bildirilen RTTI parametreleri içinde bulunamadı."
+msgstr ""
+"'Create Parameter' %s bildirilen RTTI parametreleri içinde bulunamadı."
 
 #: ../src/generic/dirdlgg.cpp:288
 msgid "Create directory"
@@ -2706,8 +2709,8 @@ msgstr "Geliştiriciler"
 
 #: ../src/msw/dialup.cpp:374
 msgid ""
-"Dial up functions are unavailable because the remote access service (RAS) is "
-"not installed on this machine. Please install it."
+"Dial up functions are unavailable because the remote access service (RAS) is"
+" not installed on this machine. Please install it."
 msgstr ""
 "Uzaktan erişim hizmeti (RAS) kurulu olmadığı için arama işlevleri "
 "kullanılamıyor. Lütfen kurun."
@@ -3316,11 +3319,11 @@ msgstr "İşaret işleyici kurulamadı"
 
 #: ../src/unix/threadpsx.cpp:1167
 msgid ""
-"Failed to join a thread, potential memory leak detected - please restart the "
-"program"
+"Failed to join a thread, potential memory leak detected - please restart the"
+" program"
 msgstr ""
-"İş parçacığına bağlanılamadı, olası bellek taşması bulundu - lütfen programı "
-"yeniden başlatın"
+"İş parçacığına bağlanılamadı, olası bellek taşması bulundu - lütfen programı"
+" yeniden başlatın"
 
 #: ../src/msw/utils.cpp:629
 #, c-format
@@ -4091,8 +4094,7 @@ msgstr ""
 
 #: ../src/generic/dbgrptg.cpp:324
 msgid ""
-"If you wish to suppress this debug report completely, please choose the "
-"\"Cancel\" button,\n"
+"If you wish to suppress this debug report completely, please choose the \"Cancel\" button,\n"
 "but be warned that it may hinder improving the program, so if\n"
 "at all possible please do continue with the report generation.\n"
 msgstr ""
@@ -4141,8 +4143,8 @@ msgstr "Görsel dosyası %s türünde değil."
 
 #: ../src/msw/textctrl.cpp:488
 msgid ""
-"Impossible to create a rich edit control, using simple text control instead. "
-"Please reinstall riched32.dll"
+"Impossible to create a rich edit control, using simple text control instead."
+" Please reinstall riched32.dll"
 msgstr ""
 "Zengin metin denetimi oluşturulamıyor. Onun yerine basit metin denetimi "
 "kullanılacak. Lütfen riched32.dll kitaplığını yeniden yükleyin."
@@ -4536,6 +4538,7 @@ msgstr "Son sayfa"
 msgid "Last repeated message (\"%s\", %u time) wasn't output"
 msgid_plural "Last repeated message (\"%s\", %u times) wasn't output"
 msgstr[0] "Son yinelenen ileti (\"%s\", %u kez) çıkartılmadı"
+msgstr[1] "Son yinelenen ileti (\"%s\", %u kez) çıkartılmadı"
 
 #: ../src/common/paper.cpp:103
 msgid "Ledger, 17 x 11 in"
@@ -4627,7 +4630,8 @@ msgstr "Limon"
 #, c-format
 msgid "Line %lu of map file \"%s\" has invalid syntax, skipped."
 msgstr ""
-"%lu satırında \"%s\" eşleştirme dosyası içinde sözdizimi hatası var, atlandı."
+"%lu satırında \"%s\" eşleştirme dosyası içinde sözdizimi hatası var, "
+"atlandı."
 
 #: ../src/richtext/richtextliststylepage.cpp:444
 msgid "Line spacing:"
@@ -4698,8 +4702,8 @@ msgid ""
 "MS HTML Help functions are unavailable because the MS HTML Help library is "
 "not installed on this machine. Please install it."
 msgstr ""
-"MS HTML Yardım kitaplığı yüklü olmadığından yardım işlevleri kullanılamıyor. "
-"Lütfen yükleyin."
+"MS HTML Yardım kitaplığı yüklü olmadığından yardım işlevleri kullanılamıyor."
+" Lütfen yükleyin."
 
 #: ../src/univ/themes/win32.cpp:3754
 msgid "Ma&ximize"
@@ -5078,13 +5082,11 @@ msgstr "Hiç bir kayıt bulunamadı."
 msgid ""
 "No font for displaying text in encoding '%s' found,\n"
 "but an alternative encoding '%s' is available.\n"
-"Do you want to use this encoding (otherwise you will have to choose another "
-"one)?"
+"Do you want to use this encoding (otherwise you will have to choose another one)?"
 msgstr ""
 "Metni '%s' kodlamasıyla görüntüleyecek bir yazı türü yok,\n"
 "ancak onun yerine '%s' kodlama seçeneği kullanılabilir.\n"
-"Bu kodlamayı kullanmak istiyor musunuz (aksi halde başka bir tane "
-"seçmelisiniz) ?"
+"Bu kodlamayı kullanmak istiyor musunuz (aksi halde başka bir tane seçmelisiniz) ?"
 
 #: ../src/common/fontmap.cpp:426
 #, c-format
@@ -5854,8 +5856,7 @@ msgstr "Çıktı"
 
 #: ../src/common/debugrpt.cpp:560
 #, c-format
-msgid ""
-"Processing debug report has failed, leaving the files in \"%s\" directory."
+msgid "Processing debug report has failed, leaving the files in \"%s\" directory."
 msgstr ""
 "Hata ayıklama raporu oluşturulamadı, dosyalar \"%s\" klasöründe bırakıldı."
 
@@ -6741,8 +6742,7 @@ msgstr ""
 #: ../src/html/htmprint.cpp:271
 #, c-format
 msgid ""
-"The document \"%s\" doesn't fit on the page horizontally and will be "
-"truncated if printed.\n"
+"The document \"%s\" doesn't fit on the page horizontally and will be truncated if printed.\n"
 "\n"
 "Would you like to proceed with printing it nevertheless?"
 msgstr ""
@@ -6895,6 +6895,7 @@ msgstr "Taslak düzeyi."
 msgid "The previous message repeated %u time."
 msgid_plural "The previous message repeated %u times."
 msgstr[0] "Önceki ileti %u kez yinelendi."
+msgstr[1] "Önceki ileti %u kez yinelendi."
 
 #: ../src/common/log.cpp:270
 msgid "The previous message repeated once."
@@ -6907,12 +6908,10 @@ msgstr "Görüntülenecek aralık."
 
 #: ../src/generic/dbgrptg.cpp:322
 msgid ""
-"The report contains the files listed below. If any of these files contain "
-"private information,\n"
+"The report contains the files listed below. If any of these files contain private information,\n"
 "please uncheck them and they will be removed from the report.\n"
 msgstr ""
-"Bu rapor aşağıdaki dosyaları içermektedir. Bu dosyalarda özel bilgileriniz "
-"varsa,\n"
+"Bu rapor aşağıdaki dosyaları içermektedir. Bu dosyalarda özel bilgileriniz varsa,\n"
 "rapordan çıkarmak istediğiniz dosyaların işaretini kaldırın.\n"
 
 #: ../src/common/cmdline.cpp:1254
@@ -7052,7 +7051,8 @@ msgstr "Dikey öteleme."
 
 #: ../src/richtext/richtextprint.cpp:619 ../src/html/htmprint.cpp:745
 msgid ""
-"There was a problem during page setup: you may need to set a default printer."
+"There was a problem during page setup: you may need to set a default "
+"printer."
 msgstr ""
 "Sayfa ayarlanırken bir sorun çıktı: bir varsayılan yazıcı belirlemeniz "
 "gerekebilir."
@@ -7197,12 +7197,10 @@ msgstr "Tür enum - long çevrimini desteklemelidir"
 
 #: ../src/propgrid/propgridiface.cpp:401
 #, c-format
-msgid ""
-"Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT "
-"\"%s\"."
+msgid "Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT \"%s\"."
 msgstr ""
-"\"%s\" tür işlemi yapılamadı: Etiketlenen özellik \"%s\" \"%s\" türünde, \"%s"
-"\" türünde DEĞİL."
+"\"%s\" tür işlemi yapılamadı: Etiketlenen özellik \"%s\" \"%s\" türünde, "
+"\"%s\" türünde DEĞİL."
 
 #: ../src/common/paper.cpp:133
 msgid "US Std Fanfold, 14 7/8 x 11 in"
@@ -7956,8 +7954,7 @@ msgstr "bir DDEML uygulaması uzun koşu durumu oluşturdu."
 
 #: ../src/msw/dde.cpp:1129
 msgid ""
-"a DDEML function was called without first calling the DdeInitialize "
-"function,\n"
+"a DDEML function was called without first calling the DdeInitialize function,\n"
 "or an invalid instance identifier\n"
 "was passed to a DDEML function."
 msgstr ""
@@ -8931,15 +8928,13 @@ msgstr "~"
 #~ msgstr "Tarih görüntüleyici değeri işleyemiyor; değer tipi:"
 
 #~ msgid ""
-#~ "Do you want to overwrite the command used to %s files with extension \"%s"
-#~ "\" ?\n"
+#~ "Do you want to overwrite the command used to %s files with extension \"%s\" ?\n"
 #~ "Current value is \n"
 #~ "%s, \n"
 #~ "New value is \n"
 #~ "%s %1"
 #~ msgstr ""
-#~ "%s dosyaları için kullanılan komutu değiştirmek istiyor musunuz (\"%s\" "
-#~ "uzantılı dosyalar) ?\n"
+#~ "%s dosyaları için kullanılan komutu değiştirmek istiyor musunuz (\"%s\" uzantılı dosyalar) ?\n"
 #~ "Geçerli değer \n"
 #~ "%s, \n"
 #~ "Yeni değer \n"
@@ -8975,8 +8970,7 @@ msgstr "~"
 #~ msgid "No column for the specified column position existing."
 #~ msgstr "Belirtilen konumda sütun bulunamadı."
 
-#~ msgid ""
-#~ "No renderer or invalid renderer type specified for custom data column."
+#~ msgid "No renderer or invalid renderer type specified for custom data column."
 #~ msgstr "Özel veri sütunu için görüntüleyici belirtilmemiş ya da geçersiz."
 
 #~ msgid "No renderer specified for column."
@@ -9009,8 +9003,7 @@ msgstr "~"
 #~ msgid "Rendering failed."
 #~ msgstr "Görüntülenemiyor."
 
-#~ msgid ""
-#~ "Setting directory access times is not supported under this OS version"
+#~ msgid "Setting directory access times is not supported under this OS version"
 #~ msgstr ""
 #~ "Klasör erişim zamanları ayarı bu işletim sistemi sürümünde desteklenmiyor"
 
@@ -9051,7 +9044,6 @@ msgstr "~"
 #~ msgid "Win32s on Windows 3.1"
 #~ msgstr "Windows 3.1 üstünde Win32s"
 
-#, fuzzy
 #~ msgid "Windows 10"
 #~ msgstr "Windows 8.1"
 
@@ -9091,7 +9083,6 @@ msgstr "~"
 #~ msgid "Windows NT %lu.%lu"
 #~ msgstr "Windows NT %lu.%lu"
 
-#, fuzzy
 #~ msgid "Windows Server 10"
 #~ msgstr "Windows Server 2003"
 

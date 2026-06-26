@@ -1,9 +1,4 @@
-# wxWidgets translations to Dutch
-# Copyright (C) 2014 wxWidgets developers
-# This file is distributed under the same license as the wxWidgets package.
 #
-# Translators:
-# Thomas De Rocker, 2013-2014, G. van Melle 2009-2015
 msgid ""
 msgstr ""
 "Project-Id-Version: wxWidgets 3.1\n"
@@ -11,14 +6,87 @@ msgstr ""
 "POT-Creation-Date: 2017-05-21 14:25+0200\n"
 "PO-Revision-Date: 2016-08-21 12:00+0200\n"
 "Last-Translator: gvmelle <translations@gvmelle.com>\n"
-"Language-Team: Dutch (http://www.transifex.com/projects/p/"
-"wxwidgets_unofficial/language/nl/)\n"
+"Language-Team: Dutch (http://www.transifex.com/projects/p/wxwidgets_unofficial/language/nl/)\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.8.8\n"
+
+msgid "Deleting password for \"%s/%s\" failed: %s."
+msgstr "Verwijderen van wachtwoord voor \"%s/%s\" is mislukt: %s."
+
+msgid "Reading password for \"%s/%s\" failed: %s."
+msgstr "Lezen van wachtwoord voor \"%s/%s\" is mislukt: %s."
+
+msgid "Saving password for \"%s/%s\" failed: %s."
+msgstr "Opslaan van wachtwoord voor \"%s/%s\" is mislukt: %s."
+
+msgid " "
+msgstr " "
+
+msgid " (while overwriting an existing item)"
+msgstr " (tijdens het overschrijven van een bestaand item)"
+
+msgid "%s (%d items)"
+msgstr "%s (%d items)"
+
+msgid "Collapse"
+msgstr "Inklappen"
+
+msgid "Column %u"
+msgstr "Kolom %u"
+
+msgid "Expand"
+msgstr "Uitklappen"
+
+msgid "Red:"
+msgstr "Rood:"
+
+msgid "Registry value \"%s\" is not binary (but of type %s)"
+msgstr "Registerwaarde \"%s\" is niet binair (maar van type %s)"
+
+msgid "Registry value \"%s\" is not numeric (but of type %s)"
+msgstr "Registerwaarde \"%s\" is niet numeriek (maar van type %s)"
+
+msgid "Registry value \"%s\" is not text (but of type %s)"
+msgstr "Registerwaarde \"%s\" is geen tekst (maar van type %s)"
+
+msgid "Row %i"
+msgstr "Rij %i"
+
+msgid "Unable to remove inotify watch %i"
+msgstr "Kan inotify-watch %i niet verwijderen"
+
+msgid "checked"
+msgstr "aangevinkt"
+
+msgid "file '%s', line %zu: '%s' ignored after group header."
+msgstr "bestand '%s', regel %zu: '%s' genegeerd na groepskop."
+
+msgid "file '%s', line %zu: '=' expected."
+msgstr "bestand '%s', regel %zu: '=' verwacht."
+
+msgid "file '%s', line %zu: key '%s' was first found at line %d."
+msgstr ""
+"bestand '%s', regel %zu: sleutel '%s' werd eerst gevonden op regel %d."
+
+msgid "file '%s', line %zu: value for immutable key '%s' ignored."
+msgstr ""
+"bestand '%s', regel %zu: waarde voor onveranderbare sleutel '%s' genegeerd."
+
+msgid "file '%s': unexpected character %c at line %zu."
+msgstr "bestand '%s': onverwacht teken %c op regel %zu."
+
+msgid "true"
+msgstr "waar"
+
+msgid "unchecked"
+msgstr "niet aangevinkt"
+
+msgid "unknown (%lu)"
+msgstr "onbekend (%lu)"
 
 #: ../src/common/debugrpt.cpp:586
 msgid ""
@@ -27,11 +95,6 @@ msgid ""
 msgstr ""
 "\n"
 "Zend dit rapport naar de programmabeheerder, bedankt!\n"
-
-#: ../src/richtext/richtextstyledlg.cpp:210
-#: ../src/richtext/richtextstyledlg.cpp:222
-msgid " "
-msgstr " "
 
 #: ../src/generic/dbgrptg.cpp:326
 msgid "              Thank you and we're sorry for the inconvenience!\n"
@@ -51,10 +114,6 @@ msgstr " (fout %ld: %s)"
 #, c-format
 msgid " (in module \"%s\")"
 msgstr " (in module \"%s\")"
-
-#: ../src/osx/core/secretstore.cpp:138
-msgid " (while overwriting an existing item)"
-msgstr ""
 
 #: ../src/common/docview.cpp:1642
 msgid " - "
@@ -135,11 +194,6 @@ msgstr[1] "%ld bytes"
 #, c-format
 msgid "%lu of %lu"
 msgstr "%lu van %lu"
-
-#: ../src/generic/datavgen.cpp:6028
-#, fuzzy, c-format
-msgid "%s (%d items)"
-msgstr "%s (of %s)"
 
 #: ../src/common/cmdline.cpp:1221
 #, c-format
@@ -1513,7 +1567,6 @@ msgid "Blue"
 msgstr "Blauw"
 
 #: ../src/generic/colrdlgg.cpp:345
-#, fuzzy
 msgid "Blue:"
 msgstr "Blauw"
 
@@ -1644,7 +1697,8 @@ msgstr "Kan niet &ongedaan maken: "
 #: ../src/common/image.cpp:2824
 msgid "Can't automatically determine the image format for non-seekable input."
 msgstr ""
-"Kan niet automatisch het afbeeldingsformaat bepalen voor niet vindbare input."
+"Kan niet automatisch het afbeeldingsformaat bepalen voor niet vindbare "
+"input."
 
 #: ../src/msw/registry.cpp:506
 #, c-format
@@ -1996,8 +2050,8 @@ msgstr "Verander Stijl"
 #, c-format
 msgid "Changes won't be saved to avoid overwriting the existing file \"%s\""
 msgstr ""
-"Wijzigingen worden niet opgeslagen om te vermijden dat het bestaande bestand "
-"\"%s\" zal worden overschreven"
+"Wijzigingen worden niet opgeslagen om te vermijden dat het bestaande bestand"
+" \"%s\" zal worden overschreven"
 
 #: ../src/gtk/filepicker.cpp:190 ../src/gtk/filedlg.cpp:87
 #, c-format
@@ -2260,11 +2314,6 @@ msgstr "Sluit het huidige document."
 msgid "Close this window"
 msgstr "Sluit dit venster"
 
-#. TRANSLATORS: Action for manipulating a tree control
-#: ../src/generic/datavgen.cpp:6006
-msgid "Collapse"
-msgstr ""
-
 #: ../src/common/stockitem.cpp:193
 msgid "Color"
 msgstr "Kleur"
@@ -2282,11 +2331,6 @@ msgstr "Kleurenselectie dialoog mislukt met fout %0lx."
 msgid "Colour:"
 msgstr "Kleur:"
 
-#: ../src/generic/datavgen.cpp:6077
-#, fuzzy, c-format
-msgid "Column %u"
-msgstr "Kolom toevoegen"
-
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:114
 msgid "Command"
@@ -2298,8 +2342,8 @@ msgid ""
 "Command line argument %d couldn't be converted to Unicode and will be "
 "ignored."
 msgstr ""
-"Commandoregel argument %d kon niet omgezet worden naar Unicode en zal worden "
-"genegeerd."
+"Commandoregel argument %d kon niet omgezet worden naar Unicode en zal worden"
+" genegeerd."
 
 #: ../src/msw/fontdlg.cpp:120
 #, c-format
@@ -2311,8 +2355,8 @@ msgid ""
 "Compositing not supported by this system, please enable it in your Window "
 "Manager."
 msgstr ""
-"Samenstellen niet ondersteund door dit systeem. U kunt dit inschakelen in uw "
-"Vensterbeheer."
+"Samenstellen niet ondersteund door dit systeem. U kunt dit inschakelen in uw"
+" Vensterbeheer."
 
 #: ../src/html/helpwnd.cpp:1551
 msgid "Compressed HTML Help file (*.chm)|*.chm|"
@@ -2399,7 +2443,6 @@ msgid "Could not find tab for id"
 msgstr "Kon tabblad niet vinden voor id"
 
 #: ../src/gtk/notifmsg.cpp:108
-#, fuzzy
 msgid "Could not initalize libnotify."
 msgstr "Kon uitlijning niet instellen."
 
@@ -2433,7 +2476,6 @@ msgstr "Kon geen afbeelding aan de lijst toevoegen"
 
 #: ../src/osx/glcanvas_osx.cpp:414 ../src/unix/glx11.cpp:558
 #: ../src/msw/glcanvas.cpp:616
-#, fuzzy
 msgid "Couldn't create OpenGL context"
 msgstr "Kon geen timer creëren"
 
@@ -2690,11 +2732,6 @@ msgstr "Stijl %s verwijderen?"
 msgid "Deleted stale lock file '%s'."
 msgstr "Verouderd vergrendeld bestand '%s' verwijderd."
 
-#: ../src/common/secretstore.cpp:220
-#, fuzzy, c-format
-msgid "Deleting password for \"%s/%s\" failed: %s."
-msgstr "Aanmaken van '%s' in '%s' mislukte."
-
 #: ../src/common/module.cpp:124
 #, c-format
 msgid "Dependency \"%s\" of module \"%s\" doesn't exist."
@@ -2719,8 +2756,8 @@ msgstr "Ontwikkelaars"
 
 #: ../src/msw/dialup.cpp:374
 msgid ""
-"Dial up functions are unavailable because the remote access service (RAS) is "
-"not installed on this machine. Please install it."
+"Dial up functions are unavailable because the remote access service (RAS) is"
+" not installed on this machine. Please install it."
 msgstr ""
 "Inbelfuncties zijn niet beschikbaar omdat de inbelverbindingsoftware (RAS) "
 "niet op deze machine is geïnstalleerd. Installeer het a.u.b."
@@ -2989,7 +3026,7 @@ msgid "Error closing kqueue instance"
 msgstr "Fout bij sluiten van kqueue exemplaarset"
 
 #: ../src/common/filefn.cpp:1049
-#, fuzzy, c-format
+#, c-format
 msgid "Error copying the file '%s' to '%s'."
 msgstr "Kopiëren van bestand '%s' naar '%s' mislukt"
 
@@ -3057,11 +3094,6 @@ msgstr "Uitvoering van opdracht '%s' mislukt"
 #: ../src/common/paper.cpp:105
 msgid "Executive, 7 1/4 x 10 1/2 in"
 msgstr "USA Executive, 7 1/4 x 10 1/2 inch"
-
-#. TRANSLATORS: Action for manipulating a tree control
-#: ../src/generic/datavgen.cpp:6009
-msgid "Expand"
-msgstr ""
 
 #: ../src/msw/registry.cpp:1240
 #, c-format
@@ -3333,8 +3365,8 @@ msgstr "Installeren van signaal handler mislukt"
 
 #: ../src/unix/threadpsx.cpp:1167
 msgid ""
-"Failed to join a thread, potential memory leak detected - please restart the "
-"program"
+"Failed to join a thread, potential memory leak detected - please restart the"
+" program"
 msgstr ""
 "Aansluiten bij een thread mislukt, mogelijk geheugenlek aangetroffen - "
 "herstart het programma a.u.b."
@@ -3355,7 +3387,7 @@ msgid "Failed to load icon \"%s\" from resources."
 msgstr "Laden van icoon \"%s\" van bronnen mislukt."
 
 #: ../src/common/iconbndl.cpp:225
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to load icons from resource '%s'."
 msgstr "Laden van icoon \"%s\" van bronnen mislukt."
 
@@ -3926,7 +3958,6 @@ msgid "Green"
 msgstr "Groen"
 
 #: ../src/generic/colrdlgg.cpp:342
-#, fuzzy
 msgid "Green:"
 msgstr "Groen"
 
@@ -4110,15 +4141,12 @@ msgstr ""
 
 #: ../src/generic/dbgrptg.cpp:324
 msgid ""
-"If you wish to suppress this debug report completely, please choose the "
-"\"Cancel\" button,\n"
+"If you wish to suppress this debug report completely, please choose the \"Cancel\" button,\n"
 "but be warned that it may hinder improving the program, so if\n"
 "at all possible please do continue with the report generation.\n"
 msgstr ""
-"Als u dit foutopsporingsrapport totaal wilt onderdrukken, kies dan de "
-"\"Annuleren\" knop,\n"
-"maar wees gewaarschuwd dat het 't verbeteren van het programma kan "
-"verhinderen, dus als\n"
+"Als u dit foutopsporingsrapport totaal wilt onderdrukken, kies dan de \"Annuleren\" knop,\n"
+"maar wees gewaarschuwd dat het 't verbeteren van het programma kan verhinderen, dus als\n"
 "het enigszins mogelijk is, ga dan door met het genereren van het rapport.\n"
 
 #: ../src/msw/registry.cpp:1405
@@ -4162,8 +4190,8 @@ msgstr "Afbeelding is niet van type %s."
 
 #: ../src/msw/textctrl.cpp:488
 msgid ""
-"Impossible to create a rich edit control, using simple text control instead. "
-"Please reinstall riched32.dll"
+"Impossible to create a rich edit control, using simple text control instead."
+" Please reinstall riched32.dll"
 msgstr ""
 "Niet mogelijk om Rich Edit control te maken, gewone tekst wordt gebruikt. "
 "Installeer riched32.dll a.u.b. opnieuw"
@@ -4323,8 +4351,7 @@ msgstr "Ongeldige reguliere expressie '%s': %s"
 #: ../src/common/config.cpp:226
 #, c-format
 msgid "Invalid value %ld for a boolean key \"%s\" in config file."
-msgstr ""
-"Ongeldige waarde %ld voor een boolean sleutel \"%s\" in config bestand."
+msgstr "Ongeldige waarde %ld voor een boolean sleutel \"%s\" in config bestand."
 
 #: ../src/generic/fontdlgg.cpp:329 ../src/richtext/richtextfontpage.cpp:351
 #: ../src/osx/carbon/fontdlg.cpp:361 ../src/common/stockitem.cpp:168
@@ -5103,11 +5130,9 @@ msgstr "Geen ingangen gevonden."
 msgid ""
 "No font for displaying text in encoding '%s' found,\n"
 "but an alternative encoding '%s' is available.\n"
-"Do you want to use this encoding (otherwise you will have to choose another "
-"one)?"
+"Do you want to use this encoding (otherwise you will have to choose another one)?"
 msgstr ""
-"Er is geen lettertype gevonden voor het tonen van tekst in de versleuteling "
-"'%s',\n"
+"Er is geen lettertype gevonden voor het tonen van tekst in de versleuteling '%s',\n"
 "maar een alternatieve versleuteling '%s' is beschikbaar.\n"
 "Wilt u deze versleuteling gebruiken (Anders moet u een andere kiezen)?"
 
@@ -5357,7 +5382,6 @@ msgid "Opaci&ty:"
 msgstr "Ondoorzich&tigheid:"
 
 #: ../src/generic/colrdlgg.cpp:354
-#, fuzzy
 msgid "Opacity:"
 msgstr "Ondoorzich&tigheid:"
 
@@ -5379,7 +5403,6 @@ msgid "Open..."
 msgstr "Openen..."
 
 #: ../src/unix/glx11.cpp:506 ../src/msw/glcanvas.cpp:592
-#, fuzzy
 msgid "OpenGL 3.0 or later is not supported by the OpenGL driver."
 msgstr "Core OpenGL-profiel wordt niet ondersteund door de OpenGL-driver."
 
@@ -5880,8 +5903,7 @@ msgstr "Afdruk"
 
 #: ../src/common/debugrpt.cpp:560
 #, c-format
-msgid ""
-"Processing debug report has failed, leaving the files in \"%s\" directory."
+msgid "Processing debug report has failed, leaving the files in \"%s\" directory."
 msgstr ""
 "Verwerking van foutopsporingsrapport mislukt. Bestanden zijn achtergelaten "
 "in de \"%s\" map."
@@ -5942,11 +5964,6 @@ msgstr "RawCtrl+"
 msgid "Read error on file '%s'"
 msgstr "Leesfout bij bestand '%s'"
 
-#: ../src/common/secretstore.cpp:199
-#, fuzzy, c-format
-msgid "Reading password for \"%s/%s\" failed: %s."
-msgstr "Aanmaken van '%s' in '%s' mislukte."
-
 #: ../src/common/prntbase.cpp:272
 msgid "Ready"
 msgstr "Gereed"
@@ -5954,10 +5971,6 @@ msgstr "Gereed"
 #: ../src/propgrid/advprops.cpp:1605
 msgid "Red"
 msgstr "Rood"
-
-#: ../src/generic/colrdlgg.cpp:339
-msgid "Red:"
-msgstr ""
 
 #: ../src/common/stockitem.cpp:185 ../src/stc/stc_i18n.cpp:16
 msgid "Redo"
@@ -5991,21 +6004,6 @@ msgstr ""
 "Registersleutel '%s' is nodig voor normaal systeemgebruik,\n"
 "wissen maakt uw systeem onbruikbaar:\n"
 "bewerking afgebroken."
-
-#: ../src/msw/registry.cpp:954
-#, c-format
-msgid "Registry value \"%s\" is not binary (but of type %s)"
-msgstr ""
-
-#: ../src/msw/registry.cpp:917
-#, c-format
-msgid "Registry value \"%s\" is not numeric (but of type %s)"
-msgstr ""
-
-#: ../src/msw/registry.cpp:1003
-#, c-format
-msgid "Registry value \"%s\" is not text (but of type %s)"
-msgstr ""
 
 #: ../src/msw/registry.cpp:521
 #, c-format
@@ -6131,11 +6129,6 @@ msgstr "Rechtsuitgelijnde tekst."
 msgid "Roman"
 msgstr "Romein"
 
-#: ../src/generic/datavgen.cpp:5916
-#, c-format
-msgid "Row %i"
-msgstr ""
-
 #: ../src/richtext/richtextliststylepage.cpp:299
 #: ../src/richtext/richtextbulletspage.cpp:239
 msgid "S&tandard bullet name:"
@@ -6177,11 +6170,6 @@ msgstr "Het huidige bestand onder een nieuwe naam opslaan"
 #: ../src/generic/logg.cpp:512
 msgid "Save log contents to file"
 msgstr "Sla log-gegevens op in bestand"
-
-#: ../src/common/secretstore.cpp:179
-#, fuzzy, c-format
-msgid "Saving password for \"%s/%s\" failed: %s."
-msgstr "Aanmaken van '%s' in '%s' mislukte."
 
 #: ../src/generic/fontdlgg.cpp:325
 msgid "Script"
@@ -6771,13 +6759,11 @@ msgstr ""
 #: ../src/html/htmprint.cpp:271
 #, c-format
 msgid ""
-"The document \"%s\" doesn't fit on the page horizontally and will be "
-"truncated if printed.\n"
+"The document \"%s\" doesn't fit on the page horizontally and will be truncated if printed.\n"
 "\n"
 "Would you like to proceed with printing it nevertheless?"
 msgstr ""
-"Het document \"%s\" past niet horizontaal op de pagina en zal worden "
-"afgekapt bij het afdrukken.\n"
+"Het document \"%s\" past niet horizontaal op de pagina en zal worden afgekapt bij het afdrukken.\n"
 "\n"
 "Wilt u ondanks dat toch doorgaan met afdrukken?"
 
@@ -6939,12 +6925,10 @@ msgstr "De te tonen range."
 
 #: ../src/generic/dbgrptg.cpp:322
 msgid ""
-"The report contains the files listed below. If any of these files contain "
-"private information,\n"
+"The report contains the files listed below. If any of these files contain private information,\n"
 "please uncheck them and they will be removed from the report.\n"
 msgstr ""
-"Het rapport bevat de hieronder opgesomde bestanden. Wanneer een van deze "
-"bestanden persoonlijke informatie bevat,\n"
+"Het rapport bevat de hieronder opgesomde bestanden. Wanneer een van deze bestanden persoonlijke informatie bevat,\n"
 "haal dan het vinkje weg en ze zullen verwijderd worden uit het rapport.\n"
 
 #: ../src/common/cmdline.cpp:1254
@@ -7085,7 +7069,8 @@ msgstr "De verticale verschuiving."
 
 #: ../src/richtext/richtextprint.cpp:619 ../src/html/htmprint.cpp:745
 msgid ""
-"There was a problem during page setup: you may need to set a default printer."
+"There was a problem during page setup: you may need to set a default "
+"printer."
 msgstr ""
 "Er was een probleem tijdens pagina-instellingen: u moet mogelijk een "
 "standaard printer instellen."
@@ -7120,8 +7105,8 @@ msgid ""
 "Thread module initialization failed: cannot store value in thread local "
 "storage"
 msgstr ""
-"Threadmodule-initialisatie mislukt: kan geen waarde opslaan in lokale thread-"
-"geheugenruimte."
+"Threadmodule-initialisatie mislukt: kan geen waarde opslaan in lokale "
+"thread-geheugenruimte."
 
 #: ../src/unix/threadpsx.cpp:1794
 msgid "Thread module initialization failed: failed to create thread key"
@@ -7132,8 +7117,8 @@ msgid ""
 "Thread module initialization failed: impossible to allocate index in thread "
 "local storage"
 msgstr ""
-"Threadmodule-initialisatie mislukt: niet mogelijk een index te reserveren in "
-"lokale thread-geheugenruimte."
+"Threadmodule-initialisatie mislukt: niet mogelijk een index te reserveren in"
+" lokale thread-geheugenruimte."
 
 #: ../src/unix/threadpsx.cpp:1043
 msgid "Thread priority setting is ignored."
@@ -7238,12 +7223,10 @@ msgstr "Type moet enum hebben - long conversie."
 
 #: ../src/propgrid/propgridiface.cpp:401
 #, c-format
-msgid ""
-"Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT "
-"\"%s\"."
+msgid "Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT \"%s\"."
 msgstr ""
-"Type handeling \"%s\" mislukt: Eigenschap met label \"%s\" is van type \"%s"
-"\", NIET \"%s\"."
+"Type handeling \"%s\" mislukt: Eigenschap met label \"%s\" is van type "
+"\"%s\", NIET \"%s\"."
 
 #: ../src/common/paper.cpp:133
 msgid "US Std Fanfold, 14 7/8 x 11 in"
@@ -7332,11 +7315,6 @@ msgstr "Kan voltooiingstatus niet plaatsen"
 #: ../src/unix/fswatcher_inotify.cpp:556
 msgid "Unable to read from inotify descriptor"
 msgstr "kan inotify descriptor niet lezen"
-
-#: ../src/unix/fswatcher_inotify.cpp:141
-#, fuzzy, c-format
-msgid "Unable to remove inotify watch %i"
-msgstr "Kan inotify controle niet verwijderen"
 
 #: ../src/unix/fswatcher_kqueue.cpp:153
 msgid "Unable to remove kqueue watch"
@@ -8001,13 +7979,11 @@ msgstr ""
 
 #: ../src/msw/dde.cpp:1129
 msgid ""
-"a DDEML function was called without first calling the DdeInitialize "
-"function,\n"
+"a DDEML function was called without first calling the DdeInitialize function,\n"
 "or an invalid instance identifier\n"
 "was passed to a DDEML function."
 msgstr ""
-"een DDEML-functie was aangeroepen zonder eerst de DdeInitialize-functie aan "
-"te roepen\n"
+"een DDEML-functie was aangeroepen zonder eerst de DdeInitialize-functie aan te roepen\n"
 "of een ongeldige applicatie-pid was doorgegeven aan een DDEML-functie."
 
 #: ../src/msw/dde.cpp:1147
@@ -8035,7 +8011,8 @@ msgstr ""
 #: ../src/msw/dde.cpp:1135
 msgid "a request for a synchronous execute transaction has timed out."
 msgstr ""
-"aanvraag voor synchrone uitvoeringstransactie heeft een time-out veroorzaakt."
+"aanvraag voor synchrone uitvoeringstransactie heeft een time-out "
+"veroorzaakt."
 
 #: ../src/msw/dde.cpp:1153
 msgid "a request for a synchronous poke transaction has timed out."
@@ -8074,8 +8051,7 @@ msgid ""
 "attempted to perform server transactions."
 msgstr ""
 "een applicatie die als APPCLASS_MONITOR is gestart heeft geprobeerd\n"
-"een DDE-transactie uit te voeren of een applicatie die als APPCMD_CLIENTONLY "
-"is\n"
+"een DDE-transactie uit te voeren of een applicatie die als APPCMD_CLIENTONLY is\n"
 "gestart heeft geprobeerd een server-transactie uit te voeren."
 
 #: ../src/msw/dde.cpp:1156
@@ -8249,11 +8225,6 @@ msgstr "kan niet schrijven naar bestandsbeschrijving %d"
 msgid "can't write user configuration file."
 msgstr "kan gebruikers-configuratiebestand niet schrijven."
 
-#. TRANSLATORS: Checkbox state name
-#: ../src/generic/treelist.cpp:482 ../src/generic/datavgen.cpp:1261
-msgid "checked"
-msgstr ""
-
 #: ../src/html/chm.cpp:345
 msgid "checksum error"
 msgstr "checksum fout"
@@ -8373,7 +8344,6 @@ msgstr "legen van bestand '%s' mislukt"
 
 #. TRANSLATORS: Name of Boolean false value
 #: ../src/generic/datavgen.cpp:1030
-#, fuzzy
 msgid "false"
 msgstr "Onwaar"
 
@@ -8384,33 +8354,6 @@ msgstr "vijftiende"
 #: ../src/common/datetimefmt.cpp:1956
 msgid "fifth"
 msgstr "vijfde"
-
-#: ../src/common/fileconf.cpp:579
-#, fuzzy, c-format
-msgid "file '%s', line %zu: '%s' ignored after group header."
-msgstr "bestand '%s', regel %d: '%s' genegeerd na groepsheader."
-
-#: ../src/common/fileconf.cpp:608
-#, fuzzy, c-format
-msgid "file '%s', line %zu: '=' expected."
-msgstr "bestand '%s', regel %d: '=' verwacht."
-
-#: ../src/common/fileconf.cpp:631
-#, fuzzy, c-format
-msgid "file '%s', line %zu: key '%s' was first found at line %d."
-msgstr ""
-"bestand '%s', regel %d: sleutel '%s' voor het eerst gevonden op regel %d."
-
-#: ../src/common/fileconf.cpp:621
-#, fuzzy, c-format
-msgid "file '%s', line %zu: value for immutable key '%s' ignored."
-msgstr ""
-"bestand '%s', regel %d: waarde voor onveranderbare sleutel '%s' genegeerd."
-
-#: ../src/common/fileconf.cpp:543
-#, fuzzy, c-format
-msgid "file '%s': unexpected character %c at line %zu."
-msgstr "bestand '%s': onverwacht letterteken %c in regel %d."
 
 #: ../src/richtext/richtextbuffer.cpp:8738
 msgid "files"
@@ -8781,11 +8724,6 @@ msgstr ""
 "Reinout van Schouwen <reinouts@gnome.org>\n"
 "Kijk voor meer informatie op http://nl.gnome.org/"
 
-#. TRANSLATORS: Name of Boolean true value
-#: ../src/generic/datavgen.cpp:1028
-msgid "true"
-msgstr ""
-
 #: ../src/common/datetimefmt.cpp:1963
 msgid "twelfth"
 msgstr "twaalfde"
@@ -8794,18 +8732,12 @@ msgstr "twaalfde"
 msgid "twentieth"
 msgstr "twintigste"
 
-#. TRANSLATORS: Checkbox state name
-#: ../src/generic/treelist.cpp:486 ../src/generic/datavgen.cpp:1263
-msgid "unchecked"
-msgstr ""
-
 #: ../src/common/fontcmn.cpp:802 ../src/common/fontcmn.cpp:978
 msgid "underlined"
 msgstr "onderstreept"
 
 #. TRANSLATORS: Checkbox state name
 #: ../src/generic/treelist.cpp:490
-#, fuzzy
 msgid "undetermined"
 msgstr "onderstreept"
 
@@ -8821,11 +8753,6 @@ msgstr "onverwacht einde van bestand"
 #: ../src/generic/progdlgg.cpp:370 ../src/common/tarstrm.cpp:371
 #: ../src/common/tarstrm.cpp:394 ../src/common/tarstrm.cpp:425
 msgid "unknown"
-msgstr "onbekend"
-
-#: ../src/msw/registry.cpp:150
-#, fuzzy, c-format
-msgid "unknown (%lu)"
 msgstr "onbekend"
 
 #: ../src/common/xtixml.cpp:253
@@ -8988,15 +8915,13 @@ msgstr "~"
 #~ msgstr "Datum renderer kan geen waarde renderen; waarde type: "
 
 #~ msgid ""
-#~ "Do you want to overwrite the command used to %s files with extension \"%s"
-#~ "\" ?\n"
+#~ "Do you want to overwrite the command used to %s files with extension \"%s\" ?\n"
 #~ "Current value is \n"
 #~ "%s, \n"
 #~ "New value is \n"
 #~ "%s %1"
 #~ msgstr ""
-#~ "Wilt u het '%s' commando dat gebruikt wordt voor bestanden met extensie "
-#~ "\"%s\" overschrijven?\n"
+#~ "Wilt u het '%s' commando dat gebruikt wordt voor bestanden met extensie \"%s\" overschrijven?\n"
 #~ "Huidige waarde is \n"
 #~ "%s, \n"
 #~ "Nieuwe waarde is \n"
@@ -9032,8 +8957,7 @@ msgstr "~"
 #~ msgid "No column for the specified column position existing."
 #~ msgstr "Er bestaat geen kolom voor de gespecificeerde kolompositie."
 
-#~ msgid ""
-#~ "No renderer or invalid renderer type specified for custom data column."
+#~ msgid "No renderer or invalid renderer type specified for custom data column."
 #~ msgstr ""
 #~ "Geen renderer of ongeldig renderingstype gespecificeerd voor aangepaste "
 #~ "gegevens kolom."
@@ -9068,11 +8992,10 @@ msgstr "~"
 #~ msgid "Rendering failed."
 #~ msgstr "Renderen mislukt."
 
-#~ msgid ""
-#~ "Setting directory access times is not supported under this OS version"
+#~ msgid "Setting directory access times is not supported under this OS version"
 #~ msgstr ""
-#~ "Instellen van toegangstijden voor mappen wordt niet ondersteund op deze "
-#~ "OS versie"
+#~ "Instellen van toegangstijden voor mappen wordt niet ondersteund op deze OS "
+#~ "versie"
 
 #~ msgid "Show hidden directories"
 #~ msgstr "Toon verborgen mappen"
@@ -9087,8 +9010,8 @@ msgstr "~"
 #~ "This system doesn't support date controls, please upgrade your version of "
 #~ "comctl32.dll"
 #~ msgstr ""
-#~ "Dit systeem ondersteunt geen datum controls. Werk uw versie van comctl32."
-#~ "dll bij"
+#~ "Dit systeem ondersteunt geen datum controls. Werk uw versie van comctl32.dll"
+#~ " bij"
 
 #~ msgid "Toggle renderer cannot render value; value type: "
 #~ msgstr "Schakelaar renderer kan geen waarde renderen; waarde type:"

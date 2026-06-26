@@ -10,6 +10,7 @@
 #include "GUI.hpp"
 #include "GUI_App.hpp"
 #include "I18N.hpp"
+#include "Widgets/UIColors.hpp"
 
 wxDEFINE_EVENT(EVT_WIPE_TOWER_CHART_CHANGED, wxCommandEvent);
 
@@ -23,18 +24,19 @@ void Chart::draw()
 {
     wxAutoBufferedPaintDC dc(this); // unbuffered DC caused flickering on win
 
+    // Themed chart colors so the graph matches the active theme on all platforms.
+    const wxColour theme_fg = UIColors::ContentForeground();
+    const wxColour theme_plot_bg = UIColors::InputBackground();
+
     dc.SetBrush(GetBackgroundColour());
     dc.SetPen(GetBackgroundColour());
     dc.DrawRectangle(GetClientRect()); // otherwise the background would end up black on windows
 
-#ifdef _WIN32
-    dc.SetPen(wxPen(GetForegroundColour()));
-    dc.SetBrush(wxBrush(Slic3r::GUI::wxGetApp().get_highlight_default_clr()));
-#else
-    dc.SetPen(*wxBLACK_PEN);
-    dc.SetBrush(*wxWHITE_BRUSH);
-#endif
+    // Plot area fill + border; set themed text color for all axis labels/ticks drawn below.
+    dc.SetPen(wxPen(theme_fg));
+    dc.SetBrush(wxBrush(theme_plot_bg));
     dc.DrawRectangle(m_rect);
+    dc.SetTextForeground(theme_fg);
 
     if (visible_area.m_width < 0.499)
     {
@@ -45,17 +47,12 @@ void Chart::draw()
 
     if (!m_line_to_draw.empty())
     {
+        // Themed area fill under the ramming curve (speed is read off the Y-axis).
+        const wxColour fill_clr = UIColors::AccentPrimary();
+        dc.SetPen(wxPen(fill_clr, 1));
         for (unsigned int i = 0; i < m_line_to_draw.size() - 2; ++i)
-        {
-            int color = 510 * ((m_rect.GetBottom() - (m_line_to_draw)[i]) / double(m_rect.GetHeight()));
-            dc.SetPen(wxPen(wxColor(std::min(255, color), 255 - std::max(color - 255, 0), 0), 1));
             dc.DrawLine(m_rect.GetLeft() + 1 + i, (m_line_to_draw)[i], m_rect.GetLeft() + 1 + i, m_rect.GetBottom());
-        }
-#ifdef _WIN32
-        dc.SetPen(wxPen(GetForegroundColour()));
-#else
-        dc.SetPen(wxPen(wxColor(0, 0, 0), 1));
-#endif
+        dc.SetPen(wxPen(theme_fg));
         for (unsigned int i = 0; i < m_line_to_draw.size() - 2; ++i)
         {
             if (splines)
@@ -70,13 +67,9 @@ void Chart::draw()
         }
     }
 
-    // draw draggable buttons
-    dc.SetBrush(*wxBLUE_BRUSH);
-#ifdef _WIN32
-    dc.SetPen(wxPen(GetForegroundColour()));
-#else
-    dc.SetPen(wxPen(wxColor(0, 0, 0), 1));
-#endif
+    // draw draggable buttons - themed accent handles with a foreground outline
+    dc.SetBrush(wxBrush(UIColors::AccentSecondary()));
+    dc.SetPen(wxPen(theme_fg));
     for (auto &button : m_buttons)
         //dc.DrawRectangle(math_to_screen(button.get_pos())-wxPoint(get_button_side()/2.,get_button_side()/2.), wxSize(get_button_side(),get_button_side()));
         dc.DrawCircle(math_to_screen(button.get_pos()), get_button_side() / 2.);

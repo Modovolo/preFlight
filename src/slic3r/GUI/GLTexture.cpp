@@ -11,6 +11,7 @@
 #include "GUI_App.hpp"
 #include "GLModel.hpp"
 #include "BitmapCache.hpp"
+#include "ThemePalette.hpp"
 
 #if SLIC3R_OPENGL_ES
 #include <glad/gles2.h>
@@ -25,6 +26,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <cmath>
 #include <thread>
 
 #define STB_DXT_IMPLEMENTATION
@@ -208,13 +210,40 @@ bool GLTexture::load_from_svg_files_as_sprites_array(const std::vector<std::stri
     std::vector<unsigned char> sprite_data(sprite_bytes, 0);
     std::vector<unsigned char> sprite_white_only_data(sprite_bytes, 0);
     std::vector<unsigned char> sprite_gray_only_data(sprite_bytes, 0);
+    std::vector<unsigned char> sprite_hover_data(sprite_bytes, 0);
     std::vector<unsigned char> output_data(sprite_bytes, 0);
+
+    // preFlight: theme-aware monochrome icon colors for the enabled (state 1) and disabled (state 2) variants.
+    const wxColour ic_enabled = Slic3r::GUI::active_palette().icon_enabled;
+    const wxColour ic_disabled = Slic3r::GUI::active_palette().icon_disabled;
 
     NSVGrasterizer *rast = nsvgCreateRasterizer();
     if (rast == nullptr)
     {
         reset();
         return false;
+    }
+
+    // preFlight: recolor the brand orange baked into the icon SVGs to the active theme accent. The colored
+    // sprite variant (sprite_data) is used for the normal/active/hovered states, so the orange must be
+    // replaced at parse time; the enabled/disabled monochrome variants are recolored to the icon color below.
+    std::map<std::string, std::string> replaces;
+    {
+        const wxColour &acc = Slic3r::GUI::active_palette().accent_primary;
+        auto byte_hex = [](int v)
+        {
+            const char *d = "0123456789ABCDEF";
+            std::string s;
+            s += d[(v >> 4) & 0xF];
+            s += d[v & 0xF];
+            return s;
+        };
+        const std::string accent = "#" + byte_hex(acc.Red()) + byte_hex(acc.Green()) + byte_hex(acc.Blue());
+        if (accent != "#EAA032")
+        {
+            replaces["#EAA032"] = accent;
+            replaces["#eaa032"] = accent;
+        }
     }
 
     int sprite_id = -1;
@@ -228,7 +257,7 @@ bool GLTexture::load_from_svg_files_as_sprites_array(const std::vector<std::stri
         if (!boost::algorithm::iends_with(filename, ".svg"))
             continue;
 
-        NSVGimage *image = BitmapCache::nsvgParseFromFileWithReplace(filename.c_str(), "px", 96.0f, {});
+        NSVGimage *image = BitmapCache::nsvgParseFromFileWithReplace(filename.c_str(), "px", 96.0f, replaces);
         if (image == nullptr)
             continue;
 
@@ -238,22 +267,54 @@ bool GLTexture::load_from_svg_files_as_sprites_array(const std::vector<std::stri
         nsvgRasterize(rast, image, 1, 1, scale, sprite_data.data(), sprite_size_px_ex, sprite_size_px_ex,
                       sprite_stride);
 
-        // makes white only copy of the sprite
+        // makes the "enabled" monochrome copy of the sprite (themed icon color). Test the alpha channel
+        // (offset + 3) for coverage, not red: the colored sprite may now contain an accent with a zero red
+        // channel (e.g. cyan/green), which a red-channel test would wrongly treat as transparent and leave
+        // un-recolored, leaking the accent into the normal/unselected state.
         ::memcpy((void *) sprite_white_only_data.data(), (const void *) sprite_data.data(), sprite_bytes);
         for (int i = 0; i < sprite_n_pixels; ++i)
         {
             int offset = i * 4;
-            if (sprite_white_only_data.data()[offset] != 0)
-                ::memset((void *) &sprite_white_only_data.data()[offset], 255, 3);
+            if (sprite_white_only_data.data()[offset + 3] != 0)
+            {
+                sprite_white_only_data.data()[offset + 0] = ic_enabled.Red();
+                sprite_white_only_data.data()[offset + 1] = ic_enabled.Green();
+                sprite_white_only_data.data()[offset + 2] = ic_enabled.Blue();
+            }
         }
 
-        // makes gray only copy of the sprite
+        // makes the "disabled" monochrome copy of the sprite (themed dimmed color)
         ::memcpy((void *) sprite_gray_only_data.data(), (const void *) sprite_data.data(), sprite_bytes);
         for (int i = 0; i < sprite_n_pixels; ++i)
         {
             int offset = i * 4;
-            if (sprite_gray_only_data.data()[offset] != 0)
-                ::memset((void *) &sprite_gray_only_data.data()[offset], 128, 3);
+            if (sprite_gray_only_data.data()[offset + 3] != 0)
+            {
+                sprite_gray_only_data.data()[offset + 0] = ic_disabled.Red();
+                sprite_gray_only_data.data()[offset + 1] = ic_disabled.Green();
+                sprite_gray_only_data.data()[offset + 2] = ic_disabled.Blue();
+            }
+        }
+
+        // makes the "hover" copy: keeps accent-colored pixels, replaces white/near-white
+        // with ic_enabled so they remain visible on light theme backgrounds
+        ::memcpy((void *) sprite_hover_data.data(), (const void *) sprite_data.data(), sprite_bytes);
+        for (int i = 0; i < sprite_n_pixels; ++i)
+        {
+            int offset = i * 4;
+            if (sprite_hover_data.data()[offset + 3] != 0)
+            {
+                unsigned char r = sprite_hover_data.data()[offset + 0];
+                unsigned char g = sprite_hover_data.data()[offset + 1];
+                unsigned char b = sprite_hover_data.data()[offset + 2];
+                // non-accent pixels (white/near-white or grayscale) get the themed icon color
+                if (r > 200 && g > 200 && b > 200)
+                {
+                    sprite_hover_data.data()[offset + 0] = ic_enabled.Red();
+                    sprite_hover_data.data()[offset + 1] = ic_enabled.Green();
+                    sprite_hover_data.data()[offset + 2] = ic_enabled.Blue();
+                }
+            }
         }
 
         int sprite_offset_px = sprite_id * (int) sprite_size_px_ex * m_width;
@@ -274,6 +335,11 @@ bool GLTexture::load_from_svg_files_as_sprites_array(const std::vector<std::stri
             case 2:
             {
                 src = &sprite_gray_only_data;
+                break;
+            }
+            case 3:
+            {
+                src = &sprite_hover_data;
                 break;
             }
             default:
@@ -413,6 +479,73 @@ void GLTexture::render_sub_texture(unsigned int tex_id, float left, float right,
     }
 
     glsafe(::glBindTexture(GL_TEXTURE_2D, 0));
+    glsafe(::glDisable(GL_BLEND));
+}
+
+void GLTexture::render_solid_quad(float left, float right, float bottom, float top, float r, float g, float b, float a,
+                                  float radius_x, float radius_y, bool round_tl, bool round_tr, bool round_bl,
+                                  bool round_br)
+{
+    glsafe(::glEnable(GL_BLEND));
+    glsafe(::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+    // Clamp the corner radius so it never exceeds half the quad's extents.
+    const float rx = std::min(std::max(radius_x, 0.0f), 0.5f * std::abs(right - left));
+    const float ry = std::min(std::max(radius_y, 0.0f), 0.5f * std::abs(top - bottom));
+
+    // Build the (possibly rounded) perimeter counter-clockwise (front-facing): BL -> BR -> TR -> TL.
+    // The winding must match the original quad so the fan survives face culling (the gizmo overlay
+    // renders with GL_CULL_FACE enabled; back-facing triangles would be culled and the backdrop would vanish).
+    std::vector<Vec2f> pts;
+    const int seg = 4; // segments per rounded corner
+    auto add_corner = [&](float cx, float cy, float a0_deg, float a1_deg, bool rounded, float px, float py)
+    {
+        if (!rounded || rx <= 0.0f || ry <= 0.0f)
+        {
+            pts.emplace_back(px, py); // sharp corner
+            return;
+        }
+        for (int k = 0; k <= seg; ++k)
+        {
+            const float t = (float) k / (float) seg;
+            const float ang = (a0_deg + (a1_deg - a0_deg) * t) * float(M_PI) / 180.0f;
+            pts.emplace_back(cx + rx * std::cos(ang), cy + ry * std::sin(ang));
+        }
+    };
+
+    add_corner(left + rx, bottom + ry, 180.0f, 270.0f, round_bl, left, bottom);
+    add_corner(right - rx, bottom + ry, 270.0f, 360.0f, round_br, right, bottom);
+    add_corner(right - rx, top - ry, 0.0f, 90.0f, round_tr, right, top);
+    add_corner(left + rx, top - ry, 90.0f, 180.0f, round_tl, left, top);
+
+    const Vec2f center(0.5f * (left + right), 0.5f * (top + bottom));
+    const size_t n = pts.size();
+
+    GLModel::Geometry init_data;
+    init_data.format = {GLModel::Geometry::EPrimitiveType::Triangles, GLModel::Geometry::EVertexLayout::P2};
+    init_data.reserve_vertices(n + 1);
+    init_data.reserve_indices(3 * n);
+
+    init_data.add_vertex(center); // index 0
+    for (const Vec2f &p : pts)
+        init_data.add_vertex(p);
+    for (size_t i = 0; i < n; ++i)
+        init_data.add_triangle(0, (unsigned int) (1 + i), (unsigned int) (1 + (i + 1) % n));
+
+    GLModel model;
+    model.init_from(std::move(init_data));
+    model.set_color(ColorRGBA(r, g, b, a));
+
+    GLShaderProgram *shader = wxGetApp().get_shader("flat");
+    if (shader != nullptr)
+    {
+        shader->start_using();
+        shader->set_uniform("view_model_matrix", Transform3d::Identity());
+        shader->set_uniform("projection_matrix", Transform3d::Identity());
+        model.render();
+        shader->stop_using();
+    }
+
     glsafe(::glDisable(GL_BLEND));
 }
 
@@ -636,7 +769,28 @@ bool GLTexture::load_from_svg(const std::string &filename, bool use_mipmaps, boo
 {
     const bool compression_enabled = compress && OpenGLManager::are_compressed_textures_supported();
 
-    NSVGimage *image = BitmapCache::nsvgParseFromFileWithReplace(filename.c_str(), "px", 96.0f, {});
+    // preFlight: recolor the brand orange baked into single-texture SVGs (e.g. the toolbar hint arrow)
+    // to the active theme's accent. A no-op for SVGs without orange (e.g. the bed texture).
+    std::map<std::string, std::string> replaces;
+    {
+        const wxColour &acc = Slic3r::GUI::active_palette().accent_primary;
+        auto byte_hex = [](int v)
+        {
+            const char *d = "0123456789ABCDEF";
+            std::string s;
+            s += d[(v >> 4) & 0xF];
+            s += d[v & 0xF];
+            return s;
+        };
+        const std::string accent = "#" + byte_hex(acc.Red()) + byte_hex(acc.Green()) + byte_hex(acc.Blue());
+        if (accent != "#EAA032")
+        {
+            replaces["#EAA032"] = accent;
+            replaces["#eaa032"] = accent;
+        }
+    }
+
+    NSVGimage *image = BitmapCache::nsvgParseFromFileWithReplace(filename.c_str(), "px", 96.0f, replaces);
     if (image == nullptr)
     {
         reset();

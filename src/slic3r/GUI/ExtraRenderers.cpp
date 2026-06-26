@@ -10,6 +10,7 @@
 #include "I18N.hpp"
 #include "BitmapComboBox.hpp"
 #include "Plater.hpp"
+#include "Widgets/UIColors.hpp"
 
 #include <wx/dc.h>
 
@@ -85,15 +86,9 @@ bool BitmapTextRenderer::Render(wxRect rect, wxDC *dc, int state)
         xoffset = icon_sz.x + 4;
     }
 
-    // Set text color based on current theme palette (cross-platform)
-    bool is_dark = Slic3r::GUI::wxGetApp().dark_mode();
-    wxColour text_color = is_dark ? wxColour(250, 250, 250) : wxColour(38, 46, 48);
-
-    // For selected items, use appropriate contrast color
-    if (state & wxDATAVIEW_CELL_SELECTED)
-        text_color = is_dark ? wxColour(255, 255, 255) : wxColour(38, 46, 48);
-
-    dc->SetTextForeground(text_color);
+    // Themed cell text; selected rows use the brighter highlight label.
+    dc->SetTextForeground((state & wxDATAVIEW_CELL_SELECTED) ? UIColors::HighlightLabel()
+                                                             : UIColors::ContentForeground());
 
 #ifndef _WIN32
     {
@@ -230,16 +225,9 @@ bool BitmapChoiceRenderer::Render(wxRect rect, wxDC *dc, int state)
             rect.height = icon_sz.GetHeight();
     }
 
-    // Set text color based on current theme palette (cross-platform)
-    {
-        bool is_dark = Slic3r::GUI::wxGetApp().dark_mode();
-        wxColour text_color = is_dark ? wxColour(250, 250, 250) : wxColour(38, 46, 48);
-
-        if (state & wxDATAVIEW_CELL_SELECTED)
-            text_color = is_dark ? wxColour(255, 255, 255) : wxColour(38, 46, 48);
-
-        dc->SetTextForeground(text_color);
-    }
+    // Themed cell text; selected rows use the brighter highlight label.
+    dc->SetTextForeground((state & wxDATAVIEW_CELL_SELECTED) ? UIColors::HighlightLabel()
+                                                             : UIColors::ContentForeground());
     RenderText(m_value.GetText(), xoffset, rect, dc, state & wxDATAVIEW_CELL_SELECTED ? 0 : state);
 
     return true;

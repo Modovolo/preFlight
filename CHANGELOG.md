@@ -1,5 +1,117 @@
 # preFlight Changelog
 
+## v1.1.0
+
+Note: You didn't read this wrong. With this release, we are jumping straight to v1.1.0 and skipping v1.0.1-stable with some significant changes.
+
+### Themes
+- UI theme system with 40+ built-in themes (Auto, Default Light / Dark, plus community favorites including Catppuccin, Matrix, Dracula, Nord, Solarized, Gruvbox, Tokyo Night, Rose Pine, and many more)
+  - Change themes via the drop down in Preferences > GUI
+
+### Sidebar
+- Replaced per-row visibility checkboxes with a dedicated Edit Visibility mode and a Tabbed/Accordion view toggle at the bottom of the sidebar
+  - Every option in the sidebar has a visibility checkbox - if the sidebar feels cluttered, you can hide anything you don't use
+- Added "Legacy layout for Prepare" preference that mirrors the Prepare view horizontally - sidebar moves to the right, gizmo toolbar to the left
+- Click the filament color swatch in the Filament dropdown to open the color picker directly
+
+### Intel macOS
+- New build available for Intel macOS machines
+
+### Auto Speed
+- Added Auto speed checkbox that calculates print move speeds from each filament's max volumetric flow (MVF), capped at an effective max print speed (MPS)
+  - Setting individual speeds to 0 still triggers volumetric speed calculation for that feature
+- Unified auto speed calculation paths and fixed filament max print speed override behavior - filament_max_print_speed is now an auto speed ceiling override only (MVF remains the unconditional physical safety cap)
+- Added filament_max_volumetric_flow as the primary max volumetric flow setting, replacing the legacy filament_max_volumetric_speed (kept as a synced alias)
+- Added filament_max_print_speed to override the print profile's max print speed on a per-filament basis
+
+Note: MVF caps all print speeds regardless of whether Auto speed is enabled - if your speeds seem lower than expected, check that the active filament's MVF is set correctly. MPS only applies to Auto speed and does not affect manually set speeds.
+
+### Klipper
+- Added native Klipper machine limits for accurate time estimation - max_velocity, max_accel, square_corner_velocity, and minimum_cruise_ratio fields matching printer.cfg (#183)
+- Time estimator handles SET_VELOCITY_LIMIT G-code commands for mid-print parameter changes
+- Fixed minimum_cruise_ratio time estimation - ported Klipper's two-pass LookAheadQueue flush for accurate junction-dense geometry estimates
+
+### GPU / Rendering
+- Active GPU renderer now displayed in the title bar for easy identification and support
+- Improved GPU detection - removed Intel GPU blocklist that forced basic lighting on capable cards like Arc A770
+- Enabled Enhanced (Blinn-Phong) lighting on all hardware GPUs passing the OpenGL 3.2 minimum
+- Lighting quality changes in Preferences now take effect without restart via deferred shader compilation
+
+### Athena Perimeter Generation
+- Perimeter compression no longer allows "Disabled" - minimal bead compression is required to prevent unfilled gaps
+  - The new floor is "Minimal" (75%), and legacy profiles migrate automatically (#195)
+- Promoted FillEnsuring gap fill from Arachne to Athena, eliminating oscillating-width diamond artifacts on staircase-shaped gap boundaries
+- Fixed unnecessary infill in thin regions by subtracting actual innermost bead coverage from the inner contour
+- Routed narrow-to-Athena fills to concentric instead of Ensuring, preventing bridge anchor geometry erosion from grouping collision
+
+### Thumbnails
+- Replaced the fragile thumbnails text field with a structured editor dialog with per-row size and format controls
+- Added COLPIC (Elegoo/Chitu) and BTT_TFT (BigTreeTech) G-code thumbnail formats
+- Unknown thumbnail formats are now a non-blocking warning instead of a hard error
+- Platter renders in the theme accent so thumbnails match the active theme
+
+### Orca Import
+- Orca G-code variables now resolve at runtime via alias mapping to their preFlight equivalents - works in both `[bracket]` and `{brace}` syntax
+- Commented-out G-code lines (starting with `;`) are no longer evaluated, preventing parse errors from leftover Orca placeholders
+- Import results dialog now clearly labels skipped settings as "Orca-Exclusive" with an explanation
+
+### G-code Variables
+- Local variables (`{local ...}`) can now shadow config keys, allowing overrides like `{local retract_lift = 0.5}`
+- Unified resolution order (locals > config > aliases) across both `[bracket]` and `{brace}` syntax
+
+### Cooling
+- Fixed fan always on not acting as a floor against dynamic overhang fan speed overrides
+  - M107 no longer fires on supported extrusions when keep fan always on is set
+- Fixed fan ramp backward insertion crossing fan-off commands, causing emitted fan speed to desync for the rest of the layer (#164)
+- Fixed reset fan speed firing during manual fan mode, overriding per-feature speeds
+- UI now disables fan_always_on when manual fan controls are active
+
+### Localization
+- Brought all 20 language catalogs to 100% translated (0 untranslated, 0 fuzzy) with a cross-language semantic review
+
+### UI
+- Added configurable extrusion width warning thresholds per nozzle (33-500%), replacing hardcoded 60%/150% warning limits (#146)
+- Enabled right-click context menu in WebView printer UIs
+- Widened seam line snap threshold from 5 to 15 degrees for more reliable activation on curved surfaces
+- Rewrote interlocking overlap tooltip and added tuning guidance note
+- Removed obsolete "Sequential slider applied only to top layer" preference - the behavior is now always on
+
+### Bug Fixes
+- Fixed concentric top fill incorrectly overridden to Ensuring on complex multi-hole geometry
+- Fixed crash when slicing sunken objects due to dangling render context pointer (#168)
+- Fixed Custom G-code error when idle_temperature is nil (#186)
+- Fixed Variable Layer Height gizmo hiding the selected object
+- Fixed Align to Face sliders rotating the canvas when interacting with the popup panel
+- Fixed bed temperature set to 0 when "Other layers" was set to 0 - now keeps the first layer temperature
+- Fixed null dereference crash when printer webview authentication completed after the panel was destroyed (#159)
+- Fixed binary G-code (bGcode) export producing plain text output regardless of the binary_gcode setting (#165)
+- Fixed tab button text overflow for translated labels - buttons now dynamically size to fit text with ellipsis truncation (#158)
+- Fixed extruder dropdown in Filaments tab never populated with items on multi-tool printers (#176)
+- Fixed Bed Shape dialog texture/model filename labels not updating on load or remove until the dialog was reopened
+- Fixed auto-slice not triggering when switching to Preview via the Tab key (#177)
+- Fixed extruder color swatch showing gray in sidebar for single-extruder setups
+- Fixed time_estimate attribute access in sample preprocessor scripts (#221)
+- Fixed Python preprocessor/export crash on GUI recreation via GIL management
+- Fixed "Perimeters while Interlocking" not obeying certain geometry (#223)
+- Printer webview tab now reuses the existing tab instead of opening duplicates (#159)
+- Interlocking perimeters are now automatically disabled when entering spiral vase mode
+- Improved performance when saving presets
+- Enabled measure gizmo on sunk objects
+
+### Windows
+- Fixed nVidia splash screen transparency corruption via DirectComposition rendering
+
+### Linux
+- Fixed WebKit GBM EGL crash on NVIDIA proprietary drivers under Xorg (#157)
+- Fixed AppImage crash on NVIDIA GPUs with older glibc by adding three-way launch strategy (#155)
+- Fixed packaging conflicts with manifold and slicer-udev packages (#154)
+- Statically linked OCCTWrapper on Linux to eliminate runtime dlopen failures
+
+### Build / Packaging
+- Bumped bundled deps cmake_minimum_required to 3.13 for CMake 4 compatibility
+- Added support for building against system libraries for distro packaging
+- Added support for building Intel macOS
+
 ## v1.0.1-beta2
 
 ### We listened

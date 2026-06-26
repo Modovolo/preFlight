@@ -9,7 +9,9 @@
 ///|/
 #include "Preferences.hpp"
 #include "OptionsGroup.hpp"
+#include "GUI.hpp"
 #include "GUI_App.hpp"
+#include "ThemePalette.hpp"
 #include "Plater.hpp"
 #include "MsgDialog.hpp"
 #include "I18N.hpp"
@@ -28,6 +30,7 @@
 #include "ConfigWizard.hpp"
 #include "Search.hpp"
 
+#include "Widgets/ScrollablePanel.hpp"
 #include "Widgets/SpinInput.hpp"
 #include "Widgets/UIColors.hpp"
 
@@ -138,16 +141,20 @@ PreferencesDialog::PreferencesDialog(wxWindow *parent)
     for (size_t tab_id = 0; tab_id < pages_cnt; tab_id++)
     {
         wxSizer *tab_sizer = tabs->GetPage(tab_id)->GetSizer();
-        wxScrolledWindow *scrolled = static_cast<wxScrolledWindow *>(tab_sizer->GetItem(size_t(0))->GetWindow());
-        scrolled->SetScrollRate(0, 5);
-
-        is_scrollbar_shown |= scrolled->GetScrollLines(wxVERTICAL) > 0;
+        wxWindow *scrolled = tab_sizer->GetItem(size_t(0))->GetWindow();
+        if (auto *sp = dynamic_cast<ScrollablePanel *>(scrolled))
+            sp->UpdateScrollbar();
+        else if (auto *sw = dynamic_cast<wxScrolledWindow *>(scrolled))
+        {
+            sw->SetScrollRate(0, 5);
+            is_scrollbar_shown |= sw->GetScrollLines(wxVERTICAL) > 0;
+        }
     }
 
     if (is_scrollbar_shown)
         sz.x += 2 * em_unit();
 #ifdef __WXGTK__
-    // To correct Layout of wxScrolledWindow we need at least small change of size
+    // To correct Layout we need at least a small change of size
     else
         sz.x += 1;
 #endif
@@ -202,7 +209,8 @@ void PreferencesDialog::show(const std::string &highlight_opt_key /*= std::strin
         // downloader->set_path_name(app_config->get("url_downloader_dest"));
         // downloader->allow(!app_config->has("downloader_url_registered") || app_config->get_bool("downloader_url_registered"));
 
-        for (const std::string opt_key : {"suppress_hyperlinks", "show_step_import_parameters"})
+        // preFlight: suppress_hyperlinks option is hidden until the hyperlink feature is implemented
+        for (const std::string opt_key : {"show_step_import_parameters"})
             m_optgroup_other->set_value(opt_key, app_config->get_bool(opt_key));
 
         for (const std::string opt_key : {"default_action_on_close_application", "default_action_on_new_project",
@@ -210,7 +218,6 @@ void PreferencesDialog::show(const std::string &highlight_opt_key /*= std::strin
             m_optgroup_general->set_value(opt_key, app_config->get(opt_key) == "none");
         m_optgroup_general->set_value("default_action_on_dirty_project",
                                       app_config->get("default_action_on_dirty_project").empty());
-        m_optgroup_gui->set_value("seq_top_layer_only", app_config->get_bool("seq_top_layer_only"));
 
         // Label colors and mode palette are hardcoded
     }
@@ -221,6 +228,23 @@ void PreferencesDialog::show(const std::string &highlight_opt_key /*= std::strin
     this->ShowModal();
 }
 
+// ScrollablePanel reports a tiny best size so fixed-area hosts (the settings Tab, the sidebar) stay
+// constrained by their parent. The Preferences dialog instead auto-sizes to its content like the old
+// native wxScrolledWindow did, so here the panel reports its content height as its best size. The
+// dialog can still be shrunk (its own min size allows it), at which point the themed scrollbar shows.
+class PreferencesScrollPanel : public ScrollablePanel
+{
+public:
+    using ScrollablePanel::ScrollablePanel;
+
+protected:
+    wxSize DoGetBestSize() const override
+    {
+        wxWindow *c = const_cast<PreferencesScrollPanel *>(this)->GetContentPanel();
+        return c ? c->GetBestSize() : ScrollablePanel::DoGetBestSize();
+    }
+};
+
 static std::shared_ptr<ConfigOptionsGroup> create_options_tab(const wxString &title, wxBookCtrlBase *tabs)
 {
     wxPanel *tab = new wxPanel(tabs, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBK_LEFT | wxTAB_TRAVERSAL);
@@ -228,18 +252,22 @@ static std::shared_ptr<ConfigOptionsGroup> create_options_tab(const wxString &ti
     tabs->AddPage(tab, _(title));
     tab->SetFont(wxGetApp().normal_font());
 
-    auto scrolled = new wxScrolledWindow(tab);
+    // Themed scrollbar host (custom ScrollBar) in place of the native wxScrolledWindow; the option
+    // controls live in the panel's content area so they scroll under the themed bar. The subclass
+    // reports the content height so the dialog still auto-sizes to fit, as it did before.
+    auto scrolled = new PreferencesScrollPanel(tab);
+    wxWindow *content = scrolled->GetContentPanel();
 
 #ifdef _WIN32
     wxGetApp().UpdateDarkUI(tab);
-    wxGetApp().UpdateDarkUI(scrolled);
+    wxGetApp().UpdateDarkUI(content);
 #else
     // preFlight: apply theme background on Linux/macOS
     tab->SetBackgroundColour(wxGetApp().get_window_default_clr());
-    scrolled->SetBackgroundColour(wxGetApp().get_window_default_clr());
+    content->SetBackgroundColour(wxGetApp().get_window_default_clr());
 #endif
 
-    // Sizer in the scrolled area
+    // Sizer in the scrolled content area (ScrollablePanel::SetSizer targets the content panel)
     auto *scrolled_sizer = new wxBoxSizer(wxVERTICAL);
     scrolled->SetSizer(scrolled_sizer);
 
@@ -248,7 +276,7 @@ static std::shared_ptr<ConfigOptionsGroup> create_options_tab(const wxString &ti
     sizer->SetSizeHints(tab);
     tab->SetSizer(sizer);
 
-    std::shared_ptr<ConfigOptionsGroup> optgroup = std::make_shared<ConfigOptionsGroup>(scrolled);
+    std::shared_ptr<ConfigOptionsGroup> optgroup = std::make_shared<ConfigOptionsGroup>(content);
     optgroup->label_width = 40;
     optgroup->set_config_category_and_type(title, int(Preset::TYPE_PREFERENCES));
     return optgroup;
@@ -333,23 +361,27 @@ void PreferencesDialog::build()
 
     auto app_config = get_app_config();
 
-#ifdef _MSW_DARK_MODE
+    // preFlight: the owner-drawn Notebook paints its own tab strip from the theme palette, so the
+    // tabs follow the active theme on every platform (native wxNotebook tabs ignore our colours).
     tabs = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                         wxNB_TOP | wxTAB_TRAVERSAL | wxNB_NOPAGETHEME | wxNB_DEFAULT);
+#ifdef _MSW_DARK_MODE
     // Only apply if window handle is valid to prevent GCodeViewer hang
     if (tabs->GetHWND())
         wxGetApp().UpdateDarkUI(tabs);
 #else
-    tabs = new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                          wxNB_TOP | wxTAB_TRAVERSAL | wxNB_NOPAGETHEME | wxNB_DEFAULT);
-    // preFlight: theme the notebook tab bar on Linux/macOS
     tabs->SetBackgroundColour(wxGetApp().get_window_default_clr());
 #ifdef __linux__
-    tabs->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED,
+    tabs->Bind(wxEVT_BOOKCTRL_PAGE_CHANGED,
                [this](wxBookCtrlEvent &e)
                {
                    e.Skip();
-                   CallAfter([this]() { tabs->GetCurrentPage()->Layout(); });
+                   CallAfter(
+                       [this]()
+                       {
+                           if (wxWindow *page = tabs->GetCurrentPage())
+                               page->Layout();
+                       });
                });
 #endif
 #endif
@@ -427,9 +459,8 @@ void PreferencesDialog::build()
             L("Suppress \" - default - \" presets in the Print / Filament / Printer selections once there are any other valid presets available."),
             app_config->get_bool("no_defaults"));
 
-        append_bool_option(m_optgroup_general, "show_incompatible_presets",
-                           L("Show incompatible print and filament presets"),
-                           L("When checked, the print and filament presets are shown in the preset editor "
+        append_bool_option(m_optgroup_general, "show_incompatible_presets", L("Show incompatible print presets"),
+                           L("When checked, the print presets are shown in the preset editor "
                              "even if they are marked as incompatible with the active printer"),
                            app_config->get_bool("show_incompatible_presets"));
 
@@ -569,6 +600,12 @@ void PreferencesDialog::build()
                 }
             }
         }
+        if (opt_key == "theme")
+        {
+            // The theme selection is captured deterministically in accept() (the combo's on_change
+            // is not a reliable source here). Return so it doesn't fall through to the bool cast below.
+            return;
+        }
         if (opt_key == "use_custom_toolbar_size")
         {
             m_icon_size_sizer->ShowItems(boost::any_cast<bool>(value));
@@ -596,18 +633,6 @@ void PreferencesDialog::build()
         L("If enabled, the sidebar moves to the right and the gizmo toolbar moves to the left in the Prepare view. "
           "This matches the traditional slicer layout. Requires application restart."),
         app_config->get_bool("legacy_prepare_layout"));
-
-    append_bool_option(
-        m_optgroup_gui, "use_tabbed_sidebar", L("Use tabbed sidebar layout"),
-        L("If enabled, the sidebar shows a tab bar to switch between Print, Filament, Printer, and Object settings. "
-          "If disabled, all settings sections are shown stacked in a single scrollable view."),
-        app_config->get_bool("use_tabbed_sidebar"));
-
-    append_bool_option(
-        m_optgroup_gui, "seq_top_layer_only", L("Sequential slider applied only to top layer"),
-        L("If enabled, changes made using the sequential slider, in preview, apply only to gcode top layer. "
-          "If disabled, changes made using the sequential slider, in preview, apply to the whole gcode."),
-        app_config->get_bool("seq_top_layer_only"));
 
     if (is_editor)
     {
@@ -641,6 +666,31 @@ void PreferencesDialog::build()
         // 	L("If enabled, useful hints are displayed at startup."),
         // 	app_config->get_bool("show_hints"));
 
+        // preFlight: Theme selector. Entries are the theme files on disk; "Auto" follows the
+        // OS light/dark setting. Changing the theme restarts preFlight (options_to_recreate_GUI).
+        {
+            ConfigOptionDef theme_def;
+            theme_def.label = L("Theme");
+            theme_def.type = coStrings;
+            theme_def.tooltip = L("Select the application color theme. \"Auto\" follows your operating "
+                                  "system's light/dark setting. Changing the theme restarts preFlight.");
+            // Auto, the two compiled-in defaults, then every theme file on disk (alpha-sorted).
+            std::vector<std::string> theme_entries;
+            theme_entries.emplace_back(auto_theme_key());    // "Auto"
+            theme_entries.emplace_back(default_light_key()); // "Default Light"
+            theme_entries.emplace_back(default_dark_key());  // "Default Dark"
+            for (const ThemeInfo &t : available_themes())
+                theme_entries.push_back(t.name);
+            // Values only (no labels); the Choice field falls back to displaying the values.
+            theme_def.set_enum_values(theme_entries, std::initializer_list<std::string_view>{});
+            theme_def.gui_type = ConfigOptionDef::GUIType::select_close;
+            theme_def.set_default_value(new ConfigOptionStrings{current_theme_selection()});
+            Option theme_opt(theme_def, "theme");
+            m_optgroup_gui->append_single_option_line(theme_opt);
+            wxGetApp().searcher().add_key("theme", Preset::TYPE_PREFERENCES, m_optgroup_gui->config_category(),
+                                          L("Preferences"));
+        }
+
         append_enum_option<NotifyReleaseMode>(
             m_optgroup_gui, "notify_release", L("Notify about new releases"),
             L("You will be notified about new release after startup acordingly: All = Regular release and alpha / beta releases. Release only = regular release."),
@@ -648,7 +698,6 @@ void PreferencesDialog::build()
                 static_cast<NotifyReleaseMode>(s_keys_map_NotifyReleaseMode.at(app_config->get("notify_release")))),
             {{"all", L("All")}, {"release", L("Release only")}, {"none", L("None")}});
 
-        m_optgroup_gui->append_separator();
         // use_custom_toolbar_size hardcoded to 100%
     }
 
@@ -685,12 +734,12 @@ void PreferencesDialog::build()
                              "checking this option will result in the export of G-code in binary format."),
                            app_config->get_bool("use_binary_gcode_when_supported"));
 
-        append_bool_option(
-            m_optgroup_other, "suppress_hyperlinks", L("Suppress to open hyperlink in browser"),
-            L("If enabled, preFlight will not open a hyperlinks in your browser."),
-            //L("If enabled, the descriptions of configuration parameters in settings tabs wouldn't work as hyperlinks. "
-            //  "If disabled, the descriptions of configuration parameters in settings tabs will work as hyperlinks."),
-            app_config->get_bool("suppress_hyperlinks"));
+        // preFlight: hidden until the documentation-hyperlink feature is implemented; suppress_hyperlinks
+        // is force-set to "1" in AppConfig so parameter labels never render as links in the meantime.
+        // append_bool_option(
+        //     m_optgroup_other, "suppress_hyperlinks", L("Suppress to open hyperlink in browser"),
+        //     L("If enabled, preFlight will not open a hyperlinks in your browser."),
+        //     app_config->get_bool("suppress_hyperlinks"));
 
         append_bool_option(
             m_optgroup_other, "show_step_import_parameters", L("Show STEP file import parameters"),
@@ -1392,37 +1441,6 @@ void PreferencesDialog::build()
 #endif // ENABLE_ENVIRONMENT_MAP
     }
 
-#ifdef _WIN32
-    // Add "Dark Mode" tab
-    m_optgroup_dark_mode = create_options_tab(_L("Dark mode"), tabs);
-    m_optgroup_dark_mode->on_change = [this](t_config_option_key opt_key, boost::any value)
-    {
-        if (auto it = m_values.find(opt_key); it != m_values.end())
-        {
-            m_values.erase(
-                it); // we shouldn't change value, if some of those parameters were selected, and then deselected
-            return;
-        }
-        m_values[opt_key] = boost::any_cast<bool>(value) ? "1" : "0";
-    };
-
-    append_bool_option(m_optgroup_dark_mode, "dark_color_mode", L("Enable dark mode"),
-                       L("If enabled, UI will use Dark mode colors. If disabled, old UI will be used."),
-                       app_config->get_bool("dark_color_mode"));
-
-    if (wxPlatformInfo::Get().GetOSMajorVersion() >= 10) // Use system menu just for Window newer then Windows 10
-    // Use menu with ownerdrawn items by default on systems older then Windows 10
-    {
-        append_bool_option(
-            m_optgroup_dark_mode, "sys_menu_enabled", L("Use system menu for application"),
-            L("If enabled, application will use the standard Windows system menu,\n"
-              "but on some combination of display scales it can look ugly. If disabled, old UI will be used."),
-            app_config->get_bool("sys_menu_enabled"));
-    }
-
-    activate_options_tab(m_optgroup_dark_mode);
-#endif //_WIN32
-
     // update alignment of the controls for all tabs
     update_ctrls_alignment();
 
@@ -1461,12 +1479,8 @@ std::vector<ConfigOptionsGroup *> PreferencesDialog::optgroups()
     out.reserve(4);
     for (ConfigOptionsGroup *opt : {m_optgroup_general.get(), m_optgroup_camera.get(), m_optgroup_gui.get(),
                                     m_optgroup_other.get(), m_optgroup_cpu.get()
-#ifdef _WIN32
-                                                                ,
-                                    m_optgroup_dark_mode.get()
-#endif // _WIN32
 #if ENABLE_ENVIRONMENT_MAP
-                                        ,
+                                                                ,
                                     m_optgroup_render.get()
 #endif // ENABLE_ENVIRONMENT_MAP
          })
@@ -1499,7 +1513,24 @@ void PreferencesDialog::accept(wxEvent &)
     // #endif //(__linux__) && defined(SLIC3R_DESKTOP_INTEGRATION)
     // }
 
-    std::vector<std::string> options_to_recreate_GUI = {"no_defaults", "sys_menu_enabled", "font_pt_size",
+    // preFlight: capture the selected theme directly from the field rather than relying on the
+    // combo's on_change, then treat a change like the other recreate-on-restart options.
+    if (m_optgroup_gui)
+    {
+        if (Field *theme_field = m_optgroup_gui->get_field("theme"))
+        {
+            std::string sel;
+            const boost::any &v = theme_field->get_value();
+            if (v.type() == typeid(std::string))
+                sel = boost::any_cast<std::string>(v);
+            else if (v.type() == typeid(wxString))
+                sel = into_u8(boost::any_cast<wxString>(v));
+            if (!sel.empty() && sel != current_theme_selection())
+                m_values["theme"] = sel;
+        }
+    }
+
+    std::vector<std::string> options_to_recreate_GUI = {"no_defaults", "theme", "font_pt_size",
                                                         "suppress_round_corners", "legacy_prepare_layout"};
 
     for (const std::string &option : options_to_recreate_GUI)
@@ -1528,10 +1559,6 @@ void PreferencesDialog::accept(wxEvent &)
 
     auto app_config = get_app_config();
 
-    m_seq_top_layer_only_changed = false;
-    if (auto it = m_values.find("seq_top_layer_only"); it != m_values.end())
-        m_seq_top_layer_only_changed = app_config->get("seq_top_layer_only") != it->second;
-
     for (const std::string &key : {"old_settings_layout_mode", "dlg_settings_layout_mode"})
     {
         auto it = m_values.find(key);
@@ -1555,15 +1582,6 @@ void PreferencesDialog::accept(wxEvent &)
     // Label colors and mode palette are hardcoded
 
     EndModal(wxID_OK);
-
-#ifdef _WIN32
-    if (m_values.find("dark_color_mode") != m_values.end())
-        wxGetApp().force_colors_update();
-#ifdef _MSW_DARK_MODE
-    if (m_values.find("sys_menu_enabled") != m_values.end())
-        wxGetApp().force_menu_update();
-#endif //_MSW_DARK_MODE
-#endif // _WIN32
 
     wxGetApp().update_ui_from_settings();
     clear_cache();
@@ -1621,10 +1639,6 @@ void PreferencesDialog::revert(wxEvent &)
         }
 
         for (auto opt_group : {m_optgroup_general, m_optgroup_camera, m_optgroup_gui, m_optgroup_other
-#ifdef _WIN32
-                               ,
-                               m_optgroup_dark_mode
-#endif // _WIN32
 #if ENABLE_ENVIRONMENT_MAP
                                ,
                                m_optgroup_render
@@ -1965,10 +1979,6 @@ void PreferencesDialog::init_highlighter(const t_config_option_key &opt_key)
         }
 
     for (auto opt_group : {m_optgroup_general, m_optgroup_camera, m_optgroup_gui, m_optgroup_other
-#ifdef _WIN32
-                           ,
-                           m_optgroup_dark_mode
-#endif // _WIN32
 #if ENABLE_ENVIRONMENT_MAP
                            ,
                            m_optgroup_render

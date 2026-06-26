@@ -7,6 +7,7 @@
 #include "libslic3r/libslic3r.h"
 #include "GLGizmosManager.hpp"
 #include "slic3r/GUI/InputEvents_wx.hpp"
+#include "slic3r/GUI/ThemePalette.hpp"
 #include "slic3r/GUI/GLCanvas3D.hpp"
 #include "slic3r/GUI/3DScene.hpp"
 #include "slic3r/GUI/Camera.hpp"
@@ -885,7 +886,16 @@ void GLGizmosManager::do_render_overlay() const
     float top_y = 0.5f * height;
 
     // Render background with normal bounds
-    render_background(top_x, top_y, top_x + width, top_y - height, border_w, border_h);
+    // preFlight: themed solid backdrop, corners rounded only on the canvas-facing side; the side flips
+    // with the Legacy layout (toolbar on the right by default, on the left in legacy). The active-gizmo
+    // highlight below keeps the texture / brand color.
+    {
+        const Slic3r::GUI::RGBAf &bg = Slic3r::GUI::active_palette().toolbar_background;
+        const float radius_x = 2.0f * 8.0f * inv_cnv_w;
+        const float radius_y = 2.0f * 8.0f * inv_cnv_h;
+        GLTexture::render_solid_quad(top_x, top_x + width, top_y - height, top_y, bg.r, bg.g, bg.b, bg.a, radius_x,
+                                     radius_y, /*tl*/ !legacy, /*tr*/ legacy, /*bl*/ !legacy, /*br*/ legacy);
+    }
 
     top_x += margin_w;
     top_y -= border_h;
@@ -926,8 +936,8 @@ void GLGizmosManager::do_render_overlay() const
         const unsigned int sprite_id = gizmo->get_sprite_id();
         // higlighted state needs to be decided first so its highlighting in every other state
         const int icon_idx = (m_highlight.first == idx ? (m_highlight.second ? 4 : 5)
-                              : (m_current == idx)     ? /*2*/ 1
-                                                       : ((m_hover == idx) ? 1 : (gizmo->is_activable() ? 0 : 3)));
+                              : (m_current == idx)     ? 1
+                                                       : ((m_hover == idx) ? 2 : (gizmo->is_activable() ? 0 : 3)));
 
         const float u_left = u_offset + icon_idx * du;
         const float u_right = u_left + du - u_offset;
@@ -1070,12 +1080,12 @@ bool GLGizmosManager::generate_icons_texture()
     }
 
     std::vector<std::pair<int, bool>> states;
-    states.push_back(std::make_pair(1, false)); // Activable
-    states.push_back(std::make_pair(0, false)); // Hovered
-    states.push_back(std::make_pair(0, true));  // Selected
-    states.push_back(std::make_pair(2, false)); // Disabled
-    states.push_back(std::make_pair(0, false)); // HighlightedShown
-    states.push_back(std::make_pair(2, false)); // HighlightedHidden
+    states.push_back(std::make_pair(1, false)); // 0: Activable
+    states.push_back(std::make_pair(0, false)); // 1: Selected (accent+white, dark bg drawn separately)
+    states.push_back(std::make_pair(3, false)); // 2: Hovered (accent + themed non-accent)
+    states.push_back(std::make_pair(2, false)); // 3: Disabled
+    states.push_back(std::make_pair(0, false)); // 4: HighlightedShown
+    states.push_back(std::make_pair(2, false)); // 5: HighlightedHidden
 
     unsigned int sprite_size_px = (unsigned int) m_layout.scaled_icons_size();
     //    // force even size

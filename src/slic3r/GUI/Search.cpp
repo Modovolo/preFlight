@@ -28,6 +28,9 @@
 #include "Widgets/ScrollBar.hpp"
 #include "Widgets/TextInput.hpp"
 #include "Widgets/UIColors.hpp"
+#ifdef __APPLE__
+#include "../Utils/MacDarkMode.hpp"
+#endif
 
 #include <wx/dcbuffer.h>
 
@@ -815,7 +818,6 @@ private:
     {
         wxAutoBufferedPaintDC dc(this);
         const wxSize clientSize = GetClientSize();
-        bool is_dark = GUI::wxGetApp().dark_mode();
 
         wxColour bgColor = UIColors::InputBackground();
         dc.SetBackground(wxBrush(bgColor));
@@ -841,7 +843,7 @@ private:
         wxColour normalTextColor = UIColors::InputForeground();
         wxColour highlightTextColor = UIColors::AccentPrimary();
         wxColour selectedBg = UIColors::HighlightBackground();
-        wxColour hoveredBg = is_dark ? wxColour(33, 38, 45) : wxColour(235, 228, 218);
+        wxColour hoveredBg = UIColors::HeaderHover();
 
         for (int i = firstVisible; i <= lastVisible; ++i)
         {
@@ -1028,6 +1030,24 @@ SearchDialog::SearchDialog(OptionsSearcher *searcher, wxWindow *parent)
                                      wxTE_PROCESS_ENTER);
     m_filter_input->SetFont(GUI::wxGetApp().normal_font());
     GUI::wxGetApp().UpdateDarkUI(m_filter_input);
+#ifdef __APPLE__
+    // The search field auto-focuses on open; suppress the native blue focus ring so the themed input
+    // border isn't framed by an unthemed rectangle.
+    GUI::mac_set_focus_ring_none(m_filter_input->GetHandle());
+    if (wxTextCtrl *tc = m_filter_input->GetTextCtrl())
+    {
+        GUI::mac_set_focus_ring_none(tc->GetHandle());
+        // Theme the caret instead of the system blue. The field editor (which draws the caret) only
+        // exists while the field is first responder, so set the color each time the field gains focus.
+        tc->Bind(wxEVT_SET_FOCUS,
+                 [tc](wxFocusEvent &e)
+                 {
+                     e.Skip();
+                     const wxColour c = UIColors::InputForeground();
+                     GUI::mac_set_insertion_point_color(tc->GetHandle(), c.Red(), c.Green(), c.Blue());
+                 });
+    }
+#endif
 
     m_filter_input->Bind(wxEVT_TEXT,
                          [this](wxCommandEvent &)

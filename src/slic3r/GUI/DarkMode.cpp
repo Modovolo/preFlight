@@ -646,14 +646,21 @@ static LRESULT CALLBACK TreeViewParentSubclassProc(HWND hwnd, UINT uMsg, WPARAM 
                 bool is_dark = g_darkModeEnabled;
                 bool is_selected = (nmcd->nmcd.uItemState & CDIS_SELECTED) != 0;
 
-                // Colors - always use normal background (no highlight fill)
-                COLORREF bgColor = is_dark ? UIColorsWin::InputBackgroundDark() : UIColorsWin::InputBackgroundLight();
+                COLORREF baseColor = is_dark ? UIColorsWin::InputBackgroundDark() : UIColorsWin::InputBackgroundLight();
                 COLORREF textColor = is_dark ? UIColorsWin::TextDark() : UIColorsWin::TextLight();
-                COLORREF borderColor = is_dark ? UIColorsWin::SelectionBorderDark()
-                                               : UIColorsWin::SelectionBorderLight();
+
+                // Muted accent fill for selected rows: (accent + base*3) / 4
+                COLORREF rowColor = baseColor;
+                if (is_selected)
+                {
+                    COLORREF accent = UIColorsWin::AccentPrimary();
+                    rowColor = RGB((GetRValue(accent) + GetRValue(baseColor) * 3) / 4,
+                                   (GetGValue(accent) + GetGValue(baseColor) * 3) / 4,
+                                   (GetBValue(accent) + GetBValue(baseColor) * 3) / 4);
+                }
 
                 // Fill entire row background
-                HBRUSH hBrush = CreateSolidBrush(bgColor);
+                HBRUSH hBrush = CreateSolidBrush(rowColor);
                 FillRect(nmcd->nmcd.hdc, &nmcd->nmcd.rc, hBrush);
                 DeleteObject(hBrush);
 
@@ -683,32 +690,9 @@ static LRESULT CALLBACK TreeViewParentSubclassProc(HWND hwnd, UINT uMsg, WPARAM 
                     iconOffset = iconW + padding;
                 }
 
-                // Measure text width
-                SIZE textSize = {0};
-                GetTextExtentPoint32W(nmcd->nmcd.hdc, szText, (int) wcslen(szText), &textSize);
-
                 // Calculate text rect with padding (after icon)
                 RECT rcText = nmcd->nmcd.rc;
                 rcText.left += padding + iconOffset;
-                int textRight = rcText.left + textSize.cx + padding;
-                if (textRight > nmcd->nmcd.rc.right)
-                    textRight = nmcd->nmcd.rc.right;
-
-                // Draw 1px border around text area only if selected
-                if (is_selected)
-                {
-                    RECT rcBorder = nmcd->nmcd.rc;
-                    rcBorder.left += 1;
-                    rcBorder.right = textRight + padding;
-
-                    HPEN hPen = CreatePen(PS_SOLID, 1, borderColor);
-                    HPEN hOldPen = (HPEN) SelectObject(nmcd->nmcd.hdc, hPen);
-                    HBRUSH hOldBrush = (HBRUSH) SelectObject(nmcd->nmcd.hdc, GetStockObject(NULL_BRUSH));
-                    Rectangle(nmcd->nmcd.hdc, rcBorder.left, rcBorder.top, rcBorder.right, rcBorder.bottom);
-                    SelectObject(nmcd->nmcd.hdc, hOldBrush);
-                    SelectObject(nmcd->nmcd.hdc, hOldPen);
-                    DeleteObject(hPen);
-                }
 
                 // Draw text
                 SetTextColor(nmcd->nmcd.hdc, textColor);

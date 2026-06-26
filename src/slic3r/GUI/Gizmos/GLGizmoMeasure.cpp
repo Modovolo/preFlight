@@ -975,7 +975,7 @@ void GLGizmoMeasure::on_render()
 
     auto set_emission_uniform = [shader](const ColorRGBA &color, bool hover)
     {
-        shader->set_uniform("emission_factor", (color == GLVolume::SELECTED_COLOR) ? 0.0f : hover ? 0.5f : 0.25f);
+        shader->set_uniform("emission_factor", (color == GLVolume::selected_color()) ? 0.0f : hover ? 0.5f : 0.25f);
     };
 
     auto render_feature = [this, set_matrix_uniforms, set_emission_uniform](const Measure::SurfaceFeature &feature,
@@ -1115,7 +1115,7 @@ void GLGizmoMeasure::on_render()
 
     auto hovering_color = [this, hover_selection_color]()
     {
-        return (m_mode == EMode::PointSelection) ? GLVolume::SELECTED_COLOR : hover_selection_color();
+        return (m_mode == EMode::PointSelection) ? GLVolume::selected_color() : hover_selection_color();
     };
 
     if (m_curr_feature.has_value())

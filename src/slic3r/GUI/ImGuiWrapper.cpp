@@ -6,6 +6,7 @@
 ///|/
 #include "ImGuiWrapper.hpp"
 #include "Theme.hpp"
+#include "ThemePalette.hpp"
 
 #include <cstdio>
 #include <vector>
@@ -757,6 +758,8 @@ static bool selectable(const char *label, bool selected, ImGuiSelectableFlags fl
     // Render
     if (held && (flags & ImGuiSelectableFlags_DrawHoveredWhenHeld))
         hovered = true;
+    bool fill_text_contrast = false;
+    ImVec4 contrast_text_col;
     if (hovered || selected)
     {
         const ImU32 col = ImGui::GetColorU32((held && hovered) ? ImGuiCol_HeaderActive
@@ -764,6 +767,9 @@ static bool selectable(const char *label, bool selected, ImGuiSelectableFlags fl
                                                                : ImGuiCol_Header);
         ImGui::RenderFrame(bb.Min, bb.Max, col, false, 0.0f);
         ImGui::RenderNavHighlight(bb, id, ImGuiNavHighlightFlags_TypeThin | ImGuiNavHighlightFlags_NoRounding);
+        // Keep the label readable on the themed highlight fill (e.g. bright-accent headers).
+        contrast_text_col = ImGuiPureWrap::contrasting_text(ImGui::ColorConvertU32ToFloat4(col));
+        fill_text_contrast = true;
     }
 
     if (span_all_columns && window->DC.CurrentColumns)
@@ -778,10 +784,13 @@ static bool selectable(const char *label, bool selected, ImGuiSelectableFlags fl
     else
         strcpy(marked_label, label);
 
-    if (flags & ImGuiSelectableFlags_Disabled)
+    const bool disabled_text = (flags & ImGuiSelectableFlags_Disabled) != 0;
+    if (disabled_text)
         ImGui::PushStyleColor(ImGuiCol_Text, style.Colors[ImGuiCol_TextDisabled]);
+    else if (fill_text_contrast)
+        ImGui::PushStyleColor(ImGuiCol_Text, contrast_text_col);
     ImGui::RenderTextClipped(text_min, text_max, marked_label, NULL, &label_size, style.SelectableTextAlign, &bb);
-    if (flags & ImGuiSelectableFlags_Disabled)
+    if (disabled_text || fill_text_contrast)
         ImGui::PopStyleColor();
 
     // Automatically close popups
@@ -1222,6 +1231,26 @@ std::vector<unsigned char> ImGuiWrapper::load_svg(const std::string &bitmap_name
             {": #fff", ": #262E30"},
         };
 
+    // preFlight: also recolor the brand orange baked into the icon SVGs to the active theme accent
+    // (no-op for orange themes). A bare-hex replace covers every fill/stroke format these icons use.
+    {
+        const wxColour &acc = Slic3r::GUI::active_palette().accent_primary;
+        auto byte_hex = [](int v)
+        {
+            const char *d = "0123456789ABCDEF";
+            std::string s;
+            s += d[(v >> 4) & 0xF];
+            s += d[v & 0xF];
+            return s;
+        };
+        const std::string a = "#" + byte_hex(acc.Red()) + byte_hex(acc.Green()) + byte_hex(acc.Blue());
+        if (a != "#EAA032")
+        {
+            color_replaces["#EAA032"] = a;
+            color_replaces["#eaa032"] = a;
+        }
+    }
+
     NSVGimage *image = BitmapCache::nsvgParseFromFileWithReplace(Slic3r::var(bitmap_name + ".svg").c_str(), "px", 96.0f,
                                                                  color_replaces);
     if (image == nullptr)
@@ -1468,7 +1497,24 @@ void ImGuiWrapper::init_input()
 void ImGuiWrapper::init_style()
 {
     ImGuiStyle &style = ImGui::GetStyle();
-    bool is_dark = wxGetApp().dark_mode();
+    // preFlight: ImGui colors come from the active theme palette.
+    const Slic3r::GUI::ThemePalette &pal = Slic3r::GUI::active_palette();
+    auto im = [](const Slic3r::GUI::RGBAf &c)
+    {
+        return ImVec4(c.r, c.g, c.b, c.a);
+    };
+    auto imc = [](const wxColour &c, float a = 1.0f)
+    {
+        return ImVec4(c.Red() / 255.0f, c.Green() / 255.0f, c.Blue() / 255.0f, a);
+    };
+
+    // preFlight: refresh the shared brand-accent ImGui colors from the active theme so every overlay
+    // accent (legend headers, ImGui Title/Button/Tab/Scrollbar below, help text) follows the theme.
+    ImGuiPureWrap::COL_ORANGE_LIGHT = imc(pal.accent_primary);
+    ImGuiPureWrap::COL_ORANGE_DARK = imc(pal.accent_dark);
+    ImGuiPureWrap::COL_BUTTON_BACKGROUND = ImGuiPureWrap::COL_ORANGE_DARK;
+    ImGuiPureWrap::COL_BUTTON_HOVERED = ImGuiPureWrap::COL_ORANGE_LIGHT;
+    ImGuiPureWrap::COL_BUTTON_ACTIVE = ImGuiPureWrap::COL_BUTTON_HOVERED;
 
     auto set_color = [&](ImGuiCol_ entity, ImVec4 color)
     {
@@ -1482,28 +1528,16 @@ void ImGuiWrapper::init_style()
     // ========================================================================
 
     // Background colors
-    ImVec4 col_window_bg = is_dark ? ImVec4(0.086f, 0.106f, 0.133f, 0.95f)  // #161B22
-                                   : ImVec4(0.980f, 0.973f, 0.957f, 0.95f); // Warm white
-
-    ImVec4 col_frame_bg = is_dark ? ImVec4(0.129f, 0.149f, 0.176f, 1.0f)  // #21262D
-                                  : ImVec4(0.922f, 0.910f, 0.894f, 1.0f); // Light gray
-
-    ImVec4 col_frame_hover = is_dark ? ImVec4(0.188f, 0.212f, 0.239f, 1.0f)  // #30363D
-                                     : ImVec4(0.878f, 0.867f, 0.851f, 1.0f); // Slightly darker
+    ImVec4 col_window_bg = im(pal.imgui_window_bg);
+    ImVec4 col_frame_bg = im(pal.imgui_frame_bg);
+    ImVec4 col_frame_hover = im(pal.imgui_frame_hover);
 
     // Text colors
-    ImVec4 col_text = is_dark ? ImVec4(0.788f, 0.820f, 0.851f, 1.0f)  // #C9D1D9
-                              : ImVec4(0.149f, 0.180f, 0.188f, 1.0f); // Dark text
-
-    ImVec4 col_text_disabled = is_dark ? ImVec4(0.431f, 0.463f, 0.506f, 1.0f)  // #6E7681
-                                       : ImVec4(0.565f, 0.565f, 0.565f, 1.0f); // Gray
-
-    // Text on orange backgrounds (for contrast)
-    ImVec4 col_text_on_orange = ImVec4(0.1f, 0.1f, 0.1f, 1.0f); // Dark text for readability
+    ImVec4 col_text = im(pal.imgui_text);
+    ImVec4 col_text_disabled = im(pal.imgui_text_disabled);
 
     // Border colors
-    ImVec4 col_border = is_dark ? ImVec4(0.188f, 0.212f, 0.239f, 1.0f)  // #30363D
-                                : ImVec4(0.784f, 0.765f, 0.725f, 1.0f); // Light border
+    ImVec4 col_border = im(pal.imgui_border);
 
     // Window
     style.WindowRounding = 4.0f * m_style_scaling;
@@ -1526,7 +1560,7 @@ void ImGuiWrapper::init_style()
     set_color(ImGuiCol_FrameBgActive, col_frame_hover);
 
     // Text selection (orange bg needs dark text, but this is just highlight)
-    set_color(ImGuiCol_TextSelectedBg, ImVec4(0.784f, 0.549f, 0.157f, 0.4f)); // Semi-transparent orange
+    set_color(ImGuiCol_TextSelectedBg, imc(pal.accent_primary, 0.4f)); // themed accent (semi-transparent)
 
     // Buttons - using frame colors, orange only for special buttons
     set_color(ImGuiCol_Button, col_frame_bg);
@@ -1538,9 +1572,8 @@ void ImGuiWrapper::init_style()
 
     // ComboBox items / Headers (orange background = dark text)
     // Using slightly muted orange for better text contrast
-    ImVec4 col_header = is_dark ? ImVec4(0.588f, 0.412f, 0.118f, 1.0f)  // Darker orange for dark mode
-                                : ImVec4(0.784f, 0.549f, 0.157f, 0.3f); // Semi-transparent for light mode
-    ImVec4 col_header_hover = is_dark ? ImVec4(0.700f, 0.490f, 0.140f, 1.0f) : ImVec4(0.784f, 0.549f, 0.157f, 0.5f);
+    ImVec4 col_header = im(pal.imgui_header);
+    ImVec4 col_header_hover = im(pal.imgui_header_hover);
 
     set_color(ImGuiCol_Header, col_header);
     set_color(ImGuiCol_HeaderHovered, col_header_hover);
@@ -1562,11 +1595,16 @@ void ImGuiWrapper::init_style()
     set_color(ImGuiCol_TabUnfocused, col_frame_bg);
     set_color(ImGuiCol_TabUnfocusedActive, col_frame_hover);
 
-    // Scrollbars
+    // Scrollbars: 50% accent (blended over the track) at rest, full accent on hover/drag, matching the
+    // custom wx ScrollBar so every scrollbar in the app behaves the same.
+    const ImVec4 col_accent = imc(pal.accent_primary);
+    const ImVec4 col_scroll_rest(col_frame_bg.x + (col_accent.x - col_frame_bg.x) * 0.5f,
+                                 col_frame_bg.y + (col_accent.y - col_frame_bg.y) * 0.5f,
+                                 col_frame_bg.z + (col_accent.z - col_frame_bg.z) * 0.5f, 1.0f);
     set_color(ImGuiCol_ScrollbarBg, col_frame_bg);
-    set_color(ImGuiCol_ScrollbarGrab, col_frame_hover);
-    set_color(ImGuiCol_ScrollbarGrabHovered, ImGuiPureWrap::COL_ORANGE_LIGHT);
-    set_color(ImGuiCol_ScrollbarGrabActive, ImGuiPureWrap::COL_ORANGE_DARK);
+    set_color(ImGuiCol_ScrollbarGrab, col_scroll_rest);
+    set_color(ImGuiCol_ScrollbarGrabHovered, col_accent);
+    set_color(ImGuiCol_ScrollbarGrabActive, col_accent);
 
     // Title bar (inactive) - also orange since title text is black for contrast
     set_color(ImGuiCol_TitleBg, ImGuiPureWrap::COL_ORANGE_DARK);

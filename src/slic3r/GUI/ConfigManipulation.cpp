@@ -803,9 +803,6 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config)
         toggle_field(el, !auto_speed);
     }
 
-    // Gap fill is newly allowed in between perimeter lines even for empty infill (see GH #1476).
-    toggle_field("gap_fill_speed", have_perimeters);
-
     // Note: Base fuzzy skin options (thickness, point_dist, etc.) are ALWAYS shown because:
     // 1. They apply to global fuzzy skin (when type != None)
     // 2. They ALSO apply to paint-on fuzzy skin (which works when type == None)

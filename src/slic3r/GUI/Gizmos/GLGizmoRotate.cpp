@@ -46,7 +46,7 @@ GLGizmoRotate::GLGizmoRotate(GLCanvas3D &parent, GLGizmoRotate::Axis axis)
     , m_snap_fine_in_radius(0.0f)
     , m_snap_fine_out_radius(0.0f)
     , m_drag_color(DEFAULT_DRAG_COLOR)
-    , m_highlight_color(DEFAULT_HIGHLIGHT_COLOR)
+    , m_highlight_color(default_highlight_color())
 {
     m_group_id = static_cast<int>(axis);
 }

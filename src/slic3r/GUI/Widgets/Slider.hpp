@@ -44,10 +44,6 @@ private:
     int m_max;
     bool m_dragging;
 
-    // Brand color #EAA032 (RGB: 234, 160, 50)
-    static const wxColour BRAND_COLOR;
-    static const wxColour BRAND_COLOR_DARK;
-
     wxDECLARE_EVENT_TABLE();
 };
 

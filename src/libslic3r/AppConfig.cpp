@@ -223,9 +223,6 @@ void AppConfig::set_defaults()
         set("use_retina_opengl", "1");
 #endif // __APPLE__
 
-    if (get("seq_top_layer_only").empty())
-        set("seq_top_layer_only", "1");
-
     // Preview legend toggle defaults (0 = hidden, 1 = visible)
     if (get("preview_travel").empty())
         set("preview_travel", "0");
@@ -297,19 +294,14 @@ void AppConfig::set_defaults()
 #ifdef _WIN32
     if (get("use_legacy_3DConnexion").empty())
         set("use_legacy_3DConnexion", "0");
-
-    if (get("dark_color_mode").empty())
-        set("dark_color_mode", "1"); // Dark mode enabled by default
-
-    if (get("sys_menu_enabled").empty())
-        set("sys_menu_enabled", "1");
 #endif // _WIN32
 
     if (get("show_step_import_parameters").empty())
         set("show_step_import_parameters", "1");
 
-    if (get("suppress_hyperlinks").empty())
-        set("suppress_hyperlinks", "1");
+    // preFlight: documentation-hyperlink feature is not yet implemented; force-suppress on every
+    // launch so parameter labels never render as links. Restore the empty-check when the feature lands.
+    set("suppress_hyperlinks", "1");
 
     if (get("linear_precision").empty())
         set("linear_precision", "0.005");

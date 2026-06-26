@@ -5,6 +5,7 @@
 #include "Sidebar.hpp"
 #include "libslic3r/AppConfig.hpp"
 #include "Widgets/CollapsibleSection.hpp"
+#include "Widgets/SwitchButton.hpp"
 #include "ConfigManipulation.hpp"
 #include "GUI.hpp"
 #include "GUI_App.hpp"
@@ -22,6 +23,7 @@
 #include "BedShapeDialog.hpp"
 #include "WipeTowerDialog.hpp"
 #include "PhysicalPrinterDialog.hpp"
+#include "ThumbnailsDialog.hpp"
 #include "MsgDialog.hpp"
 
 #include <wx/dcbuffer.h>
@@ -52,6 +54,7 @@
 #include <functional>
 #include <set>
 #include <wx/statbmp.h>
+#include <wx/weakref.h>
 #include <wx/colordlg.h>
 #include <wx/clrpicker.h>
 
@@ -186,23 +189,161 @@ inline wxColour DisabledForeground()
 }
 } // namespace SidebarColors
 
-// ============================================================================
-// Helper to create wxStaticBoxSizer with FlatStaticBox for proper flat borders
-// ============================================================================
-static wxStaticBoxSizer *CreateFlatStaticBoxSizer(wxWindow *parent, const wxString &label, int orient = wxVERTICAL)
+// When true, "Edit Visibility" mode is active: every setting/group/tab is shown (with pin checkboxes)
+// regardless of its pinned state. The three visibility gates below short-circuit on this flag.
+static bool s_sidebar_edit_mode = false;
+
+// Recursively collect all child windows contained (directly or via nested sizers) in a sizer.
+static void collect_sizer_windows(wxSizer *sizer, std::set<wxWindow *> &out)
 {
-    auto *stb = new FlatStaticBox(parent, wxID_ANY, label);
+    if (!sizer)
+        return;
+    for (size_t i = 0; i < sizer->GetItemCount(); ++i)
+    {
+        wxSizerItem *item = sizer->GetItem(i);
+        if (!item)
+            continue;
+        if (item->IsWindow())
+            out.insert(item->GetWindow());
+        else if (item->IsSizer())
+            collect_sizer_windows(item->GetSizer(), out);
+    }
+}
+
+// ============================================================================
+// Helper to create wxStaticBoxSizer with FlatStaticBox for proper flat borders.
+// The box title is left blank and drawn by an overlay header that also hosts a
+// section pin checkbox (mirrors the main-settings section checkbox in OptionsGroup).
+// ============================================================================
+wxStaticBoxSizer *TabbedSettingsPanel::CreateFlatStaticBoxSizer(wxWindow *parent, const wxString &label, int orient)
+{
+    const int em = wxGetApp().em_unit();
+
+    // Blank box title; the overlay header below draws the real label.
+    auto *stb = new FlatStaticBox(parent, wxID_ANY, " ");
 #ifdef _WIN32
     stb->SetBackgroundStyle(wxBG_STYLE_PAINT);
 #endif
-    stb->SetFont(wxGetApp().bold_font());
+#ifdef __WXGTK__
+    stb->SetFont(wxGetApp().normal_font());
+#else
+    stb->SetFont(wxOSX ? wxGetApp().normal_font() : wxGetApp().bold_font());
+#endif
     wxGetApp().UpdateDarkUI(stb);
+
     auto *sizer = new wxStaticBoxSizer(stb, orient);
 #if defined(__WXGTK__) || defined(__WXOSX__)
     // preFlight: On GTK, GtkFrame label is removed.  On macOS, NSBox title is
     // set to NSNoTitle.  Add top padding so content clears the custom border.
-    sizer->AddSpacer(wxGetApp().em_unit());
+    sizer->AddSpacer(em);
 #endif
+
+    // --- Overlay header: [pin checkbox][label] centered on the top border line ---
+#ifdef __WXOSX__
+    wxColour header_bg = parent->GetBackgroundColour();
+#else
+    wxColour header_bg = stb->GetBackgroundColour();
+#endif
+    // The overlay is a child of the box's PARENT, not the box itself: the setting rows are children
+    // of `parent` too, and giving the wxStaticBox a child of its own changes how wxStaticBoxSizer
+    // positions those rows (shifting all content out of alignment with the borders).
+    auto *header_panel = new wxPanel(parent, wxID_ANY);
+    header_panel->SetBackgroundColour(header_bg);
+    auto *header_sizer = new wxBoxSizer(wxHORIZONTAL);
+
+    auto *section_cb = new ::CheckBox(header_panel);
+    section_cb->SetValue(true);
+    section_cb->SetToolTip(_L("Show this section in the sidebar"));
+
+    auto *label_text = new wxStaticText(header_panel, wxID_ANY, label);
+    label_text->SetFont(wxOSX ? wxGetApp().normal_font() : wxGetApp().bold_font());
+    label_text->SetBackgroundColour(header_bg);
+    wxGetApp().UpdateDarkUI(label_text);
+
+    const int cb_gap = (em * 4) / 10;
+    const int label_gap = em / 3;
+    header_sizer->Add(section_cb, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, cb_gap);
+    header_sizer->Add(label_text, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, label_gap);
+    header_panel->SetSizer(header_sizer);
+    header_panel->Fit();
+
+    // Explicit widths: full (checkbox + gap + label + gap) for edit mode, label-only for normal mode
+    // (Fit() may undersize before realization). Sizing explicitly avoids a leading gap where the
+    // hidden checkbox would otherwise reserve space and indent the label.
+    wxSize cbBest = section_cb->GetBestSize();
+    wxSize txtExt = label_text->GetTextExtent(label);
+    int full_w = cbBest.GetWidth() + cb_gap + txtExt.GetWidth() + label_gap;
+    int label_w = txtExt.GetWidth() + label_gap;
+    int needed_h = cbBest.GetHeight() > txtExt.GetHeight() ? cbBest.GetHeight() : txtExt.GetHeight();
+    int init_w = s_sidebar_edit_mode ? full_w : label_w;
+    header_panel->SetMinSize(wxSize(init_w, needed_h));
+    header_panel->SetSize(init_w, needed_h);
+
+    // Center the header on the top border line (drawn ~labelHeight/2 from the box top)
+    int border_y = txtExt.GetHeight() / 2;
+    int y_pos = border_y - (needed_h / 2) + 1;
+#ifdef __WXOSX__
+    if (y_pos < 0)
+        y_pos = 0; // children above the content view top get clipped on macOS
+#endif
+
+    // Position the overlay over the box's top-left (parent coordinates) whenever the box is laid out.
+    // header_panel is a weakref: stb (the event source) and header_panel are siblings that normally
+    // die together, but the guard removes any teardown-order window where a queued SIZE/MOVE could
+    // deref a freed header_panel (matching the PAINT handler below). stb stays raw: it is the bind
+    // target, so it is always alive while its own handler runs.
+    wxWeakRef<wxWindow> weak_header = header_panel;
+    auto reposition_header = [weak_header, stb, y_pos]()
+    {
+        if (!weak_header)
+            return;
+        wxPoint p = stb->GetPosition();
+        weak_header->SetPosition(wxPoint(p.x + 8, p.y + y_pos)); // x+8 matches static-box label inset
+        weak_header->Raise();
+    };
+    // Z-order is set here (and in UpdateSectionCheckboxes), NOT per-paint: a sibling repaint never
+    // covers a window above it, so re-raising on every paint is both unnecessary and unsafe.
+    reposition_header();
+    stb->Bind(wxEVT_SIZE,
+              [reposition_header](wxSizeEvent &evt)
+              {
+                  reposition_header();
+                  evt.Skip();
+              });
+    stb->Bind(wxEVT_MOVE,
+              [reposition_header](wxMoveEvent &evt)
+              {
+                  reposition_header();
+                  evt.Skip();
+              });
+
+    // FlatStaticBox draws its top border with raw GDI to its own window DC, which doesn't clip to
+    // sibling windows and so paints over the overlapping overlay header (making the border appear to
+    // cut through the label whenever the box repaints, e.g. on input hover). Refresh the header after
+    // the box paints so it redraws on top. Synchronous Refresh only: no Raise (the header is already
+    // kept on top by the SIZE/MOVE reposition), and the weakref guard keeps it safe under teardown.
+    stb->Bind(wxEVT_PAINT,
+              [weak_header](wxPaintEvent &evt)
+              {
+                  evt.Skip();
+                  if (weak_header)
+                      weak_header->Refresh();
+              });
+
+    // Section checkbox pins/unpins every row in this group
+    section_cb->Bind(wxEVT_CHECKBOX,
+                     [this, sizer, section_cb](wxCommandEvent &evt)
+                     {
+                         SetGroupPinned(sizer, section_cb->GetValue());
+                         evt.Skip();
+                     });
+
+    // Hidden (label only) outside edit mode; UpdateSectionCheckboxes reveals and refreshes it
+    header_sizer->Show(section_cb, s_sidebar_edit_mode);
+    header_panel->Layout();
+
+    m_section_checkboxes.push_back(
+        {section_cb, sizer, header_panel, stb, label_text, y_pos, full_w, label_w, needed_h});
     return sizer;
 }
 
@@ -240,129 +381,43 @@ static int GetIconMargin()
     return wxGetApp().em_unit() / 5;
 }
 
-// Check if any setting in the list is visible in sidebar
-// Also checks indexed variants (key#0, key#1, etc.) for extruder-specific settings
-static bool has_any_visible_setting(std::initializer_list<const char *> opt_keys)
+// Map a sidebar row key to the key used in the [sidebar_visibility] AppConfig section.
+// The sidebar uses "nozzle_diameter" where the Tab stores visibility under "extruders_count".
+static std::string sidebar_visibility_key(const std::string &key)
 {
-    for (const char *key : opt_keys)
-    {
-        // Check base key first
-        std::string visibility = get_app_config()->get("sidebar_visibility", key);
-        if (visibility != "0")
-        {
-            // If base key is not explicitly hidden AND no indexed keys exist, it's visible
-            // Check if any indexed variant exists
-            bool has_indexed = false;
-            for (int i = 0; i < 16; ++i) // Support up to 16 extruders
-            {
-                std::string indexed_key = std::string(key) + "#" + std::to_string(i);
-                std::string indexed_vis = get_app_config()->get("sidebar_visibility", indexed_key);
-                if (!indexed_vis.empty())
-                {
-                    has_indexed = true;
-                    if (indexed_vis != "0")
-                        return true;
-                }
-            }
-            // If no indexed keys exist, use base key visibility (empty = visible by default)
-            if (!has_indexed)
-                return true;
-        }
-    }
-    return false;
+    return (key == "nozzle_diameter") ? std::string("extruders_count") : key;
 }
 
-// Check if any of the given settings are visible for a specific extruder index
-static bool has_extruder_visible_setting(std::initializer_list<const char *> opt_keys, size_t extruder_idx)
+// Raw pinned state for a single key (ignores edit mode): the exact same expression the Tab uses,
+// so the sidebar checkbox and the main-settings checkbox reflect one shared value. Defaults to
+// pinned (visible) when unset, and falls back to the indexed "key#0" variant the Tab stores for
+// ConfigOptionFloats (machine limits, etc.).
+static bool is_key_pinned(const std::string &key)
 {
-    for (const char *key : opt_keys)
-    {
-        std::string indexed_key = std::string(key) + "#" + std::to_string(extruder_idx);
-        std::string visibility = get_app_config()->get("sidebar_visibility", indexed_key);
-        // Empty means visible by default, "0" means hidden
-        if (visibility != "0")
-            return true;
-    }
-    return false;
-}
-
-// Check if any option in the given categories is visible in sidebar
-// This dynamically queries print_config_def instead of using hardcoded option lists
-// Options with sidebar checkboxes are initialized to "1" on first render, so:
-//   - "1" = visible (default or explicitly enabled)
-//   - "0" = explicitly hidden by user
-//   - empty = no checkbox exists for this option
-static bool is_any_category_visible(std::initializer_list<const char *> categories)
-{
-    bool found_any_tracked_option = false;
-
-    for (const auto &[opt_key, opt_def] : print_config_def.options)
-    {
-        // Check if this option's category matches any of the requested categories
-        bool category_match = false;
-        for (const char *cat : categories)
-        {
-            if (opt_def.category == cat)
-            {
-                category_match = true;
-                break;
-            }
-        }
-        if (!category_match)
-            continue;
-
-        // Check indexed variants first (e.g., opt_key#0, opt_key#1 for extruder-specific options)
-        for (int i = 0; i < 16; ++i)
-        {
-            std::string indexed_key = opt_key + "#" + std::to_string(i);
-            std::string indexed_vis = get_app_config()->get("sidebar_visibility", indexed_key);
-            if (!indexed_vis.empty())
-            {
-                found_any_tracked_option = true;
-                if (indexed_vis != "0")
-                    return true; // Found a visible indexed option
-            }
-        }
-
-        // Check base key
-        std::string visibility = get_app_config()->get("sidebar_visibility", opt_key);
-        if (!visibility.empty())
-        {
-            found_any_tracked_option = true;
-            if (visibility != "0")
-                return true; // Found a visible option
-        }
-    }
-
-    // If no options in these categories have visibility tracking,
-    // show the tab by default (user hasn't opened Tab settings yet)
-    return !found_any_tracked_option;
-}
-
-// Check if a single sidebar setting key is visible, handling indexed key variants
-// The Tab system may store visibility as "key#0" (for ConfigOptionFloats like machine limits)
-// while the sidebar uses the base key. This function checks both.
-// Also handles the special case where the Tab uses "extruders_count" but sidebar uses "nozzle_diameter".
-static bool is_sidebar_key_visible(const std::string &key)
-{
-    // Special mapping: sidebar uses "nozzle_diameter" but Tab uses "extruders_count"
-    std::string effective_key = (key == "nozzle_diameter") ? "extruders_count" : key;
-
-    // Check base key first
+    const std::string effective_key = sidebar_visibility_key(key);
     std::string vis = get_app_config()->get("sidebar_visibility", effective_key);
     if (vis == "0")
         return false;
     if (vis == "1")
         return true;
-
-    // Base key not explicitly set - check indexed variant #0
-    // (Tab stores ConfigOptionFloats visibility as "key#0" via append_option_line)
-    std::string indexed_vis = get_app_config()->get("sidebar_visibility", effective_key + "#0");
-    if (indexed_vis == "0")
+    if (get_app_config()->get("sidebar_visibility", effective_key + "#0") == "0")
         return false;
+    return true; // unset = pinned by default
+}
 
-    // Default: visible (key never set = no checkbox rendered yet)
-    return true;
+// Write the pinned state for a key to the shared [sidebar_visibility] storage, saving immediately
+// so it persists across sessions/crashes.
+static void set_key_pinned(const std::string &key, bool pinned)
+{
+    get_app_config()->set("sidebar_visibility", sidebar_visibility_key(key), pinned ? "1" : "0");
+    get_app_config()->save();
+}
+
+// Whether a single sidebar row should be shown. In edit mode every row is shown; otherwise it
+// follows the shared pinned state (is_key_pinned), which the row checkbox reads and writes.
+static bool is_sidebar_key_visible(const std::string &key)
+{
+    return s_sidebar_edit_mode ? true : is_key_pinned(key);
 }
 
 // ============================================================================
@@ -602,8 +657,7 @@ ObjectInfo::ObjectInfo(wxWindow *parent) : wxStaticBoxSizer(new FlatStaticBox(pa
     GetStaticBox()->SetFont(wxGetApp().bold_font());
     wxGetApp().UpdateDarkUI(GetStaticBox());
 
-#ifdef _WIN32
-    // Use unified color accessor - no dark_mode() check needed
+#if defined(_WIN32) || defined(__linux__)
     wxColour label_color = SidebarColors::Foreground();
 #endif
 
@@ -612,7 +666,7 @@ ObjectInfo::ObjectInfo(wxWindow *parent) : wxStaticBoxSizer(new FlatStaticBox(pa
     grid_sizer->SetFlexibleDirection(wxHORIZONTAL);
 
     auto init_info_label = [parent, grid_sizer
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__linux__)
                             ,
                             label_color
 #endif
@@ -620,12 +674,12 @@ ObjectInfo::ObjectInfo(wxWindow *parent) : wxStaticBoxSizer(new FlatStaticBox(pa
     {
         auto *text = new wxStaticText(parent, wxID_ANY, text_label + ":");
         text->SetFont(wxGetApp().small_font());
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__linux__)
         text->SetForegroundColour(label_color);
 #endif
         *info_label = new wxStaticText(parent, wxID_ANY, "");
         (*info_label)->SetFont(wxGetApp().small_font());
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__linux__)
         (*info_label)->SetForegroundColour(label_color);
 #endif
         grid_sizer->Add(text, 0);
@@ -662,7 +716,7 @@ ObjectInfo::ObjectInfo(wxWindow *parent) : wxStaticBoxSizer(new FlatStaticBox(pa
 
     info_manifold = new wxStaticText(parent, wxID_ANY, "");
     info_manifold->SetFont(wxGetApp().small_font());
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__linux__)
     info_manifold->SetForegroundColour(label_color);
 #endif
     manifold_warning_icon = new wxStaticBitmap(parent, wxID_ANY, *get_bmp_bundle(m_warning_icon_name));
@@ -702,12 +756,12 @@ void ObjectInfo::update_warning_icon(const std::string &warning_icon_name)
 
 void ObjectInfo::sys_color_changed()
 {
+#if defined(_WIN32) || defined(__linux__)
 #ifdef _WIN32
-    // Update the static box background and border colors
     if (FlatStaticBox *box = dynamic_cast<FlatStaticBox *>(GetStaticBox()))
         box->SysColorsChanged();
+#endif
 
-    // Update all label colors - use unified color accessor
     wxColour label_color = SidebarColors::Foreground();
 
     if (info_size)
@@ -721,8 +775,6 @@ void ObjectInfo::sys_color_changed()
     if (label_volume)
         label_volume->SetForegroundColour(label_color);
 
-    // Update all child wxStaticText controls (including "Size:", "Volume:", "Facets:" labels)
-    wxWindow *parent = GetStaticBox()->GetParent();
     std::function<void(wxWindow *)> update_static_text_children = [&](wxWindow *window)
     {
         if (!window)
@@ -773,6 +825,9 @@ void TabbedSettingsPanel::BuildUI()
 
         // Create section header — always expanded, non-collapsible
         auto *section = new CollapsibleSection(content_panel, def.title, true);
+
+        // Accent the section title so the category headers stand out from the rows below
+        section->SetTitleAccent(true);
 
         // Set icon if available
         if (!def.icon_name.IsEmpty())
@@ -934,6 +989,87 @@ void TabbedSettingsPanel::UpdateContentLayout()
         m_scroll_area->UpdateScrollbar();
     }
     Layout();
+}
+
+void TabbedSettingsPanel::UpdateVisibilityCheckboxes()
+{
+    for (auto &[key, cb] : m_visibility_checkboxes)
+    {
+        if (!cb)
+            continue;
+        // Hide through the containing sizer so the row reclaims the space outside edit mode
+        if (wxSizer *cs = cb->GetContainingSizer())
+            cs->Show(cb, s_sidebar_edit_mode);
+        else
+            cb->Show(s_sidebar_edit_mode);
+        if (s_sidebar_edit_mode) // refresh bitmap to the shared pinned state while editing
+            cb->SetBitmap(*get_bmp_bundle(is_key_pinned(key) ? "check_on" : "check_off", 16));
+    }
+}
+
+void TabbedSettingsPanel::SetGroupPinned(wxSizer *group_sizer, bool pinned)
+{
+    // Pin/unpin every row whose checkbox lives inside this group, and refresh its bitmap.
+    std::set<wxWindow *> group_windows;
+    collect_sizer_windows(group_sizer, group_windows);
+    for (auto &[key, cb] : m_visibility_checkboxes)
+    {
+        if (!cb || !group_windows.count(cb))
+            continue;
+        set_key_pinned(key, pinned);
+        cb->SetBitmap(*get_bmp_bundle(pinned ? "check_on" : "check_off", 16));
+    }
+}
+
+void TabbedSettingsPanel::UpdateSectionCheckboxes()
+{
+    for (auto &sc : m_section_checkboxes)
+    {
+        if (!sc.checkbox)
+            continue;
+
+        // Show/hide the checkbox (label stays); size the overlay explicitly so the label has no
+        // leading gap in normal mode, then keep it on the box border and on top.
+        if (wxSizer *cs = sc.checkbox->GetContainingSizer())
+            cs->Show(sc.checkbox, s_sidebar_edit_mode);
+        else
+            sc.checkbox->Show(s_sidebar_edit_mode);
+        if (sc.header_panel && sc.box)
+        {
+            // The header overlay is a sibling of the box, not inside the group sizer, so it must
+            // track the box's visibility explicitly. Otherwise an emptied group (all rows unpinned)
+            // hides its box but leaves the label floating over the rows that move up to fill the gap.
+            bool box_shown = sc.box->IsShown();
+            sc.header_panel->Show(box_shown);
+            if (box_shown)
+            {
+                int w = s_sidebar_edit_mode ? sc.full_w : sc.label_w;
+                sc.header_panel->SetMinSize(wxSize(w, sc.height));
+                sc.header_panel->SetSize(w, sc.height);
+                sc.header_panel->Layout();
+                wxPoint p = sc.box->GetPosition();
+                sc.header_panel->SetPosition(wxPoint(p.x + 8, p.y + sc.y_pos));
+                sc.header_panel->Raise();
+            }
+        }
+
+        // Reflect the group state: checked if any row in the group is pinned
+        if (s_sidebar_edit_mode)
+        {
+            std::set<wxWindow *> group_windows;
+            collect_sizer_windows(sc.group_sizer, group_windows);
+            bool any_pinned = false;
+            for (auto &[key, cb] : m_visibility_checkboxes)
+            {
+                if (cb && group_windows.count(cb) && is_key_pinned(key))
+                {
+                    any_pinned = true;
+                    break;
+                }
+            }
+            sc.checkbox->SetValue(any_pinned);
+        }
+    }
 }
 
 void TabbedSettingsPanel::UpdateSidebarVisibility()
@@ -1099,6 +1235,12 @@ void TabbedSettingsPanel::UpdateSidebarVisibility()
     // children, undoing the individual row hiding from step 1. Re-applying restores correct state.
     UpdateRowVisibility();
 
+    // Step 4a: Apply pin-checkbox visibility LAST. Steps 2-4 call wxSizerItem::Show(true), which
+    // recursively re-shows every child of a shown row (including the checkbox), so this must run
+    // after them to keep checkboxes hidden outside Edit Visibility mode.
+    UpdateVisibilityCheckboxes();
+    UpdateSectionCheckboxes();
+
     // Step 5: Update layout and scrollbar
     UpdateContentLayout();
 
@@ -1140,6 +1282,8 @@ void TabbedSettingsPanel::RebuildContent()
     // This prevents stale pointers from being accessed in ApplyToggleLogic()
     ClearSettingControls();
     m_auxiliary_rows.clear();
+    m_visibility_checkboxes.clear(); // raw pointers into about-to-be-destroyed rows
+    m_section_checkboxes.clear();    // raw pointers into about-to-be-destroyed group headers
 
     // Destroy the scroll area — this destroys all child sections and content.
     // Hide it first to remove from DWM composition tree, preventing hundreds
@@ -1228,6 +1372,39 @@ void TabbedSettingsPanel::ToggleOptionControl(wxWindow *control, bool enable)
     }
 }
 
+wxStaticBitmap *TabbedSettingsPanel::AddPinCheckbox(wxWindow *parent, wxSizer *left_sizer, const std::string &opt_key)
+{
+    wxColour bg_color = SidebarColors::Background();
+
+    // Pin checkbox - leads the row, mirroring the main-settings checkbox (same check_on/check_off
+    // bitmaps and the same shared [sidebar_visibility] key, so its state matches the Tab page exactly).
+    // Shown only in Edit Visibility mode; clicking toggles whether the setting stays pinned.
+    auto *checkbox = new wxStaticBitmap(parent, wxID_ANY,
+                                        *get_bmp_bundle(is_key_pinned(opt_key) ? "check_on" : "check_off", 16));
+    checkbox->SetMinSize(GetScaledIconSizeWx());
+    checkbox->SetBackgroundColour(bg_color);
+    checkbox->SetToolTip(_L("Show this setting in the sidebar"));
+    {
+        wxStaticBitmap *cb = checkbox;
+        const std::string key = opt_key;
+        cb->Bind(wxEVT_LEFT_DOWN,
+                 [this, cb, key](wxMouseEvent &)
+                 {
+                     const bool now_pinned = !is_key_pinned(key);
+                     set_key_pinned(key, now_pinned);
+                     cb->SetBitmap(*get_bmp_bundle(now_pinned ? "check_on" : "check_off", 16));
+                     cb->Refresh();
+                     // Keep the owning section-header tri-state in sync with this row's pin state
+                     UpdateSectionCheckboxes();
+                 });
+    }
+    left_sizer->Add(checkbox, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, GetIconMargin());
+    // Hide through the sizer so no gap is reserved outside edit mode
+    left_sizer->Show(checkbox, s_sidebar_edit_mode);
+    m_visibility_checkboxes.emplace_back(opt_key, checkbox);
+    return checkbox;
+}
+
 TabbedSettingsPanel::RowUIContext TabbedSettingsPanel::CreateRowUIBase(wxWindow *parent, const std::string &opt_key,
                                                                        const wxString &label)
 {
@@ -1250,6 +1427,9 @@ TabbedSettingsPanel::RowUIContext TabbedSettingsPanel::CreateRowUIBase(wxWindow 
 
     // Set background color using unified accessor
     wxColour bg_color = SidebarColors::Background();
+
+    // Pin checkbox - leads the row, mirroring the main-settings checkbox.
+    ctx.visibility_checkbox = AddPinCheckbox(parent, ctx.left_sizer, opt_key);
 
     // Create lock icon
     ctx.lock_icon = new wxStaticBitmap(parent, wxID_ANY, *get_bmp_bundle("lock_closed"));
@@ -1402,6 +1582,15 @@ void TabbedSettingsPanel::sys_color_changed()
     Refresh();
 }
 
+void TabbedSettingsPanel::ReapplyTitleAccents()
+{
+    // Re-assert accent header colors after an external dark-UI pass (e.g. the sidebar's build-time
+    // UpdateDarkUI) reset every wxStaticText to the themed default. Lightweight: only re-sets colors.
+    for (auto &tab : m_tabs)
+        if (tab.section)
+            tab.section->SetTitleAccent(true);
+}
+
 // ============================================================================
 // PrintSettingsPanel Implementation - Print settings with tabbed categories
 // ============================================================================
@@ -1441,43 +1630,6 @@ std::vector<TabbedSettingsPanel::TabDefinition> PrintSettingsPanel::GetTabDefini
             {"extruders", _L("Multiple Extruders"), "funnel"},
             {"advanced", _L("Advanced"), "wrench"},
             {"output", _L("Output options"), "output+page_white"}};
-}
-
-bool PrintSettingsPanel::IsTabVisible(int tab_index) const
-{
-    // Use category-based visibility checking from print_config_def
-    // This automatically includes any new options added to these categories
-    switch (tab_index)
-    {
-    case TAB_LAYERS:
-        return is_any_category_visible({"Layers and Perimeters", "Fuzzy skin"});
-
-    case TAB_INFILL:
-        return is_any_category_visible({"Infill", "Ironing"});
-
-    case TAB_SKIRT_BRIM:
-        return is_any_category_visible({"Skirt and brim"});
-
-    case TAB_SUPPORT:
-        return is_any_category_visible({"Support material"});
-
-    case TAB_SPEED:
-        return is_any_category_visible({"Speed"});
-
-    case TAB_EXTRUDERS:
-        return is_any_category_visible({"Extruders", "Wipe options"});
-
-    case TAB_ADVANCED:
-        return is_any_category_visible({"Advanced", "Extrusion Width"});
-
-    case TAB_OUTPUT:
-        // Output options don't have a dedicated category in PrintConfig, use explicit list
-        return has_any_visible_setting(
-            {"complete_objects", "gcode_comments", "gcode_label_objects", "output_filename_format"});
-
-    default:
-        return true;
-    }
 }
 
 wxPanel *PrintSettingsPanel::BuildTabContent(int tab_index)
@@ -1874,7 +2026,6 @@ wxPanel *PrintSettingsPanel::BuildSpeedContent()
         CreateSettingRow(content, speed_group, "support_material_interface_speed", _L("Support material interface"));
         CreateSettingRow(content, speed_group, "bridge_speed", _L("Bridges"));
         CreateSettingRow(content, speed_group, "over_bridge_speed", _L("Over bridge speed"));
-        CreateSettingRow(content, speed_group, "gap_fill_speed", _L("Gap fill"));
         sizer->Add(speed_group, 0, wxEXPAND | wxALL, em / 4);
     }
 
@@ -2121,7 +2272,8 @@ wxPanel *PrintSettingsPanel::BuildAdvancedContent()
     // Athena / Arachne perimeter generator group
     {
         auto *arachne_group = CreateFlatStaticBoxSizer(content, _L("Athena / Arachne perimeter generator"));
-        CreateSettingRow(content, arachne_group, "perimeter_generator", _L("Perimeter generator"));
+        // perimeter_generator lives only in Layers and Perimeters > Advanced (matching the main
+        // settings); it must not be duplicated here.
         CreateSettingRow(content, arachne_group, "perimeter_compression", _L("Perimeter compression"));
         CreateSettingRow(content, arachne_group, "thin_wall_precision", _L("Thin wall width precision"));
         CreateSettingRow(content, arachne_group, "max_perimeter_width", _L("Maximum perimeter width"));
@@ -2812,7 +2964,7 @@ void PrintSettingsPanel::RefreshFromConfig()
 
 void PrintSettingsPanel::ResetOriginalValues()
 {
-    const DynamicPrintConfig &config = wxGetApp().preset_bundle->prints.get_edited_preset().config;
+    const DynamicPrintConfig &config = wxGetApp().preset_bundle->prints.get_selected_preset().config;
     for (auto &[opt_key, ui_elem] : m_setting_controls)
     {
         if (config.has(opt_key))
@@ -2896,7 +3048,6 @@ void PrintSettingsPanel::ApplyToggleLogic()
     {
         ToggleOption(el, !auto_speed);
     }
-    ToggleOption("gap_fill_speed", have_perimeters);
 
     // Fuzzy skin dependencies
     FuzzySkinNoiseType noise_type = config.opt_enum<FuzzySkinNoiseType>("fuzzy_skin_noise_type");
@@ -3193,110 +3344,6 @@ std::vector<TabbedSettingsPanel::TabDefinition> PrinterSettingsPanel::GetTabDefi
     return tabs;
 }
 
-bool PrinterSettingsPanel::IsTabVisible(int tab_index) const
-{
-    // Tab layout:
-    // 0: General
-    // 1: Machine limits
-    // 2 to 2+m_extruders_count-1: Extruder tabs
-    // Last (if single_extruder_multi_material): Single extruder MM
-
-    if (tab_index == 0) // General
-    {
-        // General tab has some unwrapped groups (Size and coordinates, Capabilities)
-        // that are always shown, plus these wrapped groups
-        return has_any_visible_setting({"gcode_flavor", "thumbnails", "silent_mode", "remaining_times", "binary_gcode",
-                                        "use_relative_e_distances", "use_firmware_retraction", "use_volumetric_e",
-                                        "variable_layer_height", "prefer_clockwise_movements", "currency_symbol",
-                                        "time_cost", "extruder_clearance_radius", "extruder_clearance_height",
-                                        "max_print_height", "z_offset", "single_extruder_multi_material"});
-    }
-    else if (tab_index == 1) // Machine limits
-    {
-        // Check gcode flavor to determine which settings are actually visible
-        const DynamicPrintConfig &config = wxGetApp().preset_bundle->printers.get_edited_preset().config;
-        auto flavor = static_cast<GCodeFlavor>(config.option("gcode_flavor")->getInt());
-        bool is_rrf = (flavor == gcfRepRapFirmware || flavor == gcfRapid);
-
-        // Check exactly what the content builder checks:
-        // 1. General section (machine_limits_usage)
-        if (has_any_visible_setting({"machine_limits_usage"}))
-            return true;
-
-        // 2. Marlin or RRF settings based on gcode flavor
-        if (is_rrf)
-        {
-            // RRF mode - check RRF M-codes
-            if (has_any_visible_setting({"machine_rrf_m566", "machine_rrf_m201", "machine_rrf_m203", "machine_rrf_m204",
-                                         "machine_rrf_m207"}))
-                return true;
-        }
-        else
-        {
-            // Marlin mode - check each Marlin group separately (mirroring content builder)
-            if (has_any_visible_setting({"machine_max_feedrate_x", "machine_max_feedrate_y", "machine_max_feedrate_z",
-                                         "machine_max_feedrate_e"}))
-                return true;
-            if (has_any_visible_setting({"machine_max_acceleration_x", "machine_max_acceleration_y",
-                                         "machine_max_acceleration_z", "machine_max_acceleration_e",
-                                         "machine_max_acceleration_extruding", "machine_max_acceleration_retracting",
-                                         "machine_max_acceleration_travel"}))
-                return true;
-            if (has_any_visible_setting(
-                    {"machine_max_jerk_x", "machine_max_jerk_y", "machine_max_jerk_z", "machine_max_jerk_e"}))
-                return true;
-            if (has_any_visible_setting({"machine_max_junction_deviation"}))
-                return true;
-            if (has_any_visible_setting({"machine_min_extruding_rate", "machine_min_travel_rate"}))
-                return true;
-        }
-
-        // 3. Time estimation section (machine_time_compensation)
-        if (has_any_visible_setting({"machine_time_compensation"}))
-            return true;
-
-        return false;
-    }
-    else if (tab_index >= 2 && tab_index < 2 + static_cast<int>(m_extruders_count)) // Extruder tabs
-    {
-        // Check visibility for this specific extruder
-        size_t extruder_idx = static_cast<size_t>(tab_index - 2);
-        // Note: nozzle_diameter is not included - it's permanently shown in sidebar header
-        return has_extruder_visible_setting({"extruder_colour",
-                                             "fan_spinup_time",
-                                             "fan_spinup_response_type",
-                                             "min_layer_height",
-                                             "max_layer_height",
-                                             "extruder_offset",
-                                             "retract_lift",
-                                             "travel_ramping_lift",
-                                             "travel_max_lift",
-                                             "travel_slope",
-                                             "travel_lift_before_obstacle",
-                                             "retract_lift_above",
-                                             "retract_lift_below",
-                                             "retract_length",
-                                             "retract_speed",
-                                             "deretract_speed",
-                                             "retract_restart_extra",
-                                             "retract_before_wipe",
-                                             "retract_before_travel",
-                                             "retract_layer_change",
-                                             "wipe",
-                                             "wipe_extend",
-                                             "wipe_length",
-                                             "retract_length_toolchange",
-                                             "retract_restart_extra_toolchange"},
-                                            extruder_idx);
-    }
-    else // Single extruder MM tab (last tab when enabled)
-    {
-        return has_any_visible_setting({"cooling_tube_retraction", "cooling_tube_length", "parking_pos_retraction",
-                                        "extra_loading_move", "multimaterial_purging",
-                                        "high_current_on_filament_swap"});
-    }
-}
-
 wxPanel *PrinterSettingsPanel::BuildTabContent(int tab_index)
 {
     // Use tab name to determine content instead of fixed indices (since tabs can be conditional)
@@ -3372,7 +3419,7 @@ wxPanel *PrinterSettingsPanel::BuildGeneralContent()
 
         // Right side: button left-justified in value area (50% width)
         auto *right_sizer = new wxBoxSizer(wxHORIZONTAL);
-        auto *btn = new ScalableButton(content, wxID_ANY, "settings", _L("Set bed shape"), wxDefaultSize,
+        auto *btn = new ScalableButton(content, wxID_ANY, "settings_white", _L("Set bed shape"), wxDefaultSize,
                                        wxDefaultPosition, wxBU_LEFT | wxBU_EXACTFIT);
         btn->SetToolTip(_L("Open bed shape editor"));
         btn->Bind(wxEVT_BUTTON,
@@ -4033,6 +4080,102 @@ void PrinterSettingsPanel::CreateSettingRow(wxWindow *parent, wxSizer *sizer, co
     const DynamicPrintConfig &config = GetEditedConfig();
     std::string original_value;
 
+    // Thumbnails: the raw "WxH/FORMAT, ..." string is fragile to hand-edit, so the sidebar exposes an
+    // "Edit thumbnails" button that opens the structured ThumbnailsDialog instead of a text field.
+    if (opt_key == "thumbnails")
+    {
+        auto *value_sizer = new wxBoxSizer(wxHORIZONTAL);
+        auto *edit_btn = new ScalableButton(parent, wxID_ANY, "wrench", " " + _L("Edit thumbnails"), wxDefaultSize,
+                                            wxDefaultPosition, wxBU_LEFT | wxBU_EXACTFIT);
+        edit_btn->SetFont(wxGetApp().normal_font());
+        edit_btn->SetSize(edit_btn->GetBestSize());
+        // Snapshot the SAVED preset value (not the edited/in-memory one) so undo reverts to the
+        // last-saved thumbnails even if the sidebar is rebuilt while the preset is dirty.
+        const DynamicPrintConfig &saved_config = wxGetApp().preset_bundle->printers.get_selected_preset().config;
+        if (saved_config.has("thumbnails"))
+            original_value = saved_config.opt_serialize("thumbnails");
+
+        // Refresh the tooltip from live config on hover so it never goes stale (preset switch, undo, etc.).
+        edit_btn->Bind(wxEVT_ENTER_WINDOW,
+                       [edit_btn](wxMouseEvent &e)
+                       {
+                           const DynamicPrintConfig &cfg = wxGetApp().preset_bundle->printers.get_edited_preset().config;
+                           edit_btn->SetToolTip(thumbnails_summary(cfg.has("thumbnails") ? cfg.opt_string("thumbnails")
+                                                                                         : std::string()));
+                           e.Skip();
+                       });
+
+        edit_btn->Bind(wxEVT_BUTTON,
+                       [this](wxCommandEvent &)
+                       {
+                           DynamicPrintConfig &cfg = wxGetApp().preset_bundle->printers.get_edited_preset().config;
+                           const std::string cur = cfg.has("thumbnails") ? cfg.opt_string("thumbnails") : std::string();
+                           ThumbnailsDialog dlg(wxGetApp().mainframe, cur);
+                           if (dlg.ShowModal() != wxID_OK)
+                               return;
+
+                           // Mirror OnSettingChanged's order: guard against re-entrant RefreshFromConfig, then
+                           // update the undo/lock icons BEFORE reloading the tab, so they settle correctly.
+                           DisableUpdateGuard guard(m_disable_update);
+                           cfg.set_key_value("thumbnails", new ConfigOptionString(dlg.get_value()));
+                           UpdateUndoUI("thumbnails");
+                           wxGetApp().preset_bundle->printers.get_edited_preset().set_dirty(true);
+                           if (auto *tab = wxGetApp().get_tab(Preset::TYPE_PRINTER))
+                           {
+                               tab->reload_config();
+                               tab->update_dirty();
+                               tab->update_changed_ui();
+                           }
+                       });
+
+        value_sizer->Add(edit_btn, 0, wxALIGN_CENTER_VERTICAL);
+        value_sizer->AddStretchSpacer(1);
+        row_sizer->Add(value_sizer, 1, wxEXPAND);
+
+        SettingUIElements ui_elem;
+        ui_elem.control = edit_btn;
+        ui_elem.lock_icon = lock_icon;
+        ui_elem.undo_icon = undo_icon;
+        ui_elem.label_text = ctx.label_text;
+        ui_elem.original_value = original_value;
+        ui_elem.row_sizer = row_sizer;
+        ui_elem.parent_sizer = sizer;
+        m_setting_controls["thumbnails"] = ui_elem;
+        UpdateUndoUI("thumbnails");
+
+        // Undo icon reverts to the saved value (the button holds no value of its own).
+        undo_icon->Bind(wxEVT_LEFT_DOWN,
+                        [this](wxMouseEvent &)
+                        {
+                            auto it = m_setting_controls.find("thumbnails");
+                            if (it == m_setting_controls.end())
+                                return;
+                            DisableUpdateGuard guard(m_disable_update);
+                            // Revert to the live SAVED preset value (the snapshot can go stale across rebuilds).
+                            const DynamicPrintConfig &saved_config =
+                                wxGetApp().preset_bundle->printers.get_selected_preset().config;
+                            const std::string saved_raw = saved_config.has("thumbnails")
+                                                              ? saved_config.opt_string("thumbnails")
+                                                              : std::string();
+                            DynamicPrintConfig &cfg = wxGetApp().preset_bundle->printers.get_edited_preset().config;
+                            cfg.set_key_value("thumbnails", new ConfigOptionString(saved_raw));
+                            it->second.original_value = saved_config.has("thumbnails")
+                                                            ? saved_config.opt_serialize("thumbnails")
+                                                            : std::string();
+                            UpdateUndoUI("thumbnails");
+                            wxGetApp().preset_bundle->printers.get_edited_preset().set_dirty(true);
+                            if (auto *tab = wxGetApp().get_tab(Preset::TYPE_PRINTER))
+                            {
+                                tab->reload_config();
+                                tab->update_dirty();
+                                tab->update_changed_ui();
+                            }
+                        });
+
+        sizer->Add(row_sizer, 0, wxEXPAND | wxTOP | wxBOTTOM, em / 4);
+        return;
+    }
+
     switch (opt_def->type)
     {
     case coBool:
@@ -4456,6 +4599,12 @@ void PrinterSettingsPanel::CreateExtruderSettingRow(wxWindow *parent, wxSizer *s
     // Set background color using unified accessor
     wxColour bg_color = SidebarColors::Background();
 
+    // Create composite key for tracking this specific extruder's setting
+    std::string composite_key = opt_key + "#" + std::to_string(extruder_idx);
+
+    // Pin checkbox leads the row, pinned per-extruder under the same composite key the row hides on
+    AddPinCheckbox(parent, left_sizer, composite_key);
+
     auto *lock_icon = new wxStaticBitmap(parent, wxID_ANY, *get_bmp_bundle("lock_closed"));
     lock_icon->SetMinSize(GetScaledIconSizeWx());
     lock_icon->SetBackgroundColour(bg_color);
@@ -4484,9 +4633,6 @@ void PrinterSettingsPanel::CreateExtruderSettingRow(wxWindow *parent, wxSizer *s
     const Preset &saved_preset = wxGetApp().preset_bundle->printers.get_selected_preset();
     const DynamicPrintConfig &saved_config = saved_preset.config;
     std::string original_value;
-
-    // Create composite key for tracking this specific extruder's setting
-    std::string composite_key = opt_key + "#" + std::to_string(extruder_idx);
 
     switch (opt_def->type)
     {
@@ -6157,7 +6303,7 @@ void PrinterSettingsPanel::RefreshFromConfig()
 
 void PrinterSettingsPanel::ResetOriginalValues()
 {
-    const DynamicPrintConfig &config = wxGetApp().preset_bundle->printers.get_edited_preset().config;
+    const DynamicPrintConfig &config = wxGetApp().preset_bundle->printers.get_selected_preset().config;
     for (auto &[opt_key, ui_elem] : m_setting_controls)
     {
         size_t hash_pos = opt_key.find('#');
@@ -6507,107 +6653,6 @@ std::vector<TabbedSettingsPanel::TabDefinition> FilamentSettingsPanel::GetTabDef
             {"overrides", _L("Filament Overrides"), "wrench"}};
 }
 
-bool FilamentSettingsPanel::IsTabVisible(int tab_index) const
-{
-    switch (tab_index)
-    {
-    case TAB_FILAMENT:
-        return has_any_visible_setting({"filament_colour", "filament_transmission_distance", "filament_diameter",
-                                        "extrusion_multiplier", "filament_density", "filament_cost",
-                                        "filament_spool_weight", "idle_temperature", "first_layer_temperature",
-                                        "temperature", "first_layer_bed_temperature", "bed_temperature",
-                                        "chamber_temperature", "chamber_minimal_temperature"});
-
-    case TAB_COOLING:
-        return has_any_visible_setting({"fan_always_on",
-                                        "cooling",
-                                        "cooling_slowdown_logic",
-                                        "cooling_perimeter_transition_distance",
-                                        "min_fan_speed",
-                                        "max_fan_speed",
-                                        "disable_fan_first_layers",
-                                        "full_fan_speed_layer",
-                                        "enable_manual_fan_speeds",
-                                        "manual_fan_speed_perimeter",
-                                        "manual_fan_speed_external_perimeter",
-                                        "manual_fan_speed_overhang_perimeter",
-                                        "manual_fan_speed_interlocking_perimeter",
-                                        "manual_fan_speed_internal_infill",
-                                        "manual_fan_speed_solid_infill",
-                                        "bridge_fan_speed",
-                                        "manual_fan_speed_top_solid_infill",
-                                        "manual_fan_speed_ironing",
-                                        "manual_fan_speed_gap_fill",
-                                        "manual_fan_speed_skirt",
-                                        "manual_fan_speed_support_material",
-                                        "manual_fan_speed_support_interface",
-                                        "enable_dynamic_fan_speeds",
-                                        "overhang_fan_speed_0",
-                                        "overhang_fan_speed_1",
-                                        "overhang_fan_speed_2",
-                                        "overhang_fan_speed_3",
-                                        "fan_spinup_bridge_infill",
-                                        "fan_spinup_overhang_perimeter",
-                                        "fan_below_layer_time",
-                                        "slowdown_below_layer_time",
-                                        "dont_slow_down_outer_wall",
-                                        "min_print_speed"});
-
-    case TAB_ADVANCED:
-        return has_any_visible_setting({"filament_type",
-                                        "filament_soluble",
-                                        "filament_abrasive",
-                                        "filament_max_volumetric_flow",
-                                        "filament_infill_max_speed",
-                                        "filament_infill_max_crossing_speed",
-                                        "filament_shrinkage_compensation_x",
-                                        "filament_shrinkage_compensation_y",
-                                        "filament_shrinkage_compensation_z",
-                                        "filament_minimal_purge_on_wipe_tower",
-                                        "filament_loading_speed_start",
-                                        "filament_loading_speed",
-                                        "filament_unloading_speed_start",
-                                        "filament_unloading_speed",
-                                        "filament_load_time",
-                                        "filament_unload_time",
-                                        "filament_toolchange_delay",
-                                        "filament_cooling_moves",
-                                        "filament_cooling_initial_speed",
-                                        "filament_cooling_final_speed",
-                                        "filament_stamping_loading_speed",
-                                        "filament_stamping_distance",
-                                        "filament_purge_multiplier",
-                                        "filament_multitool_ramming",
-                                        "filament_multitool_ramming_volume",
-                                        "filament_multitool_ramming_flow"});
-
-    case TAB_OVERRIDES:
-        return has_any_visible_setting({"filament_retract_lift",
-                                        "filament_travel_ramping_lift",
-                                        "filament_travel_max_lift",
-                                        "filament_travel_slope",
-                                        "filament_travel_lift_before_obstacle",
-                                        "filament_retract_lift_above",
-                                        "filament_retract_lift_below",
-                                        "filament_retract_length",
-                                        "filament_retract_speed",
-                                        "filament_deretract_speed",
-                                        "filament_retract_restart_extra",
-                                        "filament_retract_before_travel",
-                                        "filament_retract_layer_change",
-                                        "filament_wipe",
-                                        "filament_wipe_extend",
-                                        "filament_retract_before_wipe",
-                                        "filament_wipe_length",
-                                        "filament_retract_length_toolchange",
-                                        "filament_retract_restart_extra_toolchange",
-                                        "filament_seam_gap_distance"});
-
-    default:
-        return true;
-    }
-}
-
 wxPanel *FilamentSettingsPanel::BuildTabContent(int tab_index)
 {
     switch (tab_index)
@@ -6730,7 +6775,6 @@ wxPanel *FilamentSettingsPanel::BuildCoolingContent()
         CreateSettingRow(content, manual_group, "bridge_fan_speed", _L("Bridge"));
         CreateSettingRow(content, manual_group, "manual_fan_speed_top_solid_infill", _L("Top solid infill"));
         CreateSettingRow(content, manual_group, "manual_fan_speed_ironing", _L("Ironing"));
-        CreateSettingRow(content, manual_group, "manual_fan_speed_gap_fill", _L("Gap fill"));
         CreateSettingRow(content, manual_group, "manual_fan_speed_skirt", _L("Skirt"));
         CreateSettingRow(content, manual_group, "manual_fan_speed_support_material", _L("Support material"));
         CreateSettingRow(content, manual_group, "manual_fan_speed_support_interface", _L("Support interface"));
@@ -7389,7 +7433,26 @@ void FilamentSettingsPanel::CreateSettingRow(wxWindow *parent, wxSizer *sizer, c
                                 }
                                 break;
                             default:
-                                if (auto *combo = dynamic_cast<::ComboBox *>(it->second.control))
+                                if (opt_key == "filament_colour")
+                                {
+                                    // Write the original color string back into the config directly
+                                    DynamicPrintConfig &cfg =
+                                        wxGetApp().preset_bundle->filaments.get_edited_preset().config;
+                                    auto *opt = cfg.option<ConfigOptionStrings>(opt_key, true);
+                                    if (opt && !opt->values.empty())
+                                        opt->values[0] = it->second.original_value;
+                                    // Update the color panel visual
+                                    if (auto *panel = dynamic_cast<wxPanel *>(it->second.control))
+                                    {
+                                        wxColour clr(from_u8(it->second.original_value));
+                                        if (clr.IsOk())
+                                        {
+                                            panel->SetBackgroundColour(clr);
+                                            panel->Refresh();
+                                        }
+                                    }
+                                }
+                                else if (auto *combo = dynamic_cast<::ComboBox *>(it->second.control))
                                 {
                                     // select_open string: revert dropdown selection
                                     if (def->enum_def && def->enum_def->has_values())
@@ -7547,6 +7610,9 @@ void FilamentSettingsPanel::CreateNullableSettingRow(wxWindow *parent, wxSizer *
 
     // Set background color using unified accessor
     wxColour bg_color = SidebarColors::Background();
+
+    // Pin checkbox leads the row so overrides pin/hide like normal rows
+    AddPinCheckbox(parent, left_sizer, opt_key);
 
     // Lock and undo icons first (same order as regular settings)
     auto *lock_icon = new wxStaticBitmap(parent, wxID_ANY, *get_bmp_bundle("lock_closed"));
@@ -8677,7 +8743,10 @@ void FilamentSettingsPanel::RefreshFromConfig()
 
 void FilamentSettingsPanel::ResetOriginalValues()
 {
-    const DynamicPrintConfig &config = wxGetApp().preset_bundle->filaments.get_edited_preset().config;
+    // Use the saved (non-edited) preset as the undo baseline, matching the Tab system's
+    // behavior.  get_edited_preset() contains in-flight modifications and would cause
+    // the undo icon to never appear.
+    const DynamicPrintConfig &config = wxGetApp().preset_bundle->filaments.get_selected_preset().config;
     for (auto &[opt_key, ui_elem] : m_setting_controls)
     {
         if (config.has(opt_key))
@@ -8713,11 +8782,11 @@ void FilamentSettingsPanel::ApplyToggleLogic()
         ToggleOption(el, fan_always_on && !manual_fan_enabled);
 
     // Manual fan controls require enable_manual_fan_speeds to be ON
-    for (const char *el : {"manual_fan_speed_perimeter", "manual_fan_speed_external_perimeter",
-                           "manual_fan_speed_interlocking_perimeter", "manual_fan_speed_internal_infill",
-                           "manual_fan_speed_solid_infill", "manual_fan_speed_top_solid_infill",
-                           "manual_fan_speed_ironing", "manual_fan_speed_gap_fill", "manual_fan_speed_skirt",
-                           "manual_fan_speed_support_material", "manual_fan_speed_support_interface"})
+    for (const char *el :
+         {"manual_fan_speed_perimeter", "manual_fan_speed_external_perimeter",
+          "manual_fan_speed_interlocking_perimeter", "manual_fan_speed_internal_infill",
+          "manual_fan_speed_solid_infill", "manual_fan_speed_top_solid_infill", "manual_fan_speed_ironing",
+          "manual_fan_speed_skirt", "manual_fan_speed_support_material", "manual_fan_speed_support_interface"})
         ToggleOption(el, manual_fan_enabled);
 
     // Dynamic fan speed sub-options disabled when manual fan is enabled
@@ -8942,6 +9011,12 @@ void ProcessSection::sys_color_changed()
 {
     if (m_settings_panel)
         m_settings_panel->sys_color_changed();
+}
+
+void ProcessSection::ReapplyTitleAccents()
+{
+    if (m_settings_panel)
+        m_settings_panel->ReapplyTitleAccents();
 }
 
 // ============================================================================
@@ -9268,6 +9343,10 @@ void Sidebar::BuildUI()
 
     m_main_sizer->Add(m_scrolled_panel, 1, wxEXPAND);
 
+    // Bottom button bar - pinned below the scroll area, shared by both views (never scrolls)
+    CreateButtonBar();
+    m_main_sizer->Add(m_buttons_panel, 0, wxEXPAND);
+
     SetSizer(m_main_sizer);
 
     // Set initial visibility inline — lightweight state-only, no HWND operations.
@@ -9298,7 +9377,24 @@ void Sidebar::BuildUI()
             if (m_scrolled_panel->GetHWND())
                 NppDarkMode::SetDarkExplorerTheme(m_scrolled_panel->GetHWND());
 #endif
+            // The dark-UI pass above resets every wxStaticText (including the accent headers) to the
+            // themed default, so re-assert the accent header colors. Without this they show the
+            // dark-mode default (near-white) at startup instead of the accent color.
+            if (m_printer_settings_panel)
+                m_printer_settings_panel->ReapplyTitleAccents();
+            if (m_filament_settings_panel)
+                m_filament_settings_panel->ReapplyTitleAccents();
+            if (m_process_content)
+                m_process_content->ReapplyTitleAccents();
             ApplyTabVisibility();
+            // Regenerate the view-mode switch now that HWNDs are valid — its label bitmap
+            // is measured via a wxClientDC, which returns zero size during construction.
+            if (m_view_mode_switch)
+                m_view_mode_switch->Rescale();
+            if (m_edit_mode_switch)
+                m_edit_mode_switch->Rescale();
+            if (m_buttons_panel)
+                m_buttons_panel->Layout();
             if (m_objects_section)
                 m_objects_section->Layout();
             m_scrolled_panel->FitInside();
@@ -9431,8 +9527,83 @@ void Sidebar::ApplyTabVisibility()
     }
 }
 
+void Sidebar::CreateButtonBar()
+{
+    int em = wxGetApp().em_unit();
+    // The bar uses the sidebar background so it blends seamlessly with the content above.
+    wxColour bar_bg = SidebarColors::Background();
+
+    m_buttons_panel = new wxPanel(this);
+    m_buttons_panel->SetBackgroundColour(bar_bg);
+
+    auto *bar_sizer = new wxBoxSizer(wxHORIZONTAL);
+
+    // Both toggles share one fixed width (~40% of the 45em sidebar each) so the two halves stay
+    // balanced. Background must be set before SetLabels() so the rendered bitmap blends with the bar.
+    // The labeled-track path caps width at GetMaxWidth() (and collapses to empty if left at the -1
+    // default); the labels exceed this width, so both pills cap to the same value and render equal.
+    const int toggle_w = 20 * em;
+    auto make_toggle = [&](const wxString &lbl_off, const wxString &lbl_on, bool value)
+    {
+        auto *sw = new ::SwitchButton(m_buttons_panel);
+        sw->SetBackgroundColour(bar_bg);
+        sw->SetMaxSize(wxSize(toggle_w, -1));
+        sw->SetLabels(lbl_off, lbl_on);
+        sw->SetValue(value);
+        return sw;
+    };
+
+    // Left half: Tabbed (left) / Accordion (right) view toggle, bound to the use_tabbed_sidebar
+    // preference. The switch value is "accordion" (!tabbed) so Tabbed sits on the left.
+    m_view_mode_switch = make_toggle(_L("Tabbed View"), _L("Accordion View"), !m_tabbed_mode);
+    m_view_mode_switch->SetToolTip(_L("Switch between the accordion and tabbed sidebar layouts"));
+    m_view_mode_switch->Bind(wxEVT_TOGGLEBUTTON, &Sidebar::OnViewModeToggle, this);
+
+    // Right half: Pinned Settings (off, normal view) / Edit Visibility (on, editing) toggle
+    m_edit_mode_switch = make_toggle(_L("Pinned Settings"), _L("Edit Visibility"), s_sidebar_edit_mode);
+    m_edit_mode_switch->SetToolTip(_L("Show all settings with checkboxes to choose which stay pinned to the sidebar"));
+    m_edit_mode_switch->Bind(wxEVT_TOGGLEBUTTON, &Sidebar::OnEditModeToggle, this);
+
+    // Two equal halves, each toggle centered within its half
+    auto *left_sizer = new wxBoxSizer(wxHORIZONTAL);
+    left_sizer->AddStretchSpacer(1);
+    left_sizer->Add(m_view_mode_switch, 0, wxALIGN_CENTER_VERTICAL);
+    left_sizer->AddStretchSpacer(1);
+
+    auto *right_sizer = new wxBoxSizer(wxHORIZONTAL);
+    right_sizer->AddStretchSpacer(1);
+    right_sizer->Add(m_edit_mode_switch, 0, wxALIGN_CENTER_VERTICAL);
+    right_sizer->AddStretchSpacer(1);
+
+    bar_sizer->Add(left_sizer, 1, wxEXPAND | wxTOP | wxBOTTOM, em / 2);
+    bar_sizer->Add(right_sizer, 1, wxEXPAND | wxTOP | wxBOTTOM, em / 2);
+
+    m_buttons_panel->SetSizer(bar_sizer);
+}
+
+void Sidebar::OnViewModeToggle(wxCommandEvent &evt)
+{
+    const bool tabbed = !m_view_mode_switch->GetValue(); // switch value is "accordion" (right side)
+    wxGetApp().app_config->set("use_tabbed_sidebar", tabbed ? "1" : "0");
+    wxGetApp().app_config->save();
+    SetTabbedMode(tabbed);
+    evt.Skip();
+}
+
+void Sidebar::OnEditModeToggle(wxCommandEvent &evt)
+{
+    // Edit mode reveals every setting (with pin checkboxes); normal view shows only pinned settings.
+    s_sidebar_edit_mode = m_edit_mode_switch->GetValue();
+    update_sidebar_visibility();
+    evt.Skip();
+}
+
 void Sidebar::SetTabbedMode(bool tabbed)
 {
+    // Keep the bottom-bar toggle in sync when the mode is changed elsewhere (e.g. Preferences).
+    // The switch value represents "accordion" (the right-side option), i.e. the inverse of tabbed.
+    if (m_view_mode_switch && m_view_mode_switch->GetValue() == tabbed)
+        m_view_mode_switch->SetValue(!tabbed);
     if (m_tabbed_mode == tabbed)
         return;
     m_tabbed_mode = tabbed;
@@ -9814,12 +9985,68 @@ void Sidebar::CreateObjectsSection()
         });
 }
 
+// Open a color picker for the filament assigned to the given extruder and push the
+// change through the preset/tab/plater pipeline so the 3D view updates immediately.
+static void open_filament_color_picker(int extr_idx)
+{
+    auto *preset_bundle = wxGetApp().preset_bundle;
+    if (!preset_bundle)
+        return;
+
+    // Read the current color from the extruder's selected filament preset
+    const auto &extruders_filaments = preset_bundle->extruders_filaments;
+    size_t eidx = (extr_idx >= 0 && extr_idx < static_cast<int>(extruders_filaments.size())) ? extr_idx : 0;
+    const Preset *selected = extruders_filaments[eidx].get_selected_preset();
+    if (!selected)
+        return;
+
+    std::string cur_color_str = selected->config.opt_string("filament_colour", 0);
+    wxColour current_color(from_u8(cur_color_str));
+    if (!current_color.IsOk())
+        current_color = *wxWHITE;
+
+    wxColourData data;
+    data.SetChooseFull(true);
+    data.SetColour(current_color);
+
+    wxColourDialog dlg(wxGetApp().mainframe, &data);
+    dlg.CentreOnParent();
+    if (dlg.ShowModal() != wxID_OK)
+        return;
+
+    wxColour new_color = dlg.GetColourData().GetColour();
+    wxString color_str = wxString::Format("#%02X%02X%02X", new_color.Red(), new_color.Green(), new_color.Blue());
+
+    // Write the new color into the edited preset config
+    DynamicPrintConfig &config = preset_bundle->filaments.get_edited_preset().config;
+    auto *opt = config.option<ConfigOptionStrings>("filament_colour");
+    if (!opt || opt->values.empty())
+        return;
+    opt->values[0] = into_u8(color_str);
+
+    preset_bundle->filaments.get_edited_preset().set_dirty(true);
+
+    if (auto *tab = wxGetApp().get_tab(Preset::TYPE_FILAMENT))
+    {
+        tab->reload_config();
+        tab->update_dirty();
+        tab->update_changed_ui();
+    }
+
+    if (auto *plater = wxGetApp().plater())
+        plater->on_config_change(config);
+
+    // Refresh all filament combo icons so the swatch reflects the new color
+    wxGetApp().sidebar().update_presets(Preset::TYPE_FILAMENT);
+}
+
 void Sidebar::init_filament_combo(PlaterPresetComboBox **combo, int extr_idx)
 {
     *combo = new PlaterPresetComboBox(m_filament_content, Preset::TYPE_FILAMENT);
     (*combo)->SetMinSize(wxSize(1, -1)); // Allow combo to shrink
     (*combo)->set_extruder_idx(extr_idx);
     (*combo)->SetForegroundColour(SidebarColors::Foreground());
+    (*combo)->SetOnClickIcon([extr_idx]() { open_filament_color_picker(extr_idx); });
 }
 
 void Sidebar::remove_unused_filament_combos(size_t current_count)
@@ -9839,6 +10066,7 @@ void Sidebar::init_printer_filament_combo(PlaterPresetComboBox **combo, int extr
     (*combo)->SetMinSize(wxSize(1, -1)); // Allow combo to shrink
     (*combo)->set_extruder_idx(extr_idx);
     (*combo)->SetForegroundColour(SidebarColors::Foreground());
+    (*combo)->SetOnClickIcon([extr_idx]() { open_filament_color_picker(extr_idx); });
 
     // Hide the edit button - this is just for quick selection
     if ((*combo)->edit_btn)
@@ -10036,7 +10264,13 @@ void Sidebar::UpdatePrinterFilamentCombos()
             PlaterPresetComboBox *combo = nullptr;
             init_printer_filament_combo(&combo, static_cast<int>(i));
             m_printer_filament_combos.push_back(combo);
-            row_sizer->Add(combo, 1, wxEXPAND | wxALIGN_CENTER_VERTICAL);
+            row_sizer->Add(combo, 1, wxEXPAND | wxALIGN_CENTER_VERTICAL | wxRIGHT, em / 4);
+
+            auto *btn_save = new ScalableButton(m_printer_content, wxID_ANY, "save");
+            btn_save->SetToolTip(_L("Save current settings to preset"));
+            btn_save->Bind(wxEVT_BUTTON,
+                           [](wxCommandEvent &) { wxGetApp().get_tab(Preset::TYPE_FILAMENT)->save_preset(); });
+            row_sizer->Add(btn_save, 0, wxALIGN_CENTER_VERTICAL);
 
             m_printer_filament_sizer->Add(row_sizer, 0, wxEXPAND | wxBOTTOM, em / 4);
 
@@ -10801,6 +11035,11 @@ void Sidebar::msw_rescale()
     if (m_tab_bar)
         m_tab_bar->UpdateAppearance();
 
+    if (m_view_mode_switch)
+        m_view_mode_switch->Rescale();
+    if (m_edit_mode_switch)
+        m_edit_mode_switch->Rescale();
+
     if (m_printer_section)
         m_printer_section->msw_rescale();
     if (m_filament_section)
@@ -10878,6 +11117,23 @@ void Sidebar::sys_color_changed()
 
     if (m_tab_bar)
         m_tab_bar->UpdateAppearance();
+
+    // Re-theme the bottom button bar, its divider, and both toggles
+    if (m_buttons_panel)
+    {
+        wxColour bar_bg = SidebarColors::Background();
+        m_buttons_panel->SetBackgroundColour(bar_bg);
+        if (m_view_mode_switch)
+        {
+            m_view_mode_switch->SetBackgroundColour(bar_bg);
+            m_view_mode_switch->Rescale(); // regenerate label bitmaps for the new theme background
+        }
+        if (m_edit_mode_switch)
+        {
+            m_edit_mode_switch->SetBackgroundColour(bar_bg);
+            m_edit_mode_switch->Rescale();
+        }
+    }
 
     // Use unified color accessor - no dark_mode() check needed
     wxColour bg_color = SidebarColors::Background();

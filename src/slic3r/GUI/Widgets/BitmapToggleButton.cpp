@@ -65,5 +65,11 @@ void BitmapToggleButton::update_size()
 #ifndef __WXGTK3__
     wxSize best_sz = GetBestSize();
     SetSize(best_sz);
+#ifdef __WXOSX__
+    // Lock the button to its content size so sizers with wxEXPAND can't stretch it.
+    // Cocoa's NSButton centers the title and uses its accent color in the extra space.
+    SetMinSize(best_sz);
+    SetMaxSize(best_sz);
+#endif
 #endif
 }

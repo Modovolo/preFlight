@@ -6,6 +6,7 @@
 #include "GUI_App.hpp"
 #include "I18N.hpp"
 #include "Plater.hpp"
+#include "ImGuiPureWrap.hpp"
 
 #include "libslic3r/Model.hpp"
 
@@ -139,7 +140,8 @@ void NotesDialog::render()
         title += " " + _u8L("(Read only)");
     title += "###NotesDialog"; // Unique ID for window
 
-    if (ImGui::Begin(title.c_str(), &is_open, flags))
+    // Route through ImGuiPureWrap::begin so the title bar gets the dark-on-accent text the other popups use.
+    if (ImGuiPureWrap::begin(title, &is_open, flags))
     {
         // Two-column layout
         // DPI-scaled list width (15 * font_size instead of fixed 150px)
@@ -157,7 +159,7 @@ void NotesDialog::render()
         render_notes_editor();
         ImGui::EndChild();
     }
-    ImGui::End();
+    ImGuiPureWrap::end();
     ImGui::PopStyleColor(3); // ResizeGrip colors
 
     if (!is_open)
@@ -168,7 +170,7 @@ void NotesDialog::render_object_list()
 {
     // "All Objects" entry for project notes
     bool is_selected = (m_selected_idx == -1);
-    if (ImGui::Selectable(_u8L("All objects").c_str(), is_selected))
+    if (ImGuiPureWrap::selectable_contrast(_u8L("All objects").c_str(), is_selected))
     {
         if (m_selected_idx != -1)
         {
@@ -198,7 +200,7 @@ void NotesDialog::render_object_list()
         // Add unique ID to handle duplicate names
         label += "###obj_" + std::to_string(i);
 
-        if (ImGui::Selectable(label.c_str(), is_selected))
+        if (ImGuiPureWrap::selectable_contrast(label.c_str(), is_selected))
         {
             if (m_selected_idx != (int) i)
             {

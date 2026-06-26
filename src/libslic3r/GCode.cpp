@@ -1092,12 +1092,11 @@ void GCodeGenerator::_do_export(Print &print, GCodeOutputStream &file, Thumbnail
         // If "thumbnails_format" is not defined, export to PNG.
         auto [thumbnails, errors] = GCodeThumbnails::make_and_check_thumbnail_list(print.full_print_config());
 
+        // A bad thumbnail entry is a non-blocking breadcrumb on the Prepare screen, not a hard export error.
         if (errors != enum_bitmask<ThumbnailError>())
-        {
-            std::string error_str = format("Invalid thumbnails value:");
-            error_str += GCodeThumbnails::get_error_string(errors);
-            throw Slic3r::ExportError(error_str);
-        }
+            print.active_step_add_warning(PrintStateBase::WarningLevel::NON_CRITICAL,
+                                          _u8L("Some G-code thumbnail entries are invalid and were skipped:") +
+                                              GCodeThumbnails::get_error_string(errors));
 
         if (!thumbnails.empty())
             GCodeThumbnails::generate_binary_thumbnails(thumbnail_cb, binary_data.thumbnails, thumbnails,
@@ -1229,12 +1228,11 @@ void GCodeGenerator::_do_export(Print &print, GCodeOutputStream &file, Thumbnail
         // if exporting gcode in ascii format, generate the thumbnails here
         auto [thumbnails, errors] = GCodeThumbnails::make_and_check_thumbnail_list(print.full_print_config());
 
+        // A bad thumbnail entry is a non-blocking breadcrumb on the Prepare screen, not a hard export error.
         if (errors != enum_bitmask<ThumbnailError>())
-        {
-            std::string error_str = format("Invalid thumbnails value:");
-            error_str += GCodeThumbnails::get_error_string(errors);
-            throw Slic3r::ExportError(error_str);
-        }
+            print.active_step_add_warning(PrintStateBase::WarningLevel::NON_CRITICAL,
+                                          _u8L("Some G-code thumbnail entries are invalid and were skipped:") +
+                                              GCodeThumbnails::get_error_string(errors));
 
         if (!thumbnails.empty())
         {
@@ -5625,17 +5623,14 @@ std::string GCodeGenerator::_extrude(const ExtrusionAttributes &path_attr, const
         {
             speed = m_config.get_abs_value("ironing_speed");
         }
-        else if (path_attr.role == ExtrusionRole::GapFill)
-        {
-            speed = m_config.get_abs_value("gap_fill_speed");
-        }
         else if (path_attr.role == ExtrusionRole::InterlockingPerimeter)
         {
             speed = m_config.get_abs_value("perimeter_speed");
         }
         else
         {
-            throw std::runtime_error("Invalid speed");
+            // Fallback for any unhandled role: print slow at 1/4 of perimeter speed.
+            speed = m_config.get_abs_value("perimeter_speed") * 0.25;
         }
     }
     // Auto speed: calculate from filament MVF when auto_speed manages this role, or when speed=0.
@@ -5644,7 +5639,7 @@ std::string GCodeGenerator::_extrude(const ExtrusionAttributes &path_attr, const
     bool auto_calculated = false;
     if (m_config.auto_speed.value && (speed_was_default || !path_attr.role.is_perimeter()) &&
         !path_attr.role.is_bridge() && path_attr.role != ExtrusionRole::Ironing &&
-        path_attr.role != ExtrusionRole::InfillOverBridge && path_attr.role != ExtrusionRole::GapFill)
+        path_attr.role != ExtrusionRole::InfillOverBridge)
         auto_calculated = true;
     else if (speed == 0 && path_attr.role != ExtrusionRole::Ironing)
         auto_calculated = true;
@@ -5908,9 +5903,6 @@ std::string GCodeGenerator::_extrude(const ExtrusionAttributes &path_attr, const
             break;
         case GCodeExtrusionRole::BridgeInfill:
             manual_fan_speed = EXTRUDER_CONFIG(bridge_fan_speed);
-            break;
-        case GCodeExtrusionRole::GapFill:
-            manual_fan_speed = EXTRUDER_CONFIG(manual_fan_speed_gap_fill);
             break;
         case GCodeExtrusionRole::Skirt:
             manual_fan_speed = EXTRUDER_CONFIG(manual_fan_speed_skirt);

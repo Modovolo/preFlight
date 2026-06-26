@@ -423,6 +423,108 @@ static void recalculate_trapezoids(std::vector<GCodeProcessor::TimeBlock> &block
     }
 }
 
+// Klipper minimum_cruise_ratio (faithful port of Klipper's current LookAheadQueue.flush two-pass).
+// A second, reduced-acceleration look-ahead (pseudo_accel = accel * (1 - mcr)) yields a "smoothed"
+// velocity whose midpoint caps each move's cruise (peak) speed. Lowering the plateau forces a
+// minimum cruise fraction so junction-dense moves run slower - the entire point of mcr.
+// Runs AFTER the Marlin reverse/forward passes (whose entry speeds are the real start_v2 we reuse)
+// and BEFORE recalculate_trapezoids (which wires each exit from the now-lowered next.entry).
+//
+// n_apply is the count of blocks emitted this batch ([0, n_apply)); caps are applied only to those.
+// The retained look-ahead tail keeps its nominal cruise so it is re-capped from nominal (never from an
+// already-lowered value) when emitted later. Like the Marlin planner this wraps, the look-ahead is
+// recomputed per batch and seeded at the batch head from each block's junction ceiling rather than
+// carried across batches, so this is a deterministic batched approximation (boundary effects are
+// bounded by the retained-tail overlap and reset at the first binding junction), not a bit-exact
+// single-shot whole-print plan - the same accuracy class as the rest of the estimator.
+// For every non-Klipper flavor mcr == 0, so this returns immediately and output is unchanged.
+static void apply_klipper_minimum_cruise_ratio(std::vector<GCodeProcessor::TimeBlock> &blocks, float mcr,
+                                               size_t n_apply)
+{
+    if (mcr <= 0.0f || blocks.empty())
+        return;
+
+    const size_t n = blocks.size();
+    const float one_minus_mcr = 1.0f - mcr;
+    n_apply = std::min(n_apply, n);
+
+    // Forward-propagate the reduced-accel entry^2 ceiling (Klipper max_mcr_start_v2), bounded by each
+    // block's junction limit (max_entry_speed^2 == Klipper max_start_v2). The batch head is seeded
+    // from its own junction ceiling (an upper bound, since per-batch history is erased) rather than a
+    // carried value; the seed is reset at the first binding junction, so its influence is local.
+    std::vector<float> max_mcr_start_v2(n);
+    max_mcr_start_v2[0] = blocks[0].max_entry_speed * blocks[0].max_entry_speed;
+    for (size_t i = 1; i < n; ++i)
+    {
+        const float mcr_delta_prev = 2.0f * (blocks[i - 1].acceleration * one_minus_mcr) * blocks[i - 1].distance;
+        const float max_start_v2 = blocks[i].max_entry_speed * blocks[i].max_entry_speed;
+        max_mcr_start_v2[i] = std::min(max_start_v2, max_mcr_start_v2[i - 1] + mcr_delta_prev);
+    }
+
+    // Reverse pass: compute each block's cruise^2 cap. A move that cannot accelerate is "delayed"
+    // (sentinel < 0) and inherits its cap from the block before it in the forward pass. peak_cruise_v2
+    // is the current smoothed plateau, refreshed only at a local peak (the inner guard).
+    std::vector<float> cap(n, -1.0f);
+    float next_end_v2 = blocks[n - 1].safe_feedrate * blocks[n - 1].safe_feedrate; // exit of the last block
+    float next_mcr_start_v2 = 0.0f;
+    float peak_cruise_v2 = 0.0f;
+    size_t pending = 0;
+    for (size_t k = n; k-- > 0;)
+    {
+        const float accel = blocks[k].acceleration;
+        const float dist = blocks[k].distance;
+        const float delta_v2 = 2.0f * accel * dist;
+        const float mcr_delta_v2 = 2.0f * (accel * one_minus_mcr) * dist;
+        const float max_cruise_v2 = blocks[k].feedrate_profile.cruise * blocks[k].feedrate_profile.cruise;
+        const float start_v2 = blocks[k].feedrate_profile.entry * blocks[k].feedrate_profile.entry;
+        const float reachable_start_v2 = next_end_v2 + delta_v2;
+
+        ++pending;
+        const float reach_mcr = next_mcr_start_v2 + mcr_delta_v2;
+        const float mcr_start_v2 = std::min(max_mcr_start_v2[k], reach_mcr);
+        if (mcr_start_v2 < reach_mcr)
+        {
+            // This move can accelerate. Refresh the plateau only at a local peak (Klipper inner guard).
+            if (mcr_start_v2 + mcr_delta_v2 > next_mcr_start_v2 || pending > 1)
+                peak_cruise_v2 = (mcr_start_v2 + reach_mcr) * 0.5f;
+            cap[k] = std::min((start_v2 + reachable_start_v2) * 0.5f, std::min(max_cruise_v2, peak_cruise_v2));
+            pending = 0;
+        }
+
+        next_end_v2 = start_v2;
+        next_mcr_start_v2 = mcr_start_v2;
+    }
+
+    // Forward pass: apply caps to the emitted blocks. A delayed move inherits the previous block's
+    // cap (Klipper prev_cruise_v2). Leading delayed moves before the first anchor are left uncapped -
+    // a batch estimator must not zero a real move's cruise the way Klipper's streaming flush can.
+    float prev_cruise_v2 = 0.0f;
+    bool seen_anchor = false;
+    for (size_t i = 0; i < n_apply; ++i)
+    {
+        const float start_v2 = blocks[i].feedrate_profile.entry * blocks[i].feedrate_profile.entry;
+        float c = cap[i];
+        if (c < 0.0f)
+        {
+            if (!seen_anchor)
+                continue; // no plateau yet - keep nominal cruise
+            c = std::min(prev_cruise_v2, start_v2);
+        }
+        else
+            seen_anchor = true;
+
+        // The cap only ever lowers cruise (the exact inverse of the old entry-speed floor); entry is
+        // clamped down to it, and exit is wired afterward by recalculate_trapezoids from next.entry.
+        const float new_cruise = std::sqrt(std::max(c, 0.0f));
+        float &cruise = blocks[i].feedrate_profile.cruise;
+        float &entry = blocks[i].feedrate_profile.entry;
+        cruise = std::min(cruise, new_cruise);
+        entry = std::min(entry, cruise);
+        blocks[i].flags.recalculate = true;
+        prev_cruise_v2 = c;
+    }
+}
+
 void GCodeProcessor::TimeMachine::calculate_time(GCodeProcessorResult &result, PrintEstimatedStatistics::ETimeMode mode,
                                                  size_t keep_last_n_blocks, float additional_time,
                                                  float time_compensation, std::function<void(int)> progress_callback,
@@ -445,15 +547,9 @@ void GCodeProcessor::TimeMachine::calculate_time(GCodeProcessorResult &result, P
         planner_forward_pass_kernel(blocks[i], blocks[i + 1]);
     }
 
-    // Klipper minimum_cruise_ratio: re-enforce entry speed floor after planner passes
-    if (minimum_cruise_ratio > 0.0f)
-    {
-        for (auto &block : blocks)
-        {
-            float min_speed = minimum_cruise_ratio * block.feedrate_profile.cruise;
-            block.feedrate_profile.entry = std::max(block.feedrate_profile.entry, min_speed);
-        }
-    }
+    // Klipper minimum_cruise_ratio: cap cruise speeds via a reduced-acceleration look-ahead.
+    // Apply only to the blocks emitted this batch; the retained tail is re-capped when emitted.
+    apply_klipper_minimum_cruise_ratio(blocks, minimum_cruise_ratio, blocks.size() - keep_last_n_blocks);
 
     recalculate_trapezoids(blocks);
 
@@ -1478,7 +1574,7 @@ void GCodeProcessor::apply_config(const DynamicPrintConfig &config)
                 }
             }
             if (klipper_mcr != nullptr)
-                m_klipper_minimum_cruise_ratio = static_cast<float>(klipper_mcr->value);
+                m_klipper_minimum_cruise_ratio = std::clamp(static_cast<float>(klipper_mcr->value), 0.0f, 0.99f);
         }
     }
 
@@ -1626,7 +1722,7 @@ void GCodeProcessor::parse_klipper_limits_from_config(const PrintConfig &config)
     float mcr = static_cast<float>(config.machine_klipper_minimum_cruise_ratio.value);
 
     m_klipper_scv = scv;
-    m_klipper_minimum_cruise_ratio = mcr;
+    m_klipper_minimum_cruise_ratio = std::clamp(mcr, 0.0f, 0.99f);
 
     for (size_t i = 0; i < static_cast<size_t>(PrintEstimatedStatistics::ETimeMode::Count); ++i)
     {

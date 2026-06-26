@@ -21,6 +21,7 @@ class ComboBox : public wxWindowWithItems<TextInput, wxItemContainer>
     DropDown drop;
     bool drop_down = false;
     bool text_off = false;
+    bool m_readonly = false;
 
 public:
     ComboBox(wxWindow *parent, wxWindowID id, const wxString &value = wxEmptyString,
@@ -33,6 +34,7 @@ public:
 
     bool SetBackgroundColour(const wxColour &colour) override;
     bool SetForegroundColour(const wxColour &colour) override;
+    bool Enable(bool enable = true) override;
 
     void SetBorderColor(StateColor const &color);
 
@@ -87,6 +89,7 @@ protected:
 private:
     // some useful events
     void mouseDown(wxMouseEvent &event);
+    void mouseMove(wxMouseEvent &event);
     void mouseWheelMoved(wxMouseEvent &event);
     void keyDown(wxKeyEvent &event);
 

@@ -23,6 +23,7 @@
 #include "BitmapCache.hpp"
 #include "Camera.hpp"
 #include "Theme.hpp"
+#include "ThemePalette.hpp"
 
 #include "Gizmos/TriangleSelectorMmGui.hpp"
 
@@ -264,16 +265,21 @@ void GLVolume::NonManifoldEdges::update()
     m_update_needed = false;
 }
 
-const ColorRGBA GLVolume::SELECTED_COLOR = {GUI::Theme::Secondary::R_NORM, GUI::Theme::Secondary::G_NORM,
-                                            GUI::Theme::Secondary::B_NORM, 1.0f};
-const ColorRGBA GLVolume::HOVER_SELECT_COLOR = {GUI::Theme::Secondary::R_NORM * 0.8f,
-                                                GUI::Theme::Secondary::G_NORM * 0.9f, GUI::Theme::Secondary::B_NORM,
-                                                1.0f};
+// preFlight: the selected-object highlight follows the theme accent, read at render time so it tracks
+// live theme switches. Unselected volumes keep their filament/extruder color.
+ColorRGBA GLVolume::selected_color()
+{
+    const wxColour &c = GUI::active_palette().accent_primary;
+    return {c.Red() / 255.0f, c.Green() / 255.0f, c.Blue() / 255.0f, 1.0f};
+}
 const ColorRGBA GLVolume::HOVER_DESELECT_COLOR = {1.0f, 0.75f, 0.75f, 1.0f};
 const ColorRGBA GLVolume::OUTSIDE_COLOR = {0.0f, 0.38f, 0.8f, 1.0f};
-const ColorRGBA GLVolume::SELECTED_OUTSIDE_COLOR = {GUI::Theme::Secondary::R_NORM * 0.6f,
-                                                    GUI::Theme::Secondary::G_NORM * 0.75f,
-                                                    GUI::Theme::Secondary::B_NORM * 0.95f, 1.0f};
+ColorRGBA GLVolume::selected_outside_color()
+{
+    // Darker accent for a selected volume sitting outside the print area.
+    const wxColour &c = GUI::active_palette().accent_primary;
+    return {c.Red() / 255.0f * 0.6f, c.Green() / 255.0f * 0.6f, c.Blue() / 255.0f * 0.6f, 1.0f};
+}
 const ColorRGBA GLVolume::DISABLED_COLOR = ColorRGBA::DARK_GRAY();
 const ColorRGBA GLVolume::SLA_SUPPORT_COLOR = ColorRGBA::LIGHT_GRAY();
 const ColorRGBA GLVolume::SLA_PAD_COLOR = {0.0f, 0.2f, 0.0f, 1.0f};
@@ -335,7 +341,7 @@ void GLVolume::set_render_color(bool force_transparent)
             set_render_color(ColorRGBA(0.4f, 0.4f, 0.4f, 0.35f)); // Neutral transparent
         else if (hover == HS_Select || selected)
         {
-            const ColorRGBA rc = outside ? SELECTED_OUTSIDE_COLOR : SELECTED_COLOR;
+            const ColorRGBA rc = outside ? selected_outside_color() : selected_color();
             if (color == NEGATIVE_VOLUME_COLOR || color == PARAMETER_MODIFIER_COLOR || color == SUPPORT_BLOCKER_COLOR ||
                 color == SUPPORT_ENFORCER_COLOR)
                 set_render_color(

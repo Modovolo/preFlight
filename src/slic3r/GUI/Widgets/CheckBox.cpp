@@ -5,6 +5,9 @@
 #include "CheckBox.hpp"
 #include "UIColors.hpp"
 #include "../GUI_App.hpp"
+#ifdef __WXOSX__
+#include "../../Utils/MacDarkMode.hpp"
+#endif
 
 // DPI scaling helper for bitmap margin (text-to-checkbox spacing)
 static int GetScaledBitmapMargin()
@@ -83,7 +86,14 @@ void CheckBox::sys_color_changed()
 void CheckBox::update()
 {
     const bool val = GetValue();
+#ifdef __WXOSX__
+    // wxOSX's OnEnter/LeaveWindow refresh the peer image from m_bitmaps[State_Normal/Current]
+    // directly, bypassing our DoGetBitmap override, so when disabled we must bake the disabled
+    // glyph into those slots. Otherwise Cocoa just dims the enabled (accent) glyph.
+    const wxBitmapBundle &bmp = m_disable ? (val ? m_on_disabled : m_off_disabled).bmp() : (val ? m_on : m_off).bmp();
+#else
     const wxBitmapBundle &bmp = (val ? m_on : m_off).bmp();
+#endif
     SetBitmap(bmp);
     SetBitmapCurrent(bmp);
     SetBitmapDisabled((val ? m_on_disabled : m_off_disabled).bmp());
@@ -98,6 +108,15 @@ void CheckBox::update()
     if (GetBitmapMargins().GetWidth() == 0 && !GetLabelText().IsEmpty())
         SetBitmapMargins(GetScaledBitmapMargin(), 0);
     update_size();
+#ifdef __WXOSX__
+    // Cocoa applies its own blue/gray title color based on toggle state; override it with the
+    // theme text color so labels stay consistent regardless of checked state.
+    wxColour fg = GetForegroundColour();
+    Slic3r::GUI::mac_set_button_title_color(GetHandle(), fg.Red(), fg.Green(), fg.Blue());
+    // The disabled glyph already encodes the muted disabled look; stop Cocoa from dimming it again
+    // (double-dimming made it nearly invisible vs the disabled text/spin inputs).
+    Slic3r::GUI::mac_set_button_image_dims_when_disabled(GetHandle(), false);
+#endif
 }
 
 #ifdef __WXMSW__
@@ -117,8 +136,9 @@ bool CheckBox::Enable(bool enable)
     if (result)
     {
         m_disable = !enable;
-        wxCommandEvent e(wxEVT_ACTIVATE);
-        updateBitmap(e);
+        // Re-bake the Normal/Current glyph for the new enable state (update() then refreshes
+        // the peer image via updateBitmap). A bare updateBitmap would re-show the enabled glyph.
+        update();
     }
 #endif
     // Checkbox background should always match panel - disabled state shown by grayed icon

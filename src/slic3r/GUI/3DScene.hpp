@@ -79,11 +79,12 @@ extern ColorRGBA color_from_model_volume(const ModelVolume &model_volume);
 class GLVolume
 {
 public:
-    static const ColorRGBA SELECTED_COLOR;
-    static const ColorRGBA HOVER_SELECT_COLOR;
+    // preFlight: selected-object colors follow the active theme accent (read at render time), so they
+    // are functions rather than fixed constants. Unselected volumes keep their filament/extruder color.
+    static ColorRGBA selected_color();
     static const ColorRGBA HOVER_DESELECT_COLOR;
     static const ColorRGBA OUTSIDE_COLOR;
-    static const ColorRGBA SELECTED_OUTSIDE_COLOR;
+    static ColorRGBA selected_outside_color();
     static const ColorRGBA DISABLED_COLOR;
     static const ColorRGBA SLA_SUPPORT_COLOR;
     static const ColorRGBA SLA_PAD_COLOR;

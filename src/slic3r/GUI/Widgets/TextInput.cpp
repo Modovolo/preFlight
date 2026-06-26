@@ -324,7 +324,7 @@ bool TextInput::SetBackgroundColour(const wxColour &colour)
     bool is_dark = Slic3r::GUI::wxGetApp().dark_mode();
     wxColour disabled_bg = is_dark ? UIColors::InputBackgroundDisabledDark() : UIColors::InputBackgroundDisabledLight();
     const StateColor clr_state(std::make_pair(disabled_bg, (int) StateColor::Disabled),
-                               std::make_pair(clr_background_focused, (int) StateColor::Checked),
+                               std::make_pair(clr_background_focused(), (int) StateColor::Checked),
                                std::make_pair(colour, (int) StateColor::Focused),
                                std::make_pair(colour, (int) StateColor::Normal));
 
@@ -693,12 +693,17 @@ void TextInput::render(wxDC &dc)
     {
         wxSize szIcon = get_preferred_size(icon, m_parent);
         pt.y = (size.y - szIcon.y) / 2;
+        icon_rect = wxRect(pt, szIcon);
 #ifdef __WXGTK3__
         dc.DrawBitmap(icon.GetBitmap(szIcon), pt);
 #else
         dc.DrawBitmap(icon.GetBitmapFor(m_parent), pt);
 #endif
         pt.x += szIcon.x + small_margin;
+    }
+    else
+    {
+        icon_rect = wxRect();
     }
 
     // drop_down_icon draw

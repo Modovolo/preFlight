@@ -135,6 +135,12 @@ public:
     static void render_texture(unsigned int tex_id, float left, float right, float bottom, float top);
     static void render_sub_texture(unsigned int tex_id, float left, float right, float bottom, float top,
                                    const Quad_UVs &uvs);
+    // preFlight: render a flat solid-colored 2D quad, optionally with rounded corners (used for
+    // theme-aware toolbar backdrops). radius_x/radius_y are the corner radii in the same (NDC)
+    // units as the bounds; the round_* flags select which corners are rounded vs. left square.
+    static void render_solid_quad(float left, float right, float bottom, float top, float r, float g, float b, float a,
+                                  float radius_x = 0.0f, float radius_y = 0.0f, bool round_tl = false,
+                                  bool round_tr = false, bool round_bl = false, bool round_br = false);
 
 private:
     bool load_from_png(const std::string &filename, bool use_mipmaps, ECompressionType compression_type,

@@ -54,6 +54,7 @@ public:
     wxString GetTitle() const { return m_title; }
     void SetHeaderIcon(const wxBitmapBundle &icon);
     void SetHeaderIndent(int indent); // Indent header content from left edge
+    void SetTitleAccent(bool enable); // Render the title text in the themed accent color (sidebar section headers)
     void SetBadgeText(const wxString &text);
     void SetBadgeVisible(bool visible);
     void SetBulletColor(const wxColour &color); // Show colored bullet before icon
@@ -113,6 +114,7 @@ private:
     bool m_header_hovered;
     bool m_compact;
     bool m_collapsible{true};
+    bool m_title_accent{false}; // When true, the title text uses the themed accent color
 
     // Styling
     StateColor m_header_bg_color;

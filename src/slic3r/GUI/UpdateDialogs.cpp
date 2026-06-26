@@ -62,7 +62,8 @@ MsgUpdateSlic3r::MsgUpdateSlic3r(const Semver &ver_current, const Semver &ver_on
     {
         const std::string url = (boost::format(URL_DEV) % ver_online.to_string()).str();
         const wxString url_wx = from_u8(url);
-        auto *link = new wxHyperlinkCtrl(this, wxID_ANY, _(L("Changelog & Download")), url_wx);
+        auto *link = new wxGenericHyperlinkCtrl(this, wxID_ANY, _(L("Changelog & Download")), url_wx);
+        wxGetApp().tint_hyperlink(link);
         content_sizer->Add(link);
     }
     else
@@ -71,13 +72,15 @@ MsgUpdateSlic3r::MsgUpdateSlic3r(const Semver &ver_current, const Semver &ver_on
 
         const std::string url_log = (boost::format(URL_CHANGELOG) % lang_code).str();
         const wxString url_log_wx = from_u8(url_log);
-        auto *link_log = new wxHyperlinkCtrl(this, wxID_ANY, _(L("Open changelog page")), url_log_wx);
+        auto *link_log = new wxGenericHyperlinkCtrl(this, wxID_ANY, _(L("Open changelog page")), url_log_wx);
+        wxGetApp().tint_hyperlink(link_log);
         link_log->Bind(wxEVT_HYPERLINK, &MsgUpdateSlic3r::on_hyperlink, this);
         content_sizer->Add(link_log);
 
         const std::string url_dw = (boost::format(URL_DOWNLOAD) % lang_code).str();
         const wxString url_dw_wx = from_u8(url_dw);
-        auto *link_dw = new wxHyperlinkCtrl(this, wxID_ANY, _(L("Open download page")), url_dw_wx);
+        auto *link_dw = new wxGenericHyperlinkCtrl(this, wxID_ANY, _(L("Open download page")), url_dw_wx);
+        wxGetApp().tint_hyperlink(link_dw);
         link_dw->Bind(wxEVT_HYPERLINK, &MsgUpdateSlic3r::on_hyperlink, this);
         content_sizer->Add(link_dw);
     }
@@ -122,7 +125,9 @@ AppUpdateAvailableDialog::AppUpdateAvailableDialog(const Semver &ver_current, co
     // Link to the release page (from release:url section in version file)
     if (!release_page.empty())
     {
-        auto *link_release = new wxHyperlinkCtrl(this, wxID_ANY, _(L("View release page")), from_u8(release_page));
+        auto *link_release = new wxGenericHyperlinkCtrl(this, wxID_ANY, _(L("View release page")),
+                                                        from_u8(release_page));
+        wxGetApp().tint_hyperlink(link_release);
         link_release->Bind(wxEVT_HYPERLINK,
                            [](wxHyperlinkEvent &evt)
                            {
@@ -427,7 +432,10 @@ MsgUpdateConfig::MsgUpdateConfig(const std::vector<Update> &updates, PresetUpdat
             auto *line = new wxBoxSizer(wxHORIZONTAL);
             auto changelog_url = (boost::format(update.changelog_url) % lang_code).str();
             line->AddSpacer(3 * GetScaledVertSpacing());
-            line->Add(new wxHyperlinkCtrl(this, wxID_ANY, _(L("Open changelog page")), changelog_url));
+            auto *changelog_link = new wxGenericHyperlinkCtrl(this, wxID_ANY, _(L("Open changelog page")),
+                                                              changelog_url);
+            wxGetApp().tint_hyperlink(changelog_link);
+            line->Add(changelog_link);
             versions->Add(line);
             versions->AddSpacer(1); // empty value for the correct alignment inside a GridSizer
         }
@@ -515,7 +523,10 @@ MsgUpdateForced::MsgUpdateForced(const std::vector<Update> &updates)
             auto *line = new wxBoxSizer(wxHORIZONTAL);
             auto changelog_url = (boost::format(update.changelog_url) % lang_code).str();
             line->AddSpacer(3 * GetScaledVertSpacing());
-            line->Add(new wxHyperlinkCtrl(this, wxID_ANY, _(L("Open changelog page")), changelog_url));
+            auto *changelog_link = new wxGenericHyperlinkCtrl(this, wxID_ANY, _(L("Open changelog page")),
+                                                              changelog_url);
+            wxGetApp().tint_hyperlink(changelog_link);
+            line->Add(changelog_link);
             versions->Add(line);
             versions->AddSpacer(1); // empty value for the correct alignment inside a GridSizer
         }

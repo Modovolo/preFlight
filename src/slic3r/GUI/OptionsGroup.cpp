@@ -239,8 +239,18 @@ void OptionsGroup::change_opt_value(DynamicPrintConfig &config, const t_config_o
             break;
         }
         case coString:
-            config.set_key_value(opt_key, new ConfigOptionString(boost::any_cast<std::string>(value)));
+        {
+            // The value arrives as std::string from a field/load_key_value, but the revert path for an
+            // option-without-field (e.g. thumbnails) hands us a wxString from get_config_value. Accept both
+            // (and an empty any) so reverting never throws bad_any_cast.
+            std::string str;
+            if (const std::string *s = boost::any_cast<std::string>(&value))
+                str = *s;
+            else if (const wxString *ws = boost::any_cast<wxString>(&value))
+                str = into_u8(*ws);
+            config.set_key_value(opt_key, new ConfigOptionString(str));
             break;
+        }
         case coStrings:
         {
             if (opt_key == "compatible_prints" || opt_key == "compatible_printers" || opt_key == "gcode_substitutions")
@@ -756,9 +766,7 @@ bool OptionsGroup::activate(std::function<void()> throw_if_canceled /* = [](){}*
         if (staticbox)
         {
             // Use FlatStaticBox for proper flat borders in both light and dark mode
-            // If sidebar checkbox is enabled, use space as title and overlay our own header
-            wxString box_title = m_enable_sidebar_checkbox ? " " : _(title);
-            stb = new FlatStaticBox(m_parent, wxID_ANY, box_title);
+            stb = new FlatStaticBox(m_parent, wxID_ANY, _(title));
 #ifdef _WIN32
             // Windows only: wxBG_STYLE_PAINT needed for MSWWindowProc border painting.
             // On GTK3, this blocks our g_signal_connect_after draw callback.
@@ -772,141 +780,6 @@ bool OptionsGroup::activate(std::function<void()> throw_if_canceled /* = [](){}*
             stb->SetFont(wxOSX ? wxGetApp().normal_font() : wxGetApp().bold_font());
 #endif
             wxGetApp().UpdateDarkUI(stb);
-
-            // Create checkbox overlay for sidebar visibility if enabled
-            if (m_enable_sidebar_checkbox)
-            {
-                // Use the static box's background color (section interior) for the header
-                // This matches the area inside the border where most of the header sits
-                m_header_panel = new wxPanel(stb, wxID_ANY);
-                m_header_panel->SetBackgroundColour(stb->GetBackgroundColour());
-
-                auto *header_sizer = new wxBoxSizer(wxHORIZONTAL);
-
-                // Create our custom checkbox
-                m_sidebar_checkbox = new ::CheckBox(m_header_panel);
-                m_sidebar_checkbox->SetValue(true); // Default to visible in sidebar
-                m_sidebar_checkbox->SetToolTip(_L("Show this section in the sidebar"));
-
-                // Bind click event to set all row checkboxes
-                m_sidebar_checkbox->Bind(wxEVT_CHECKBOX,
-                                         [this](wxCommandEvent &evt)
-                                         {
-                                             bool checked = m_sidebar_checkbox->GetValue();
-                                             set_all_rows_sidebar_visible(checked);
-                                             evt.Skip();
-                                         });
-
-                // Create label text matching section background
-                auto *label_text = new wxStaticText(m_header_panel, wxID_ANY, _(title));
-                label_text->SetFont(wxOSX ? wxGetApp().normal_font() : wxGetApp().bold_font());
-                label_text->SetBackgroundColour(stb->GetBackgroundColour());
-                wxGetApp().UpdateDarkUI(label_text);
-#ifdef __WXGTK__
-                // Force the label to hold its full text width — GTK's GtkLabel
-                // may wrap or truncate if not given an explicit minimum size.
-                {
-                    wxSize textSz = label_text->GetTextExtent(_(title));
-                    label_text->SetMinSize(wxSize(textSz.GetWidth() + 2, textSz.GetHeight()));
-                    GtkWidget *labelGtk = static_cast<GtkWidget *>(label_text->GetHandle());
-                    if (labelGtk && GTK_IS_LABEL(labelGtk))
-                    {
-                        gtk_label_set_line_wrap(GTK_LABEL(labelGtk), FALSE);
-                        gtk_label_set_ellipsize(GTK_LABEL(labelGtk), PANGO_ELLIPSIZE_NONE);
-                        gtk_label_set_max_width_chars(GTK_LABEL(labelGtk), -1);
-                    }
-                }
-#endif
-
-                header_sizer->Add(m_sidebar_checkbox, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT,
-                                  (wxGetApp().em_unit() * 4) / 10);
-                header_sizer->Add(label_text, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT,
-                                  wxGetApp().em_unit() / 3); // DPI-scaled gap after label
-
-                m_header_panel->SetSizer(header_sizer);
-                m_header_panel->Fit();
-
-                // Explicitly compute the needed width: checkbox + gap + label text + gap.
-                // Fit() may undersize if the checkbox isn't realized yet on GTK.
-                int cb_gap = (wxGetApp().em_unit() * 4) / 10;
-                int label_gap = wxGetApp().em_unit() / 3;
-                wxSize cbBest = m_sidebar_checkbox->GetBestSize();
-                wxSize txtExt = label_text->GetTextExtent(_(title));
-                int needed_w = cbBest.GetWidth() + cb_gap + txtExt.GetWidth() + label_gap;
-                int needed_h = std::max(cbBest.GetHeight(), txtExt.GetHeight());
-                if (needed_w > m_header_panel->GetSize().GetWidth())
-                    m_header_panel->SetSize(needed_w, needed_h);
-                m_header_panel->SetMinSize(wxSize(needed_w, needed_h));
-
-                // Calculate position to center header on the top border line
-                // The static box border is drawn at approximately textHeight/2 from the top
-                // We want our header centered on that border line
-                int header_height = m_header_panel->GetSize().GetHeight();
-#ifdef __WXOSX__
-                // preFlight: OnPaintMac draws the border using a bold version of
-                // the widget font.  Use the same bold font to compute border_y so
-                // the header panel is centered on the actually-drawn border line.
-                wxFont boldMeasure = stb->GetFont();
-                boldMeasure.SetWeight(wxFONTWEIGHT_BOLD);
-                wxClientDC measDc(stb);
-                measDc.SetFont(boldMeasure);
-                int label_height = measDc.GetCharHeight();
-#else
-                int label_height = txtExt.GetHeight();
-#endif
-                int border_y = label_height / 2;                // Where the top border line is drawn
-                int y_pos = border_y - (header_height / 2) + 1; // +1 for fine tuning
-#ifdef __WXOSX__
-                // preFlight: On macOS, children positioned above the content view
-                // top (Y < 0) get clipped.  Clamp to 0 so the header is never cut off.
-                y_pos = std::max(0, y_pos);
-#endif
-
-                // Use x offset of 8 to match where static box labels normally appear
-                m_header_panel->SetPosition(wxPoint(8, y_pos));
-
-                // Raise the header panel to ensure it's on top of the static box border
-                m_header_panel->Raise();
-#ifdef __WXGTK__
-                // preFlight: tell FlatStaticBox about the header panel so the draw
-                // handler can redraw it unclipped (GtkFrame mismanages its allocation).
-                if (auto *flat_stb = dynamic_cast<FlatStaticBox *>(stb))
-                    flat_stb->SetHeaderPanel(m_header_panel);
-#endif
-
-                // Bind to paint event to keep header on top when static box redraws
-                // Use CallAfter to ensure Raise happens after paint completes
-                stb->Bind(wxEVT_PAINT,
-                          [this](wxPaintEvent &evt)
-                          {
-                              evt.Skip(); // Let the static box paint first
-                              if (m_header_panel && m_header_panel->IsShownOnScreen())
-                              {
-                                  wxTheApp->CallAfter(
-                                      [this]()
-                                      {
-                                          if (m_header_panel && m_header_panel->IsShownOnScreen())
-                                          {
-                                              m_header_panel->Raise();
-                                              m_header_panel->Refresh();
-                                          }
-                                      });
-                              }
-                          });
-
-                // Bind size event to reposition header when static box is resized
-                stb->Bind(wxEVT_SIZE,
-                          [this, y_pos](wxSizeEvent &evt)
-                          {
-                              if (m_header_panel && m_header_panel->IsShownOnScreen())
-                              {
-                                  m_header_panel->Fit();
-                                  m_header_panel->SetPosition(wxPoint(8, y_pos));
-                                  m_header_panel->Raise();
-                              }
-                              evt.Skip();
-                          });
-            }
         }
         else
             stb = nullptr;
@@ -950,10 +823,6 @@ bool OptionsGroup::activate(std::function<void()> throw_if_canceled /* = [](){}*
         ctrl_horiz_alignment = horiz_alignment;
         if (custom_ctrl)
             custom_ctrl->init_max_win_width();
-
-        // Initialize section checkbox state based on stored row visibility
-        if (m_sidebar_checkbox)
-            update_section_checkbox_from_rows();
     }
     catch (UIBuildCanceled &)
     {
@@ -971,14 +840,6 @@ void OptionsGroup::clear(bool destroy_custom_ctrl)
 {
     if (!sizer)
         return;
-
-    // Clean up sidebar checkbox header panel
-    if (m_header_panel)
-    {
-        m_header_panel->Destroy();
-        m_header_panel = nullptr;
-        m_sidebar_checkbox = nullptr; // Destroyed with parent
-    }
 
     m_grid_sizer = nullptr;
     sizer = nullptr;
@@ -1029,64 +890,6 @@ void OptionsGroup::on_change_OG(const t_config_option_key &opt_id, const boost::
 {
     if (on_change != nullptr)
         on_change(opt_id, value);
-}
-
-void OptionsGroup::set_all_rows_sidebar_visible(bool visible)
-{
-    if (!custom_ctrl)
-        return;
-
-    // Set visibility for all rows via AppConfig
-    for (const Line &line : m_lines)
-    {
-        const std::vector<Option> &options = line.get_options();
-        if (options.empty())
-            continue;
-
-        // Set visibility for ALL options on this line (handles multi-option rows like "Solid layers")
-        for (const auto &opt : options)
-            get_app_config()->set("sidebar_visibility", opt.opt_id, visible ? "1" : "0");
-    }
-
-    // Save immediately so settings persist even if app crashes
-    get_app_config()->save();
-
-    // Refresh the custom ctrl to update checkbox display
-    custom_ctrl->Refresh();
-
-    // Update sidebar visibility in-place (show/hide rows, groups, sections)
-    // Use CallAfter to avoid potential issues during event handling
-    wxTheApp->CallAfter(
-        []()
-        {
-            if (wxGetApp().plater())
-                wxGetApp().sidebar().update_sidebar_visibility();
-        });
-}
-
-void OptionsGroup::update_section_checkbox_from_rows()
-{
-    if (!m_sidebar_checkbox || !custom_ctrl)
-        return;
-
-    // Count how many rows are visible
-    int visible_count = 0;
-    int total_count = 0;
-
-    for (const Line &line : m_lines)
-    {
-        const std::vector<Option> &options = line.get_options();
-        if (options.empty())
-            continue;
-
-        total_count++;
-        const std::string &opt_key = options.front().opt_id;
-        if (get_app_config()->get("sidebar_visibility", opt_key) != "0")
-            visible_count++;
-    }
-
-    // If any rows are visible, section checkbox should be checked
-    m_sidebar_checkbox->SetValue(visible_count > 0);
 }
 
 Option ConfigOptionsGroup::get_option(const std::string &opt_key, int opt_index /*= -1*/)
@@ -1340,23 +1143,6 @@ void ConfigOptionsGroup::sys_color_changed()
             flat_stb->SysColorsChanged();
         else
             stb->Refresh();
-
-        // Update sidebar checkbox header panel colors to match static box interior
-        if (m_header_panel)
-        {
-            m_header_panel->SetBackgroundColour(stb->GetBackgroundColour());
-            for (wxWindow *child : m_header_panel->GetChildren())
-            {
-                if (auto *checkbox = dynamic_cast<::CheckBox *>(child))
-                    checkbox->sys_color_changed();
-                else
-                {
-                    child->SetBackgroundColour(stb->GetBackgroundColour());
-                    wxGetApp().UpdateDarkUI(child);
-                }
-            }
-            m_header_panel->Refresh();
-        }
     }
 
     if (custom_ctrl)
@@ -1671,7 +1457,8 @@ bool OptionsGroup::launch_browser(const std::string &path_end)
 
 // list of options, which doesn't have a related filed
 static const std::set<std::string> options_without_field = {
-    "compatible_printers", "compatible_prints", "bed_shape", "filament_ramming_parameters", "gcode_substitutions",
+    "compatible_printers", "compatible_prints", "bed_shape", "filament_ramming_parameters",
+    "gcode_substitutions", "thumbnails", // edited via the ThumbnailsDialog button, no inline field
 };
 
 bool OptionsGroup::is_option_without_field(const std::string &opt_key)

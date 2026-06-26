@@ -14,7 +14,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 2.0.2\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
@@ -503,7 +503,8 @@ msgstr "&Rede"
 msgid "&New"
 msgstr "&Novo"
 
-#: ../src/aui/tabmdi.cpp:111 ../src/generic/mdig.cpp:100 ../src/msw/mdi.cpp:180
+#: ../src/aui/tabmdi.cpp:111 ../src/generic/mdig.cpp:100
+#: ../src/msw/mdi.cpp:180
 msgid "&Next"
 msgstr "&Próximo"
 
@@ -577,7 +578,8 @@ msgstr "&Modo da posição:"
 msgid "&Preferences"
 msgstr "&Preferências"
 
-#: ../src/aui/tabmdi.cpp:112 ../src/generic/mdig.cpp:101 ../src/msw/mdi.cpp:181
+#: ../src/aui/tabmdi.cpp:112 ../src/generic/mdig.cpp:101
+#: ../src/msw/mdi.cpp:181
 msgid "&Previous"
 msgstr "&Anterior"
 
@@ -2715,11 +2717,11 @@ msgstr "Desenvolvedores"
 
 #: ../src/msw/dialup.cpp:374
 msgid ""
-"Dial up functions are unavailable because the remote access service (RAS) is "
-"not installed on this machine. Please install it."
+"Dial up functions are unavailable because the remote access service (RAS) is"
+" not installed on this machine. Please install it."
 msgstr ""
-"As funções de discagem estão indisponíveis porque o serviço de acesso remoto "
-"(RAS) não está instalado nesta máquina. Por favor instale-o."
+"As funções de discagem estão indisponíveis porque o serviço de acesso remoto"
+" (RAS) não está instalado nesta máquina. Por favor instale-o."
 
 #: ../src/generic/tipdlg.cpp:211
 msgid "Did you know..."
@@ -2963,8 +2965,8 @@ msgstr "Envelope de Convite 220 x 220 mm"
 msgid ""
 "Environment variables expansion failed: missing '%c' at position %u in '%s'."
 msgstr ""
-"A expansão das variáveis do ambiente falhou: '%c' desaparecido na posição %u "
-"em '%s'."
+"A expansão das variáveis do ambiente falhou: '%c' desaparecido na posição %u"
+" em '%s'."
 
 #: ../src/generic/filedlgg.cpp:357 ../src/generic/dirctrlg.cpp:570
 #: ../src/generic/dirctrlg.cpp:588 ../src/generic/dirctrlg.cpp:599
@@ -3329,8 +3331,8 @@ msgstr "Falhou em instalar o manejador do sinal"
 
 #: ../src/unix/threadpsx.cpp:1167
 msgid ""
-"Failed to join a thread, potential memory leak detected - please restart the "
-"program"
+"Failed to join a thread, potential memory leak detected - please restart the"
+" program"
 msgstr ""
 "Falhou em se juntar a um thread, vazamento potencial de memória detectado - "
 "por favor reinicie o programa"
@@ -3608,7 +3610,8 @@ msgstr "Falhou em definir a prioridade do thread %d."
 
 #: ../src/unix/utilsunx.cpp:783
 msgid "Failed to set up non-blocking pipe, the program might hang."
-msgstr "Falhou em configurar o pipe não-bloqueador, o programa poderia travar."
+msgstr ""
+"Falhou em configurar o pipe não-bloqueador, o programa poderia travar."
 
 #: ../src/common/fs_mem.cpp:261
 #, c-format
@@ -4091,8 +4094,8 @@ msgid ""
 "If possible, try changing the layout parameters to make the printout more "
 "narrow."
 msgstr ""
-"Se possível, tente mudar os parâmetros do layout pra tornar a impressão mais "
-"reduzida."
+"Se possível, tente mudar os parâmetros do layout pra tornar a impressão mais"
+" reduzida."
 
 #: ../src/generic/dbgrptg.cpp:358
 msgid ""
@@ -4104,13 +4107,11 @@ msgstr ""
 
 #: ../src/generic/dbgrptg.cpp:324
 msgid ""
-"If you wish to suppress this debug report completely, please choose the "
-"\"Cancel\" button,\n"
+"If you wish to suppress this debug report completely, please choose the \"Cancel\" button,\n"
 "but be warned that it may hinder improving the program, so if\n"
 "at all possible please do continue with the report generation.\n"
 msgstr ""
-"Se você deseja suprimir este relatório de debug completamente, por favor "
-"escolha o botão \"Cancelar\",\n"
+"Se você deseja suprimir este relatório de debug completamente, por favor escolha o botão \"Cancelar\",\n"
 "mas esteja avisado que pode impedir de melhorar o programa, então se\n"
 "possível de algum modo por favor continue com a geração do relatório.\n"
 
@@ -4155,8 +4156,8 @@ msgstr "A imagem não é do tipo %s."
 
 #: ../src/msw/textctrl.cpp:488
 msgid ""
-"Impossible to create a rich edit control, using simple text control instead. "
-"Please reinstall riched32.dll"
+"Impossible to create a rich edit control, using simple text control instead."
+" Please reinstall riched32.dll"
 msgstr ""
 "Impossível criar um controle de edição rico, usando o controle de texto "
 "simples ao invés disso. Por favor reinstale o riched32.dll"
@@ -4550,8 +4551,7 @@ msgstr "Última página"
 #, c-format
 msgid "Last repeated message (\"%s\", %u time) wasn't output"
 msgid_plural "Last repeated message (\"%s\", %u times) wasn't output"
-msgstr[0] ""
-"A última mensagens repetida (\"%s\", %u vez) não era da saída de dados"
+msgstr[0] "A última mensagens repetida (\"%s\", %u vez) não era da saída de dados"
 msgstr[1] ""
 "As últimas mensagens repetidas (\"%s\", %u vezes) não eram da saída de dados"
 
@@ -5096,8 +5096,7 @@ msgstr "Não foram achadas entradas."
 msgid ""
 "No font for displaying text in encoding '%s' found,\n"
 "but an alternative encoding '%s' is available.\n"
-"Do you want to use this encoding (otherwise you will have to choose another "
-"one)?"
+"Do you want to use this encoding (otherwise you will have to choose another one)?"
 msgstr ""
 "Nenhuma fonte pra exibir o texto na codificação '%s' achada,\n"
 "mas uma codificação alternativa '%s' está disponível.\n"
@@ -5870,8 +5869,7 @@ msgstr "Imprimir"
 
 #: ../src/common/debugrpt.cpp:560
 #, c-format
-msgid ""
-"Processing debug report has failed, leaving the files in \"%s\" directory."
+msgid "Processing debug report has failed, leaving the files in \"%s\" directory."
 msgstr ""
 "O processamento do relatório do debug falhou, deixando os arquivos no "
 "diretório \"%s\"."
@@ -6311,7 +6309,8 @@ msgstr "Configurar..."
 
 #: ../src/msw/dialup.cpp:544
 msgid "Several active dialup connections found, choosing one randomly."
-msgstr "Várias conexões dial-up ativas achadas, escolhendo uma aleatoriamente."
+msgstr ""
+"Várias conexões dial-up ativas achadas, escolhendo uma aleatoriamente."
 
 #: ../src/richtext/richtextbackgroundpage.cpp:271
 msgid "Sh&adow spread:"
@@ -6761,13 +6760,11 @@ msgstr ""
 #: ../src/html/htmprint.cpp:271
 #, c-format
 msgid ""
-"The document \"%s\" doesn't fit on the page horizontally and will be "
-"truncated if printed.\n"
+"The document \"%s\" doesn't fit on the page horizontally and will be truncated if printed.\n"
 "\n"
 "Would you like to proceed with printing it nevertheless?"
 msgstr ""
-"O documento \"%s\" não se encaixa na página horizontalmente e será truncado "
-"se impresso.\n"
+"O documento \"%s\" não se encaixa na página horizontalmente e será truncado se impresso.\n"
 "\n"
 "Você gostaria de prosseguir com a impressão apesar disso?"
 
@@ -6929,12 +6926,10 @@ msgstr "O alcance a mostrar."
 
 #: ../src/generic/dbgrptg.cpp:322
 msgid ""
-"The report contains the files listed below. If any of these files contain "
-"private information,\n"
+"The report contains the files listed below. If any of these files contain private information,\n"
 "please uncheck them and they will be removed from the report.\n"
 msgstr ""
-"O relatório contém os arquivos listados abaixo. Se alguns destes arquivos "
-"contém informação privada,\n"
+"O relatório contém os arquivos listados abaixo. Se alguns destes arquivos contém informação privada,\n"
 "por favor desmarque-os e eles serão removidos do relatório.\n"
 
 #: ../src/common/cmdline.cpp:1254
@@ -7075,7 +7070,8 @@ msgstr "O offset vertical."
 
 #: ../src/richtext/richtextprint.cpp:619 ../src/html/htmprint.cpp:745
 msgid ""
-"There was a problem during page setup: you may need to set a default printer."
+"There was a problem during page setup: you may need to set a default "
+"printer."
 msgstr ""
 "Houve um problema durante a configuração da página: você pode precisar "
 "definir uma impressora padrão."
@@ -7124,8 +7120,8 @@ msgid ""
 "Thread module initialization failed: impossible to allocate index in thread "
 "local storage"
 msgstr ""
-"A inicialização do módulo dos threads falhou: impossível distribuir o índice "
-"no armazém local dos threads"
+"A inicialização do módulo dos threads falhou: impossível distribuir o índice"
+" no armazém local dos threads"
 
 #: ../src/unix/threadpsx.cpp:1043
 msgid "Thread priority setting is ignored."
@@ -7229,9 +7225,7 @@ msgstr "O tipo precisa ter conversão enum - long"
 
 #: ../src/propgrid/propgridiface.cpp:401
 #, c-format
-msgid ""
-"Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT "
-"\"%s\"."
+msgid "Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT \"%s\"."
 msgstr ""
 "A operação do tipo \"%s\" falhou: A propriedade rotulada \"%s\" é do tipo "
 "\"%s\", NÃO \"%s\"."
@@ -7373,8 +7367,7 @@ msgstr "Caracteres inesperados seguindo a opção '%s'."
 #: ../src/unix/fswatcher_inotify.cpp:274
 #, c-format
 msgid "Unexpected event for \"%s\": no matching watch descriptor."
-msgstr ""
-"Evento inesperado para \"%s\": sem descritor de observação que combine."
+msgstr "Evento inesperado para \"%s\": sem descritor de observação que combine."
 
 #: ../src/common/cmdline.cpp:1195
 #, c-format
@@ -7989,8 +7982,7 @@ msgstr "um aplicativo DDEML criou uma condição de corrida prolongada."
 
 #: ../src/msw/dde.cpp:1129
 msgid ""
-"a DDEML function was called without first calling the DdeInitialize "
-"function,\n"
+"a DDEML function was called without first calling the DdeInitialize function,\n"
 "or an invalid instance identifier\n"
 "was passed to a DDEML function."
 msgstr ""
@@ -8026,7 +8018,8 @@ msgstr ""
 
 #: ../src/msw/dde.cpp:1153
 msgid "a request for a synchronous poke transaction has timed out."
-msgstr "o tempo de um pedido pra uma transação de cutucão síncrona se esgotou."
+msgstr ""
+"o tempo de um pedido pra uma transação de cutucão síncrona se esgotou."
 
 #: ../src/msw/dde.cpp:1168
 msgid "a request to end an advise transaction has timed out."
@@ -8883,14 +8876,13 @@ msgstr "~"
 #~ msgstr "Falhou em adicionar o sabor utxt"
 
 #~ msgid "Bitmap renderer cannot render value; value type: "
-#~ msgstr ""
-#~ "O renderizador do bitmap não pode renderizar o valor; tipo de valor:"
+#~ msgstr "O renderizador do bitmap não pode renderizar o valor; tipo de valor:"
 
 #~ msgid ""
 #~ "Cannot create new column's ID. Probably max. number of columns reached."
 #~ msgstr ""
-#~ "Não consegue criar a ID da nova coluna. Provavelmente o nº máx. de "
-#~ "colunas foi alcançado."
+#~ "Não consegue criar a ID da nova coluna. Provavelmente o nº máx. de colunas "
+#~ "foi alcançado."
 
 #~ msgid "Column could not be added."
 #~ msgstr "A coluna não pôde ser adicionada."
@@ -8965,15 +8957,13 @@ msgstr "~"
 #~ msgstr "O renderizador da data não pode renderizar o valor; tipo de valor:"
 
 #~ msgid ""
-#~ "Do you want to overwrite the command used to %s files with extension \"%s"
-#~ "\" ?\n"
+#~ "Do you want to overwrite the command used to %s files with extension \"%s\" ?\n"
 #~ "Current value is \n"
 #~ "%s, \n"
 #~ "New value is \n"
 #~ "%s %1"
 #~ msgstr ""
-#~ "Você quer sobrescrever o comando usado para %s arquivos com a extensão "
-#~ "\"%s\" ?\n"
+#~ "Você quer sobrescrever o comando usado para %s arquivos com a extensão \"%s\" ?\n"
 #~ "O valor atual é \n"
 #~ "%s, \n"
 #~ "O novo valor é \n"
@@ -9010,8 +9000,7 @@ msgstr "~"
 #~ msgid "No column for the specified column position existing."
 #~ msgstr "Nenhuma coluna para a posição da coluna especificada existente."
 
-#~ msgid ""
-#~ "No renderer or invalid renderer type specified for custom data column."
+#~ msgid "No renderer or invalid renderer type specified for custom data column."
 #~ msgstr ""
 #~ "Nenhum renderizador ou tipo de renderizador inválido especificado para a "
 #~ "coluna de dados personalizada."
@@ -9050,11 +9039,10 @@ msgstr "~"
 #~ msgid "Rendering failed."
 #~ msgstr "A renderização falhou."
 
-#~ msgid ""
-#~ "Setting directory access times is not supported under this OS version"
+#~ msgid "Setting directory access times is not supported under this OS version"
 #~ msgstr ""
-#~ "Configurar os tempos de acesso do diretório não é suportado por esta "
-#~ "versão do SO"
+#~ "Configurar os tempos de acesso do diretório não é suportado por esta versão "
+#~ "do SO"
 
 #~ msgid "Show hidden directories"
 #~ msgstr "Mostrar diretórios ocultos"
@@ -9069,8 +9057,8 @@ msgstr "~"
 #~ "This system doesn't support date controls, please upgrade your version of "
 #~ "comctl32.dll"
 #~ msgstr ""
-#~ "Este sistema não suporta os controles de data, por favor atualize sua "
-#~ "versão do comctl32.dll"
+#~ "Este sistema não suporta os controles de data, por favor atualize sua versão"
+#~ " do comctl32.dll"
 
 #~ msgid "Toggle renderer cannot render value; value type: "
 #~ msgstr "O renderizador ativado não pode renderizar o valor; tipo de valor:"
@@ -9089,8 +9077,7 @@ msgstr "~"
 
 #~ msgid "Valid pointer to native data view control does not exist"
 #~ msgstr ""
-#~ "O ponteiro válido pro controle de visualização dos dados nativos não "
-#~ "existe"
+#~ "O ponteiro válido pro controle de visualização dos dados nativos não existe"
 
 #~ msgid "Win32s on Windows 3.1"
 #~ msgstr "Win32s no Windows 3.1"
@@ -9627,11 +9614,11 @@ msgstr "~"
 #~ msgstr "Ir para a página"
 
 #~ msgid ""
-#~ "HTML pagination algorithm generated more than the allowed maximum number "
-#~ "of pages and it can't continue any longer!"
+#~ "HTML pagination algorithm generated more than the allowed maximum number of "
+#~ "pages and it can't continue any longer!"
 #~ msgstr ""
-#~ "O algorítmo de paginação HTML gerou mais do que o número máximo de "
-#~ "páginas permitidas e não pode mais continuar!"
+#~ "O algorítmo de paginação HTML gerou mais do que o número máximo de páginas "
+#~ "permitidas e não pode mais continuar!"
 
 #~ msgid "Help : %s"
 #~ msgstr "Ajuda : %s"
@@ -9689,14 +9676,13 @@ msgstr "~"
 
 #~ msgid "Sorry, print preview needs a printer to be installed."
 #~ msgstr ""
-#~ "Lamento, a pré-visualização da impressão precisa que uma impressora "
-#~ "esteja instalada."
+#~ "Lamento, a pré-visualização da impressão precisa que uma impressora esteja "
+#~ "instalada."
 
 #~ msgid "Status: "
 #~ msgstr "Status: "
 
-#~ msgid ""
-#~ "Streaming delegates for not already streamed objects not yet supported"
+#~ msgid "Streaming delegates for not already streamed objects not yet supported"
 #~ msgstr "O streaming delega para objetos não já streamed ainda não suportado"
 
 #~ msgid "Subclass '%s' not found for resource '%s', not subclassing!"
@@ -9740,8 +9726,7 @@ msgstr "~"
 #~ msgid "XRC resource: Cannot create bitmap from '%s'."
 #~ msgstr "Recurso XRC: Não pode criar o bitmap de '%s'."
 
-#~ msgid ""
-#~ "XRC resource: Incorrect colour specification '%s' for attribute '%s'."
+#~ msgid "XRC resource: Incorrect colour specification '%s' for attribute '%s'."
 #~ msgstr ""
 #~ "Recurso XRC: Especificação das cores '%s' incorreta para o atributo '%s'."
 
@@ -9802,7 +9787,6 @@ msgstr "~"
 #~ msgid "&Print"
 #~ msgstr "&Imprimir"
 
-#, fuzzy
 #~ msgid "*** A debug report has been generated\n"
 #~ msgstr "Um relatï¿½rio de depuraï¿½ï¿½o foi gerado no diretï¿½rio\n"
 
@@ -9820,20 +9804,17 @@ msgstr "~"
 #~ msgstr "Fecha o diï¿½logo sem inserir o sï¿½mbolo."
 
 #~ msgid ""
-#~ "Could not resolve control class or id '%s'. Use (non-zero) integer "
-#~ "instead\n"
+#~ "Could not resolve control class or id '%s'. Use (non-zero) integer instead\n"
 #~ " or provide #define (see manual for caveats)"
 #~ msgstr ""
-#~ "Controle da classe ou id '%s' nï¿½o resolvido. Use inteiros (diferentes "
-#~ "zero)\n"
+#~ "Controle da classe ou id '%s' nï¿½o resolvido. Use inteiros (diferentes zero)\n"
 #~ " ou disponibilize um #define (veja o manual para precauï¿½ï¿½es)"
 
 #~ msgid ""
 #~ "Could not resolve menu id '%s'. Use (non-zero) integer instead\n"
 #~ "or provide #define (see manual for caveats)"
 #~ msgstr ""
-#~ "Nï¿½o foi possï¿½vel resolver id de menu '%s'. Use inteiros (diferentes "
-#~ "de zero)\n"
+#~ "Nï¿½o foi possï¿½vel resolver id de menu '%s'. Use inteiros (diferentes de zero)\n"
 #~ " ou disponibilize um #define (veja o manual para precauï¿½ï¿½es)"
 
 #~ msgid "Couldn't end the context on the overlay window"
@@ -9900,10 +9881,8 @@ msgstr "~"
 #~ msgstr "Selecionar &tudo"
 
 #~ msgid ""
-#~ "Sorry, docking is not supported for ports other than wxMSW, wxMac and "
-#~ "wxGTK"
-#~ msgstr ""
-#~ "O encaixamento sï¿½ ï¿½ suportado nas versï¿½es wxMSW, wxMac e wxGTK"
+#~ "Sorry, docking is not supported for ports other than wxMSW, wxMac and wxGTK"
+#~ msgstr "O encaixamento sï¿½ ï¿½ suportado nas versï¿½es wxMSW, wxMac e wxGTK"
 
 #~ msgid "String conversions not supported"
 #~ msgstr "Conversï¿½es de string nï¿½o suportadas"

@@ -52,6 +52,12 @@
 #include "wx/uiaction.h"
 #endif /* __WXMSW__ */
 
+#ifdef _WIN32
+#include <windows.h>
+#include <commctrl.h> // SetWindowSubclass for the themed object-list border
+#include "Widgets/UIColors.hpp"
+#endif
+
 namespace Slic3r
 {
 namespace GUI
@@ -87,6 +93,39 @@ static void take_snapshot(const wxString &snapshot_name)
         plater->take_snapshot(snapshot_name);
 }
 
+#ifdef _WIN32
+// Recolor the native wxBORDER_SIMPLE frame with the themed section_border (matching the group frames /
+// settings tree) instead of the native DarkMode_Explorer gray. The generic wxDataViewCtrl keeps its own
+// MSWWindowProc private, so the border paint is hooked via a Win32 subclass on the control's HWND.
+static LRESULT CALLBACK ObjectListBorderSubclassProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam, UINT_PTR id,
+                                                     DWORD_PTR)
+{
+    if (msg == WM_NCDESTROY)
+        ::RemoveWindowSubclass(hwnd, &ObjectListBorderSubclassProc, id);
+
+    LRESULT res = ::DefSubclassProc(hwnd, msg, wParam, lParam);
+
+    if (msg == WM_NCPAINT)
+    {
+        const wxColour c = UIColors::SectionBorder();
+        if (c.IsOk())
+        {
+            if (HDC hdc = ::GetWindowDC(hwnd))
+            {
+                RECT wr;
+                ::GetWindowRect(hwnd, &wr);
+                RECT edge = {0, 0, wr.right - wr.left, wr.bottom - wr.top};
+                HBRUSH brush = ::CreateSolidBrush(RGB(c.Red(), c.Green(), c.Blue()));
+                ::FrameRect(hdc, &edge, brush);
+                ::DeleteObject(brush);
+                ::ReleaseDC(hwnd, hdc);
+            }
+        }
+    }
+    return res;
+}
+#endif
+
 ObjectList::ObjectList(wxWindow *parent)
     : wxDataViewCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
 #ifdef _WIN32
@@ -95,6 +134,11 @@ ObjectList::ObjectList(wxWindow *parent)
                          wxDV_MULTIPLE)
 {
     wxGetApp().UpdateDVCDarkUI(this, true);
+
+#ifdef _WIN32
+    // Themed border overlay (see ObjectListBorderSubclassProc).
+    ::SetWindowSubclass((HWND) GetHWND(), &ObjectListBorderSubclassProc, 1, 0);
+#endif
 
     // create control
     create_objects_ctrl();
@@ -5202,6 +5246,11 @@ void ObjectList::sys_color_changed()
     m_objects_model->UpdateBitmaps();
 
     Layout();
+
+#ifdef _WIN32
+    // Force a non-client repaint so the themed border (ObjectListBorderSubclassProc) refreshes for the new theme.
+    ::RedrawWindow((HWND) GetHWND(), nullptr, nullptr, RDW_FRAME | RDW_INVALIDATE | RDW_UPDATENOW);
+#endif
 }
 
 void ObjectList::ItemValueChanged(wxDataViewEvent &event)

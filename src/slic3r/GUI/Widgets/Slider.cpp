@@ -7,10 +7,7 @@
 #include <wx/dcbuffer.h>
 #include <algorithm>
 #include "../GUI_App.hpp"
-
-// Brand colors - #EAA032 (RGB: 234, 160, 50)
-const wxColour Slider::BRAND_COLOR(234, 160, 50);
-const wxColour Slider::BRAND_COLOR_DARK(200, 140, 40);
+#include "UIColors.hpp"
 
 // DPI scaling helper functions
 static int GetScaledTrackHeight()
@@ -103,13 +100,13 @@ void Slider::OnPaint(wxPaintEvent &event)
 
     // Draw filled portion (from start to thumb)
     int thumbX = PositionFromValue();
-    dc.SetBrush(wxBrush(BRAND_COLOR_DARK));
+    dc.SetBrush(wxBrush(UIColors::AccentDark())); // themed accent
     dc.DrawRectangle(0, trackY, thumbX + thumbWidth / 2, trackHeight);
 
     // Draw thumb
     wxRect thumbRect = GetThumbRect();
-    dc.SetBrush(wxBrush(BRAND_COLOR));
-    dc.SetPen(wxPen(BRAND_COLOR_DARK, GetScaledPenWidth()));
+    dc.SetBrush(wxBrush(UIColors::AccentPrimary())); // themed accent
+    dc.SetPen(wxPen(UIColors::AccentDark(), GetScaledPenWidth()));
     dc.DrawRoundedRectangle(thumbRect, GetScaledCornerRadius());
 }
 

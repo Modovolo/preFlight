@@ -624,6 +624,24 @@ void CollapsibleSection::UpdateColors()
     m_header_bg_color.append(m_header_hover_color, StateColor::Hovered);
 }
 
+void CollapsibleSection::SetTitleAccent(bool enable)
+{
+    m_title_accent = enable;
+    if (!m_title_text)
+        return;
+
+    if (enable)
+    {
+        m_title_text->SetForegroundColour(UIColors::AccentPrimary());
+    }
+    else
+    {
+        bool is_dark = wxGetApp().dark_mode();
+        m_title_text->SetForegroundColour(is_dark ? UIColors::PanelForegroundDark() : UIColors::InputForegroundLight());
+    }
+    m_title_text->Refresh();
+}
+
 void CollapsibleSection::sys_color_changed()
 {
     UpdateColors();
@@ -643,7 +661,8 @@ void CollapsibleSection::sys_color_changed()
     }
     if (m_title_text)
     {
-        m_title_text->SetForegroundColour(text_color);
+        // Accent-titled section headers keep the themed accent across theme switches
+        m_title_text->SetForegroundColour(m_title_accent ? UIColors::AccentPrimary() : text_color);
     }
     if (m_bullet)
     {

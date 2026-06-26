@@ -346,7 +346,7 @@ void ModernTabBar::AddSettingsDropdownButton(std::function<void(TabType)> callba
                                       // Draw rounded border for active state
                                       if (is_active)
                                       {
-                                          wxColour brand_color(234, 160, 50); // #EAA032
+                                          wxColour brand_color = UIColors::AccentPrimary(); // themed accent
                                           dc.SetPen(wxPen(brand_color, 1));
                                           dc.SetBrush(*wxTRANSPARENT_BRUSH);
                                           dc.DrawRoundedRectangle(0, 0, size.x - 1, size.y - 1, corner_radius);
@@ -710,7 +710,7 @@ wxPanel *ModernTabBar::CreateStyledButton(const wxString &label)
                      // Draw rounded border for active tab
                      if (is_active)
                      {
-                         wxColour brand_color(234, 160, 50); // #EAA032
+                         wxColour brand_color = UIColors::AccentPrimary(); // themed accent
                          dc.SetPen(wxPen(brand_color, 1));
                          dc.SetBrush(*wxTRANSPARENT_BRUSH);
                          dc.DrawRoundedRectangle(0, 0, size.x - 1, size.y - 1, corner_radius);
@@ -896,76 +896,78 @@ void ModernTabBar::AddSliceButton(std::function<void()> slice_callback, std::fun
     m_slice_button->SetBackgroundStyle(wxBG_STYLE_PAINT);
 
     // Bind paint event for custom drawing
-    m_slice_button->Bind(
-        wxEVT_PAINT,
-        [this](wxPaintEvent &event)
-        {
-            wxAutoBufferedPaintDC dc(m_slice_button);
-            wxSize size = m_slice_button->GetSize();
+    m_slice_button->Bind(wxEVT_PAINT,
+                         [this](wxPaintEvent &event)
+                         {
+                             wxAutoBufferedPaintDC dc(m_slice_button);
+                             wxSize size = m_slice_button->GetSize();
 
-            // Colors
-            wxColour dark_bg = Theme::Complementary::WX_COLOR; // Complementary tan/beige background #E2BA87
-            wxColour orange = Theme::Primary::WX_COLOR;        // Brand color #EAA032
-            wxColour orange_hover(244, 180, 80);               // Lighter hover state
-            wxColour text_color = *wxBLACK;                    // Black text for contrast on tan background
-            // Disabled colors use centralized UIColors (matching tab disabled style)
-            wxColour disabled_bg = UIColors::TabBackgroundDisabled();
-            wxColour disabled_text = UIColors::TabTextDisabled();
-            const int corner_radius = GetScaledSmallCornerRadius();
-            const int dropdown_width = m_show_dropdown ? GetScaledDropdownWidth()
-                                                       : 0; // Only show dropdown area if needed
+                             // Colors
+                             // preFlight: fully themed CTA - accent body, darker-accent dropdown zone + border, and the
+                             // themed glyph color (accent_text) drawn on the accent.
+                             wxColour body_bg = UIColors::AccentPrimary();    // themed accent (button body)
+                             wxColour accent_dark = UIColors::AccentDark();   // darker accent (dropdown zone + border)
+                             wxColour accent_hover = UIColors::AccentHover(); // themed accent hover (pressed dropdown)
+                             wxColour text_color = UIColors::AccentText();    // themed glyph drawn on the accent
+                             // Disabled colors use centralized UIColors (matching tab disabled style)
+                             wxColour disabled_bg = UIColors::TabBackgroundDisabled();
+                             wxColour disabled_text = UIColors::TabTextDisabled();
+                             const int corner_radius = GetScaledSmallCornerRadius();
+                             const int dropdown_width = m_show_dropdown ? GetScaledDropdownWidth()
+                                                                        : 0; // Only show dropdown area if needed
 
-            // First, clear the entire button area with the parent background color
-            dc.SetBrush(wxBrush(GetBackgroundColour()));
-            dc.SetPen(*wxTRANSPARENT_PEN);
-            dc.DrawRectangle(0, 0, size.x, size.y);
+                             // First, clear the entire button area with the parent background color
+                             dc.SetBrush(wxBrush(GetBackgroundColour()));
+                             dc.SetPen(*wxTRANSPARENT_PEN);
+                             dc.DrawRectangle(0, 0, size.x, size.y);
 
-            // Choose colors based on enabled state
-            bool effectively_enabled = m_slice_button_enabled;
-            wxColour bg_color = effectively_enabled ? dark_bg : disabled_bg;
-            wxColour border_color = effectively_enabled ? orange : disabled_bg;
-            wxColour current_text_color = effectively_enabled ? text_color : disabled_text;
+                             // Choose colors based on enabled state
+                             bool effectively_enabled = m_slice_button_enabled;
+                             wxColour bg_color = effectively_enabled ? body_bg : disabled_bg;
+                             wxColour border_color = effectively_enabled ? accent_dark : disabled_bg;
+                             wxColour current_text_color = effectively_enabled ? text_color : disabled_text;
 
-            // Draw background with rounded corners (match border dimensions)
-            dc.SetBrush(wxBrush(bg_color));
-            dc.SetPen(*wxTRANSPARENT_PEN);
-            dc.DrawRoundedRectangle(0, 0, size.x - 1, size.y - 1, corner_radius);
+                             // Draw background with rounded corners (match border dimensions)
+                             dc.SetBrush(wxBrush(bg_color));
+                             dc.SetPen(*wxTRANSPARENT_PEN);
+                             dc.DrawRoundedRectangle(0, 0, size.x - 1, size.y - 1, corner_radius);
 
-            // Draw orange accent on the left (dropdown area) only if dropdown is shown
-            if (m_show_dropdown)
-            {
-                wxColour accent_color = m_slice_button_pressed ? orange_hover : orange;
-                dc.SetBrush(wxBrush(accent_color));
-                dc.SetPen(*wxTRANSPARENT_PEN);
-                dc.DrawRoundedRectangle(1, 1, dropdown_width - 1, size.y - 2, corner_radius - 1);
+                             // Draw the accent on the left (dropdown area) only if dropdown is shown
+                             if (m_show_dropdown)
+                             {
+                                 wxColour accent_color = m_slice_button_pressed ? accent_hover : accent_dark;
+                                 dc.SetBrush(wxBrush(accent_color));
+                                 dc.SetPen(*wxTRANSPARENT_PEN);
+                                 dc.DrawRoundedRectangle(1, 1, dropdown_width - 1, size.y - 2, corner_radius - 1);
 
-                // Draw dropdown arrow (chevron) - all dimensions scaled for DPI
-                const int chevron_pen = GetScaledChevronPenWidth();
-                const int chevron_offset = GetScaledChevronOffset();
-                const int chevron_size = GetScaledChevronArrowSize();
-                dc.SetPen(wxPen(*wxWHITE, chevron_pen));
-                int arrow_x = dropdown_width / 2;
-                int arrow_y = size.y / 2 - chevron_offset;
-                dc.DrawLine(arrow_x - chevron_size, arrow_y, arrow_x, arrow_y + chevron_size);
-                dc.DrawLine(arrow_x, arrow_y + chevron_size, arrow_x + chevron_size, arrow_y);
-            }
+                                 // Draw dropdown arrow (chevron) - all dimensions scaled for DPI
+                                 const int chevron_pen = GetScaledChevronPenWidth();
+                                 const int chevron_offset = GetScaledChevronOffset();
+                                 const int chevron_size = GetScaledChevronArrowSize();
+                                 dc.SetPen(wxPen(text_color, chevron_pen));
+                                 int arrow_x = dropdown_width / 2;
+                                 int arrow_y = size.y / 2 - chevron_offset;
+                                 dc.DrawLine(arrow_x - chevron_size, arrow_y, arrow_x, arrow_y + chevron_size);
+                                 dc.DrawLine(arrow_x, arrow_y + chevron_size, arrow_x + chevron_size, arrow_y);
+                             }
 
-            // Draw thin border around entire button
-            dc.SetBrush(*wxTRANSPARENT_BRUSH);
-            dc.SetPen(wxPen(border_color, 1));
-            dc.DrawRoundedRectangle(0, 0, size.x - 1, size.y - 1, corner_radius);
+                             // Draw thin border around entire button
+                             dc.SetBrush(*wxTRANSPARENT_BRUSH);
+                             dc.SetPen(wxPen(border_color, 1));
+                             dc.DrawRoundedRectangle(0, 0, size.x - 1, size.y - 1, corner_radius);
 
-            // Draw text
-            dc.SetTextForeground(current_text_color);
-            dc.SetFont(GetFont());
-            wxString label = m_has_sliced_object ? _L("Export G-code") : _L("Slice Platter");
-            wxSize text_size = dc.GetTextExtent(label);
-            // Center text - if dropdown shown, offset by dropdown width; otherwise center in full button
-            int text_x = m_show_dropdown ? (dropdown_width + (size.x - dropdown_width - text_size.x) / 2)
-                                         : ((size.x - text_size.x) / 2);
-            int text_y = (size.y - text_size.y) / 2;
-            dc.DrawText(label, text_x, text_y);
-        });
+                             // Draw text
+                             dc.SetTextForeground(current_text_color);
+                             dc.SetFont(GetFont());
+                             wxString label = m_has_sliced_object ? _L("Export G-code") : _L("Slice Platter");
+                             wxSize text_size = dc.GetTextExtent(label);
+                             // Center text - if dropdown shown, offset by dropdown width; otherwise center in full button
+                             int text_x = m_show_dropdown
+                                              ? (dropdown_width + (size.x - dropdown_width - text_size.x) / 2)
+                                              : ((size.x - text_size.x) / 2);
+                             int text_y = (size.y - text_size.y) / 2;
+                             dc.DrawText(label, text_x, text_y);
+                         });
 
     // Handle mouse events
     m_slice_button->Bind(wxEVT_LEFT_DOWN,
@@ -1303,7 +1305,7 @@ void ModernTabBar::ShowPrinterWebViewTab(const wxString &printerName, std::funct
                   // Draw rounded border for active tab
                   if (is_active)
                   {
-                      wxColour brand_color(234, 160, 50); // #EAA032
+                      wxColour brand_color = UIColors::AccentPrimary(); // themed accent
                       dc.SetPen(wxPen(brand_color, 1));
                       dc.SetBrush(*wxTRANSPARENT_BRUSH);
                       dc.DrawRoundedRectangle(0, 0, size.x - 1, size.y - 1, corner_radius);

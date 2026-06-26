@@ -18,7 +18,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
 #: ../src/common/debugrpt.cpp:586
@@ -508,7 +508,8 @@ msgstr "&Netzwerk"
 msgid "&New"
 msgstr "&Neu"
 
-#: ../src/aui/tabmdi.cpp:111 ../src/generic/mdig.cpp:100 ../src/msw/mdi.cpp:180
+#: ../src/aui/tabmdi.cpp:111 ../src/generic/mdig.cpp:100
+#: ../src/msw/mdi.cpp:180
 msgid "&Next"
 msgstr "&Weiter"
 
@@ -582,7 +583,8 @@ msgstr "&Positionierungs-Modus:"
 msgid "&Preferences"
 msgstr "&Einstellungen"
 
-#: ../src/aui/tabmdi.cpp:112 ../src/generic/mdig.cpp:101 ../src/msw/mdi.cpp:181
+#: ../src/aui/tabmdi.cpp:112 ../src/generic/mdig.cpp:101
+#: ../src/msw/mdi.cpp:181
 msgid "&Previous"
 msgstr "&Zurück"
 
@@ -1302,7 +1304,8 @@ msgstr "Alphabetischer Modus"
 
 #: ../src/common/xtistrm.cpp:425
 msgid "Already Registered Object passed to SetObjectClassInfo"
-msgstr "Ein bereits registriertes Objekt wurde an SetObjectClassInfo übergeben"
+msgstr ""
+"Ein bereits registriertes Objekt wurde an SetObjectClassInfo übergeben"
 
 #: ../src/unix/dialup.cpp:353
 msgid "Already dialling ISP."
@@ -2008,8 +2011,8 @@ msgstr "Stil ändern"
 #, c-format
 msgid "Changes won't be saved to avoid overwriting the existing file \"%s\""
 msgstr ""
-"Änderungen werden nicht gesichert um das Überschreiben der vorhandenen Datei "
-"„%s“ zu vermeiden."
+"Änderungen werden nicht gesichert um das Überschreiben der vorhandenen Datei"
+" „%s“ zu vermeiden."
 
 #: ../src/gtk/filepicker.cpp:190 ../src/gtk/filedlg.cpp:87
 #, c-format
@@ -2733,8 +2736,8 @@ msgstr "Entwickler"
 
 #: ../src/msw/dialup.cpp:374
 msgid ""
-"Dial up functions are unavailable because the remote access service (RAS) is "
-"not installed on this machine. Please install it."
+"Dial up functions are unavailable because the remote access service (RAS) is"
+" not installed on this machine. Please install it."
 msgstr ""
 "DFÜ-Verbindungs-Funktionen stehen nicht zur Verfügung, da der RAS-Dienst "
 "(Remote Access Service) auf dieser Maschine nicht installiert ist. Bitte "
@@ -2780,8 +2783,8 @@ msgid ""
 "Display all index items that contain given substring. Search is case "
 "insensitive."
 msgstr ""
-"Alle Indexelemente anzeigen, die den gegebenen Suchbegriff enthalten. Groß-/"
-"Kleinschreibung wird nicht beachtet."
+"Alle Indexelemente anzeigen, die den gegebenen Suchbegriff enthalten. "
+"Groß-/Kleinschreibung wird nicht beachtet."
 
 #: ../src/html/helpwnd.cpp:679
 msgid "Display options dialog"
@@ -3194,7 +3197,8 @@ msgstr "Konnte die Datei „%s“ nicht nach „%s“ kopieren"
 #: ../src/msw/registry.cpp:679
 #, c-format
 msgid "Failed to copy the registry subkey '%s' to '%s'."
-msgstr "Kopieren des Registrierungsschlüssels von „%s“ in „%s“ fehlgeschlagen."
+msgstr ""
+"Kopieren des Registrierungsschlüssels von „%s“ in „%s“ fehlgeschlagen."
 
 #: ../src/msw/dde.cpp:1070
 msgid "Failed to create DDE string"
@@ -3353,8 +3357,8 @@ msgstr "Konnte Signalbearbeitung nicht installieren"
 
 #: ../src/unix/threadpsx.cpp:1167
 msgid ""
-"Failed to join a thread, potential memory leak detected - please restart the "
-"program"
+"Failed to join a thread, potential memory leak detected - please restart the"
+" program"
 msgstr ""
 "Thread-Verbindung fehlgeschlagen. Dies ist ein mögliches Speicherleck - "
 "Bitte Programm neu starten"
@@ -3561,8 +3565,8 @@ msgid ""
 "Failed to rename the file '%s' to '%s' because the destination file already "
 "exists."
 msgstr ""
-"Umbenennen der Datei „%s“ nach „%s“ fehlgeschlagen, da die Zieldatei bereits "
-"existiert."
+"Umbenennen der Datei „%s“ nach „%s“ fehlgeschlagen, da die Zieldatei bereits"
+" existiert."
 
 #: ../src/msw/registry.cpp:634
 #, c-format
@@ -3638,8 +3642,8 @@ msgstr "Versuch fehlgeschlagen, die Thread-Priorität %d zu setzen."
 #: ../src/unix/utilsunx.cpp:783
 msgid "Failed to set up non-blocking pipe, the program might hang."
 msgstr ""
-"Das Erzeugen einer nicht blockierenden Pipe ist fehlgeschlagen, das Programm "
-"könnte stehen bleiben."
+"Das Erzeugen einer nicht blockierenden Pipe ist fehlgeschlagen, das Programm"
+" könnte stehen bleiben."
 
 #: ../src/common/fs_mem.cpp:261
 #, c-format
@@ -3648,12 +3652,14 @@ msgstr "Versuch das Bild „%s“ im VFS-Speicher zu laden, fehlgeschlagen!"
 
 #: ../src/dfb/evtloop.cpp:170
 msgid "Failed to switch DirectFB pipe to non-blocking mode"
-msgstr "Wechsel von DirectFB Pipe in den Nicht blockierenden Modus schlug fehl"
+msgstr ""
+"Wechsel von DirectFB Pipe in den Nicht blockierenden Modus schlug fehl"
 
 #: ../src/unix/wakeuppipe.cpp:59
 msgid "Failed to switch wake up pipe to non-blocking mode"
 msgstr ""
-"Aufweck-Pipe in den nicht blockierenden Modus umzuschalten ist fehlgeschlagen"
+"Aufweck-Pipe in den nicht blockierenden Modus umzuschalten ist "
+"fehlgeschlagen"
 
 #: ../src/unix/threadpsx.cpp:1605
 msgid "Failed to terminate a thread."
@@ -3834,7 +3840,8 @@ msgstr "Schrift:"
 #, c-format
 msgid "Fonts index file %s disappeared while loading fonts."
 msgstr ""
-"Indexdatei der Schriftarten %s während des Ladens der Schriften verschwunden."
+"Indexdatei der Schriftarten %s während des Ladens der Schriften "
+"verschwunden."
 
 #: ../src/unix/utilsunx.cpp:645
 msgid "Fork failed"
@@ -3879,7 +3886,8 @@ msgid ""
 "please install GTK+ 2.12 or later."
 msgstr ""
 "Das GTK+, das auf dieser Maschine installiert ist, ist zu alt um "
-"Bildschirmanordnung zu unterstützen, bitte GTK+ 2.12 oder neuer installieren."
+"Bildschirmanordnung zu unterstützen, bitte GTK+ 2.12 oder neuer "
+"installieren."
 
 #: ../src/univ/themes/gtk.cpp:525
 msgid "GTK+ theme"
@@ -4139,15 +4147,12 @@ msgstr ""
 
 #: ../src/generic/dbgrptg.cpp:324
 msgid ""
-"If you wish to suppress this debug report completely, please choose the "
-"\"Cancel\" button,\n"
+"If you wish to suppress this debug report completely, please choose the \"Cancel\" button,\n"
 "but be warned that it may hinder improving the program, so if\n"
 "at all possible please do continue with the report generation.\n"
 msgstr ""
-"Falls Sie diesen Fehlerbericht vollständig unterdrücken möchten, drücken Sie "
-"bitte „Abbrechen“.\n"
-"Bedenken Sie aber bitte, dass dies eventuell die Verbesserung des Programms "
-"behindern kann,\n"
+"Falls Sie diesen Fehlerbericht vollständig unterdrücken möchten, drücken Sie bitte „Abbrechen“.\n"
+"Bedenken Sie aber bitte, dass dies eventuell die Verbesserung des Programms behindern kann,\n"
 "nach Möglichkeit sollten Sie also den Fehlerbericht erstellen.\n"
 
 #: ../src/msw/registry.cpp:1405
@@ -4191,11 +4196,12 @@ msgstr "Bilddatei hat nicht den Typ %s."
 
 #: ../src/msw/textctrl.cpp:488
 msgid ""
-"Impossible to create a rich edit control, using simple text control instead. "
-"Please reinstall riched32.dll"
+"Impossible to create a rich edit control, using simple text control instead."
+" Please reinstall riched32.dll"
 msgstr ""
 "Versuch eine „rich edit control“ zu erstellen fehlgeschlagen, verwende "
-"stattdessen ein einfaches Text-Control. Bitte „riched32.dll“ neu installieren"
+"stattdessen ein einfaches Text-Control. Bitte „riched32.dll“ neu "
+"installieren"
 
 #: ../src/unix/utilsunx.cpp:301
 msgid "Impossible to get child process input"
@@ -4684,7 +4690,8 @@ msgstr "Zitronengrün"
 #: ../src/generic/helpext.cpp:294
 #, c-format
 msgid "Line %lu of map file \"%s\" has invalid syntax, skipped."
-msgstr "Zeile %lu der Abbildungsdatei „%s“ hat ungültige Syntax, übersprungen."
+msgstr ""
+"Zeile %lu der Abbildungsdatei „%s“ hat ungültige Syntax, übersprungen."
 
 #: ../src/richtext/richtextliststylepage.cpp:444
 msgid "Line spacing:"
@@ -5137,8 +5144,7 @@ msgstr "Keine Einträge gefunden."
 msgid ""
 "No font for displaying text in encoding '%s' found,\n"
 "but an alternative encoding '%s' is available.\n"
-"Do you want to use this encoding (otherwise you will have to choose another "
-"one)?"
+"Do you want to use this encoding (otherwise you will have to choose another one)?"
 msgstr ""
 "Keine Schriftart für die Kodierung „%s“ gefunden,\n"
 "es ist aber eine Alternativkodierung „%s“ verfügbar.\n"
@@ -5915,11 +5921,10 @@ msgstr "Ausdruck"
 
 #: ../src/common/debugrpt.cpp:560
 #, c-format
-msgid ""
-"Processing debug report has failed, leaving the files in \"%s\" directory."
+msgid "Processing debug report has failed, leaving the files in \"%s\" directory."
 msgstr ""
-"Bearbeitung des Fehlerberichts fehlgeschlagen, belasse die Dateien im Ordner "
-"„%s“."
+"Bearbeitung des Fehlerberichts fehlgeschlagen, belasse die Dateien im Ordner"
+" „%s“."
 
 #: ../src/common/prntbase.cpp:545
 msgid "Progress:"
@@ -6082,7 +6087,8 @@ msgstr "Aktuelle Seite aus Lesezeichen entfernen"
 #, c-format
 msgid "Renderer \"%s\" has incompatible version %d.%d and couldn't be loaded."
 msgstr ""
-"Renderer „%s“ hat eine ungültige Version %d.%d und kann nicht geladen werden."
+"Renderer „%s“ hat eine ungültige Version %d.%d und kann nicht geladen "
+"werden."
 
 #: ../src/richtext/richtextbuffer.cpp:4527
 msgid "Renumber List"
@@ -6463,7 +6469,8 @@ msgstr "Größe:"
 msgid "Sizing"
 msgstr "Größenänderung"
 
-# Ein Cursor für die Größenänderung, dessen Pfeile von Norden nach Süden zeigen
+# Ein Cursor für die Größenänderung, dessen Pfeile von Norden nach Süden
+# zeigen
 #. TRANSLATORS: System cursor name
 #: ../src/propgrid/advprops.cpp:1772
 msgid "Sizing N-S"
@@ -6815,13 +6822,11 @@ msgstr ""
 #: ../src/html/htmprint.cpp:271
 #, c-format
 msgid ""
-"The document \"%s\" doesn't fit on the page horizontally and will be "
-"truncated if printed.\n"
+"The document \"%s\" doesn't fit on the page horizontally and will be truncated if printed.\n"
 "\n"
 "Would you like to proceed with printing it nevertheless?"
 msgstr ""
-"Das Dokument „%s“ ist zu breit für die Seite und wird beim Drucken "
-"abgeschnitten.\n"
+"Das Dokument „%s“ ist zu breit für die Seite und wird beim Drucken abgeschnitten.\n"
 "\n"
 "Wollen Sie dennoch mit dem Drucken fortfahren?"
 
@@ -6984,14 +6989,11 @@ msgstr "Der anzuzeigende Bereich."
 
 #: ../src/generic/dbgrptg.cpp:322
 msgid ""
-"The report contains the files listed below. If any of these files contain "
-"private information,\n"
+"The report contains the files listed below. If any of these files contain private information,\n"
 "please uncheck them and they will be removed from the report.\n"
 msgstr ""
-"Der Fehlerbericht enthält die unten aufgelisteten Dateien. Bitte stellen Sie "
-"sicher, dass alle Dateien,\n"
-"die vertrauliche Informationen enthalten, nicht ausgewählt sind; sie werden "
-"dann aus dem Fehlerbericht entfernt.\n"
+"Der Fehlerbericht enthält die unten aufgelisteten Dateien. Bitte stellen Sie sicher, dass alle Dateien,\n"
+"die vertrauliche Informationen enthalten, nicht ausgewählt sind; sie werden dann aus dem Fehlerbericht entfernt.\n"
 
 #: ../src/common/cmdline.cpp:1254
 #, c-format
@@ -7131,7 +7133,8 @@ msgstr "Der vertikale Versatz."
 
 #: ../src/richtext/richtextprint.cpp:619 ../src/html/htmprint.cpp:745
 msgid ""
-"There was a problem during page setup: you may need to set a default printer."
+"There was a problem during page setup: you may need to set a default "
+"printer."
 msgstr ""
 "Es gab ein Problem bei der Seiteneinrichtung: eventuell müssen Sie einen\n"
 "Standarddrucker einrichten."
@@ -7286,9 +7289,7 @@ msgstr "Typ muss eine enum-long-Umwandlung haben"
 
 #: ../src/propgrid/propgridiface.cpp:401
 #, c-format
-msgid ""
-"Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT "
-"\"%s\"."
+msgid "Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT \"%s\"."
 msgstr ""
 "Die Typoperation „%s“ ist fehlgeschlagen: Die Eigenschaft bezeichnet mit "
 "„%s“ ist vom Typ „%s“, NICHT „%s“."
@@ -8050,13 +8051,11 @@ msgstr "Eine DDEML-Anwendung hat eine „prolonged race condition“ ausgelöst.
 
 #: ../src/msw/dde.cpp:1129
 msgid ""
-"a DDEML function was called without first calling the DdeInitialize "
-"function,\n"
+"a DDEML function was called without first calling the DdeInitialize function,\n"
 "or an invalid instance identifier\n"
 "was passed to a DDEML function."
 msgstr ""
-"Eine DDEML-Funktion wurde aufgerufen, ohne vorher die Deinitialisierungs-"
-"Funktion aufzurufen,\n"
+"Eine DDEML-Funktion wurde aufgerufen, ohne vorher die Deinitialisierungs-Funktion aufzurufen,\n"
 "oder ein ungültiger „instance identifier“\n"
 "wurde an eine DDEML-Funktion übergeben."
 
@@ -8100,8 +8099,8 @@ msgstr ""
 #: ../src/msw/dde.cpp:1168
 msgid "a request to end an advise transaction has timed out."
 msgstr ""
-"Eine Anfrage, eine „advise transaction“ zu beenden ist, fehlgeschlagen (time-"
-"out)"
+"Eine Anfrage, eine „advise transaction“ zu beenden ist, fehlgeschlagen "
+"(time-out)"
 
 #: ../src/msw/dde.cpp:1162
 msgid ""
@@ -8147,8 +8146,7 @@ msgid ""
 "Once the application has returned from an XTYP_XACT_COMPLETE callback,\n"
 "the transaction identifier for that callback is no longer valid."
 msgstr ""
-"Eine ungültige Transaktions-Identifizierung wurde an eine DDEML-Funktion "
-"übergeben.\n"
+"Eine ungültige Transaktions-Identifizierung wurde an eine DDEML-Funktion übergeben.\n"
 "Sobald die Anwendung aus einem „XTYP_XACT_COMPLETE“-Callback zurückkehrt,\n"
 "ist die Transaktions-Identifizierung für diesen Callback nicht mehr gültig."
 
@@ -8230,7 +8228,8 @@ msgstr "Kann auf Dateibeschreibung „%d“ die Dateilänge nicht finden"
 
 #: ../src/msw/utils.cpp:341
 msgid "can't find user's HOME, using current directory."
-msgstr "Kann Benutzerverzeichnis nicht finden, verwende aktuelles Verzeichnis."
+msgstr ""
+"Kann Benutzerverzeichnis nicht finden, verwende aktuelles Verzeichnis."
 
 #: ../src/common/file.cpp:366
 #, c-format
@@ -9042,15 +9041,13 @@ msgstr "~"
 #~ msgstr "Datums-Renderer kann den Wert nicht darstellen; Werttyp: "
 
 #~ msgid ""
-#~ "Do you want to overwrite the command used to %s files with extension \"%s"
-#~ "\" ?\n"
+#~ "Do you want to overwrite the command used to %s files with extension \"%s\" ?\n"
 #~ "Current value is \n"
 #~ "%s, \n"
 #~ "New value is \n"
 #~ "%s %1"
 #~ msgstr ""
-#~ "Wollen Sie den Befehl zum %s von Dateien mit der Erweiterung »%s« "
-#~ "ändern?\n"
+#~ "Wollen Sie den Befehl zum %s von Dateien mit der Erweiterung »%s« ändern?\n"
 #~ "Aktueller Wert ist\n"
 #~ "%s,\n"
 #~ "Neuer Wert ist\n"
@@ -9086,8 +9083,7 @@ msgstr "~"
 #~ msgid "No column for the specified column position existing."
 #~ msgstr "Spalte für ausgewählte Position existiert nicht."
 
-#~ msgid ""
-#~ "No renderer or invalid renderer type specified for custom data column."
+#~ msgid "No renderer or invalid renderer type specified for custom data column."
 #~ msgstr ""
 #~ "Kein Renderer oder ungültiger Renderer-Typ für die benutzte Datenspalte "
 #~ "aufgeführt"
@@ -9122,11 +9118,10 @@ msgstr "~"
 #~ msgid "Rendering failed."
 #~ msgstr "Darstellung fehlgeschlagen."
 
-#~ msgid ""
-#~ "Setting directory access times is not supported under this OS version"
+#~ msgid "Setting directory access times is not supported under this OS version"
 #~ msgstr ""
-#~ "Das Setzen der Verzeichniszugriffszeit wird auf dieser "
-#~ "Betriebssystemversion nicht unterstützt"
+#~ "Das Setzen der Verzeichniszugriffszeit wird auf dieser Betriebssystemversion"
+#~ " nicht unterstützt"
 
 #~ msgid "Show hidden directories"
 #~ msgstr "Versteckte Verzeichnisse anzeigen"
@@ -9141,9 +9136,8 @@ msgstr "~"
 #~ "This system doesn't support date controls, please upgrade your version of "
 #~ "comctl32.dll"
 #~ msgstr ""
-#~ "Dieses System unterstützt die Komponente zur Darstellung der "
-#~ "Datumsauswahl nicht. Installieren Sie bitte eine neuere Version der "
-#~ "comctl32.dll."
+#~ "Dieses System unterstützt die Komponente zur Darstellung der Datumsauswahl "
+#~ "nicht. Installieren Sie bitte eine neuere Version der comctl32.dll."
 
 #~ msgid "Toggle renderer cannot render value; value type: "
 #~ msgstr "Umschalt-Renderer konnte den Wert nicht darstellen; Werttyp: "
@@ -9248,7 +9242,6 @@ msgstr "~"
 #~ msgid "wxWidget's control not initialized."
 #~ msgstr "wxWidget Kontrollelement nicht initialisiert."
 
-#, fuzzy
 #~ msgid "'%s' is invalid"
 #~ msgstr "»%s« ist eine ungültige Zeichenkette"
 
@@ -9522,12 +9515,10 @@ msgstr "~"
 
 #~ msgid "Can't monitor non-existent path \"%s\" for changes."
 #~ msgstr ""
-#~ "Der nicht vorhandene Pfad »%s« kann nicht nach Änderungen durchsucht "
-#~ "werden."
+#~ "Der nicht vorhandene Pfad »%s« kann nicht nach Änderungen durchsucht werden."
 
 #~ msgid "File system containing watched object was unmounted"
-#~ msgstr ""
-#~ "Das Dateisystem das die beobachteten Objekte enthält wurde ausgehängt"
+#~ msgstr "Das Dateisystem das die beobachteten Objekte enthält wurde ausgehängt"
 
 #~ msgid "&Preview..."
 #~ msgstr "& Vorschau..."
@@ -9685,20 +9676,17 @@ msgstr "~"
 #~ msgstr "Schließt das Dokument ohne ein Symbol einzufügen."
 
 #~ msgid ""
-#~ "Could not resolve control class or id '%s'. Use (non-zero) integer "
-#~ "instead\n"
+#~ "Could not resolve control class or id '%s'. Use (non-zero) integer instead\n"
 #~ " or provide #define (see manual for caveats)"
 #~ msgstr ""
 #~ "Konnte Steuerelement-Klasse oder -Kennziffer »%s« nicht auflösen.\n"
-#~ "Ganzzahl (ungleich Null) verwenden, oder #define angeben (siehe Handbuch "
-#~ "bei Problemen)"
+#~ "Ganzzahl (ungleich Null) verwenden, oder #define angeben (siehe Handbuch bei Problemen)"
 
 #~ msgid ""
 #~ "Could not resolve menu id '%s'. Use (non-zero) integer instead\n"
 #~ "or provide #define (see manual for caveats)"
 #~ msgstr ""
-#~ "Konnte Menü-Id »%s« nicht auflösen. Benutzen Sie stattdessen Integer "
-#~ "(ungleich Null)\n"
+#~ "Konnte Menü-Id »%s« nicht auflösen. Benutzen Sie stattdessen Integer (ungleich Null)\n"
 #~ "oder ein #define (s.a. Handbuch für mögliche Probleme damit)"
 
 #~ msgid "Could not unlock mutex"
@@ -9765,8 +9753,8 @@ msgstr "~"
 #~ msgstr "Gehe zur Seite"
 
 #~ msgid ""
-#~ "HTML pagination algorithm generated more than the allowed maximum number "
-#~ "of pages and it can't continue any longer!"
+#~ "HTML pagination algorithm generated more than the allowed maximum number of "
+#~ "pages and it can't continue any longer!"
 #~ msgstr ""
 #~ "Der Algorithmus zur HTML-Seitengenerierung hat mehr als die maximal "
 #~ "erlaubten Seiten erzeugt und kann nicht fortfahren!"
@@ -9832,24 +9820,21 @@ msgstr "~"
 #~ msgstr "Bedauere, diese Datei konnte nicht gespeichert werden."
 
 #~ msgid ""
-#~ "Sorry, docking is not supported for ports other than wxMSW, wxMac and "
-#~ "wxGTK"
+#~ "Sorry, docking is not supported for ports other than wxMSW, wxMac and wxGTK"
 #~ msgstr ""
 #~ "Entschuldigung, Andocken wird nicht unterstützt für Portierungen außer "
 #~ "wxMSW, wxMac und wxGTK"
 
 #~ msgid "Sorry, print preview needs a printer to be installed."
-#~ msgstr ""
-#~ "Tut mir leid: Die Druck-Vorschau benötigt einen installierten Drucker"
+#~ msgstr "Tut mir leid: Die Druck-Vorschau benötigt einen installierten Drucker"
 
 #~ msgid "Status: "
 #~ msgstr "Status: "
 
-#~ msgid ""
-#~ "Streaming delegates for not already streamed objects not yet supported"
+#~ msgid "Streaming delegates for not already streamed objects not yet supported"
 #~ msgstr ""
-#~ "Streaming delegates sind noch nicht unterstützt, wenn es sich nicht "
-#~ "bereits um streaming objects handelt"
+#~ "Streaming delegates sind noch nicht unterstützt, wenn es sich nicht bereits "
+#~ "um streaming objects handelt"
 
 #~ msgid "String conversions not supported"
 #~ msgstr "Umwandlung in Zeichenkette wird nicht unterstützt"
@@ -9898,8 +9883,8 @@ msgstr "~"
 
 #~ msgid "Warning: attempt to remove HTML tag handler from empty stack."
 #~ msgstr ""
-#~ "Warnung: Es wurde versucht, einen 'HTML-Tag-Handler' von einem leeren "
-#~ "Stack zu entfernen."
+#~ "Warnung: Es wurde versucht, einen 'HTML-Tag-Handler' von einem leeren Stack "
+#~ "zu entfernen."
 
 #~ msgid "Windows 2000 (build %lu"
 #~ msgstr "Windows 2000 (build %lu"

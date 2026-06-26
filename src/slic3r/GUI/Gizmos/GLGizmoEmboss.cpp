@@ -1024,7 +1024,8 @@ void GLGizmoEmboss::on_render_input_window(float x, float y, float bottom_limit)
 
     bool is_opened = true;
     ImGuiWindowFlags flag = ImGuiWindowFlags_NoCollapse;
-    if (ImGui::Begin(get_name().c_str(), &is_opened, flag))
+    // Route through ImGuiPureWrap::begin so the title bar gets the dark-on-accent text the other popups use.
+    if (ImGuiPureWrap::begin(get_name(), &is_opened, flag))
     {
         // Need to pop var before draw window
         ImGui::PopStyleVar(); // WindowMinSize
@@ -1043,7 +1044,7 @@ void GLGizmoEmboss::on_render_input_window(float x, float y, float bottom_limit)
         ImGui::SetWindowSize(ImVec2(0.f, min_window_size.y), ImGuiCond_Always);
     }
 
-    ImGui::End();
+    ImGuiPureWrap::end();
     if (!is_opened)
         close();
 }
@@ -2027,7 +2028,7 @@ void GLGizmoEmboss::draw_font_list()
             bool is_selected = (actual_face_name == wx_face_name);
             ImVec2 selectable_size(0, m_gui_cfg->face_name_size.y());
             ImGuiSelectableFlags flags = 0;
-            if (ImGui::Selectable(face.name_truncated.c_str(), is_selected, flags, selectable_size))
+            if (ImGuiPureWrap::selectable_contrast(face.name_truncated.c_str(), is_selected, flags, selectable_size))
             {
                 if (!select_facename(wx_face_name))
                 {
@@ -2574,7 +2575,7 @@ void GLGizmoEmboss::draw_style_list()
             const std::optional<StyleManager::StyleImage> &img = style.image;
             // allow click delete button
             ImGuiSelectableFlags_ flags = ImGuiSelectableFlags_AllowItemOverlap;
-            if (ImGui::Selectable(style.truncated_name.c_str(), is_selected, flags, select_size))
+            if (ImGuiPureWrap::selectable_contrast(style.truncated_name.c_str(), is_selected, flags, select_size))
             {
                 selected_style_index = index;
             }
@@ -3074,7 +3075,7 @@ void GLGizmoEmboss::draw_advanced()
             {
                 ImGui::PushID(1 << (10 + i));
                 bool is_selected = (i == selected);
-                if (ImGui::Selectable(std::to_string(i).c_str(), is_selected))
+                if (ImGuiPureWrap::selectable_contrast(std::to_string(i).c_str(), is_selected))
                 {
                     if (i == 0)
                         collection_number.reset();

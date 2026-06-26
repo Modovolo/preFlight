@@ -42,7 +42,8 @@ private:
     ScrollablePanel *m_scroll{nullptr};
     wxButton *m_ok_btn{nullptr};
     std::vector<wxStaticText *> m_error_labels;
-    std::vector<wxStaticText *> m_section_labels;
+    std::vector<wxStaticText *> m_section_labels;  // bold section headings -> accent
+    std::vector<wxStaticText *> m_subtitle_labels; // explanatory subtitles -> secondary text
 };
 
 // Top-level function to run the full Orca import workflow:

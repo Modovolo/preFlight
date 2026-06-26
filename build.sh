@@ -145,12 +145,16 @@ elif [[ $IS_MACOS -eq 1 ]]; then
     if [[ "$ARCH" == "arm64" ]]; then
         DEPLOY_TARGET="11.0"
     else
-        DEPLOY_TARGET="10.13"
+        DEPLOY_TARGET="10.15"
     fi
 
     CMAKE_EXTRA_ARGS="-DCMAKE_OSX_ARCHITECTURES=$ARCH"
     CMAKE_EXTRA_ARGS="$CMAKE_EXTRA_ARGS -DCMAKE_OSX_DEPLOYMENT_TARGET=$DEPLOY_TARGET"
-    CMAKE_EXTRA_ARGS="$CMAKE_EXTRA_ARGS -DCMAKE_CXX_FLAGS=-I/opt/homebrew/include"
+    # Homebrew prefix is arch-specific (Apple Silicon /opt/homebrew, Intel /usr/local).
+    # Headers only, so this stays correct even when cross-compiling x86_64 on arm64.
+    if command -v brew >/dev/null 2>&1; then
+        CMAKE_EXTRA_ARGS="$CMAKE_EXTRA_ARGS -DCMAKE_CXX_FLAGS=-I$(brew --prefix)/include"
+    fi
 
 else
     # Linux

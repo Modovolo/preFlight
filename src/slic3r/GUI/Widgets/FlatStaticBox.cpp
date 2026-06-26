@@ -282,11 +282,13 @@ void FlatStaticBox::UpdateTheme()
 #ifdef _WIN32
     if (wxGetApp().dark_mode())
     {
-        // Dark mode: use DarkMode_Explorer theme which has built-in flat borders
+        // Dark mode: keep DarkMode_Explorer for the interior, but paint the group border ourselves
+        // (WM_PAINT) with the themed section_border so groups match the settings-tree frame.
         NppDarkMode::SetDarkExplorerTheme(GetHWND());
         // Set lighter background for section interiors (#161B22 vs page #0D1117)
         SetBackgroundColour(UIColors::InputBackgroundDark());
         SetForegroundColour(UIColors::InputForegroundDark());
+        m_borderColor = UIColors::SectionBorderDark();
     }
     else
     {
@@ -295,6 +297,7 @@ void FlatStaticBox::UpdateTheme()
         SetWindowTheme((HWND) GetHWND(), L"", L"");
         SetBackgroundColour(UIColors::InputBackgroundLight());
         SetForegroundColour(UIColors::InputForegroundLight());
+        m_borderColor = UIColors::SectionBorderLight();
     }
 #elif defined(__WXGTK__)
     // GTK3: set colors and border color; the draw callback renders everything.
@@ -422,14 +425,12 @@ void FlatStaticBox::OnPaintMac(wxPaintEvent &evt)
 #ifdef _WIN32
 WXLRESULT FlatStaticBox::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
-    // Let Windows paint first (this draws the 3D border in light mode with classic theme)
+    // Let Windows paint first (native frame: classic 3D in light mode, DarkMode_Explorer flat in dark mode)
     WXLRESULT result = wxStaticBox::MSWWindowProc(nMsg, wParam, lParam);
 
-    // Only flatten the border in light mode
-    // Dark mode uses DarkMode_Explorer theme which already has flat borders
-    bool is_dark = wxGetApp().dark_mode();
-
-    if (nMsg == WM_PAINT && m_drawFlatBorder && m_borderColor.IsOk() && !is_dark)
+    // Paint the themed section_border over the native frame in BOTH modes, so groups match the
+    // settings-tree frame (LabeledBorderPanel) instead of falling back to the native gray in dark mode.
+    if (nMsg == WM_PAINT && m_drawFlatBorder && m_borderColor.IsOk())
     {
         HWND hwnd = (HWND) GetHWND();
         HDC hdc = ::GetWindowDC(hwnd);
@@ -475,24 +476,33 @@ WXLRESULT FlatStaticBox::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lP
 
         RECT rc;
 
-        // Erase the 3D border by painting background color over it
-        rc = {0, topLineY - borderW, eraseWidth, height};
+        // Erase the native border by painting background color over it. The band extends
+        // eraseWidth above the top line too (not just borderW), so the native frame's corner
+        // pixels that sit slightly above the line don't leave a stray dot at the border tips.
+        rc = {0, topLineY - eraseWidth, eraseWidth, height};
         ::FillRect(hdc, &rc, bgBrush);
         rc = {0, height - eraseWidth, width, height};
         ::FillRect(hdc, &rc, bgBrush);
-        rc = {width - eraseWidth, topLineY - borderW, width, height};
+        rc = {width - eraseWidth, topLineY - eraseWidth, width, height};
         ::FillRect(hdc, &rc, bgBrush);
 
         if (labelText[0] != 0)
         {
-            rc = {0, topLineY - borderW, labelStartX - labelGap, topLineY + eraseWidth};
+            // Erase up to labelStartX (not labelStartX - labelGap), so the native frame's
+            // border segment that resumes inside our wider label gap is covered on the left too.
+            // The label glyphs (or the overlaid header panel) start at labelStartX, so nothing
+            // visible is erased. The themed border is redrawn afterward to labelStartX - labelGap.
+            rc = {0, topLineY - eraseWidth, labelStartX, topLineY + eraseWidth};
             ::FillRect(hdc, &rc, bgBrush);
-            rc = {labelEndX + labelGap, topLineY - borderW, width, topLineY + eraseWidth};
+            // Erase from just past the label text (not labelEndX), so the native frame's
+            // border segment that resumes inside our wider label gap is covered too. The
+            // themed border is redrawn afterward from labelEndX + labelGap.
+            rc = {labelStartX + textSize.cx + labelGap, topLineY - eraseWidth, width, topLineY + eraseWidth};
             ::FillRect(hdc, &rc, bgBrush);
         }
         else
         {
-            rc = {0, topLineY - borderW, width, topLineY + eraseWidth};
+            rc = {0, topLineY - eraseWidth, width, topLineY + eraseWidth};
             ::FillRect(hdc, &rc, bgBrush);
         }
 

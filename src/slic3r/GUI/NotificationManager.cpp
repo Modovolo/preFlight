@@ -9,6 +9,7 @@
 #include "HintNotification.hpp"
 #include "GUI.hpp"
 #include "ImGuiPureWrap.hpp"
+#include "ThemePalette.hpp"
 #include "PrintHostDialogs.hpp"
 #include "wxExtensions.hpp"
 #include "ObjectDataViewModel.hpp"
@@ -272,15 +273,20 @@ bool NotificationManager::PopNotification::push_background_color()
     if (m_data.level == NotificationLevel::ErrorNotificationLevel)
     {
         ImVec4 backcolor = ImGui::GetStyleColorVec4(ImGuiCol_WindowBg);
-        backcolor.x += 0.3f;
+        const wxColour &c = Slic3r::GUI::active_palette().error; // themed error red, blended over the window bg
+        backcolor.x += (c.Red() / 255.0f - backcolor.x) * 0.55f;
+        backcolor.y += (c.Green() / 255.0f - backcolor.y) * 0.55f;
+        backcolor.z += (c.Blue() / 255.0f - backcolor.z) * 0.55f;
         push_style_color(ImGuiCol_WindowBg, backcolor, m_state == EState::FadingOut, m_current_fade_opacity);
         return true;
     }
     if (m_data.level == NotificationLevel::WarningNotificationLevel)
     {
         ImVec4 backcolor = ImGui::GetStyleColorVec4(ImGuiCol_WindowBg);
-        backcolor.x += 0.3f;
-        backcolor.y += 0.15f;
+        const wxColour &c = Slic3r::GUI::active_palette().warning; // themed warning amber, blended over the window bg
+        backcolor.x += (c.Red() / 255.0f - backcolor.x) * 0.55f;
+        backcolor.y += (c.Green() / 255.0f - backcolor.y) * 0.55f;
+        backcolor.z += (c.Blue() / 255.0f - backcolor.z) * 0.55f;
         push_style_color(ImGuiCol_WindowBg, backcolor, m_state == EState::FadingOut, m_current_fade_opacity);
         return true;
     }
@@ -661,7 +667,10 @@ void NotificationManager::PopNotification::render_close_button(const float win_s
     ImVec2 win_pos(win_pos_x, win_pos_y);
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(.0f, .0f, .0f, .0f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(.0f, .0f, .0f, .0f));
-    push_style_color(ImGuiCol_Text, ImVec4(1.f, 1.f, 1.f, 1.f), m_state == EState::FadingOut, m_current_fade_opacity);
+    // Tint the close glyph with the notification text color (like the left marker) so the X matches the
+    // marker on every theme instead of staying the brand orange baked into the icon SVG.
+    push_style_color(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_Text), m_state == EState::FadingOut,
+                     m_current_fade_opacity);
     push_style_color(ImGuiCol_TextSelectedBg, ImVec4(0, .75f, .75f, 1.f), m_state == EState::FadingOut,
                      m_current_fade_opacity);
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(.0f, .0f, .0f, .0f));
@@ -722,7 +731,8 @@ void NotificationManager::PopNotification::render_minimize_button(const float wi
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(.0f, .0f, .0f, .0f));
     push_style_color(ImGuiCol_ButtonActive, ImGui::GetStyleColorVec4(ImGuiCol_WindowBg), m_state == EState::FadingOut,
                      m_current_fade_opacity);
-    push_style_color(ImGuiCol_Text, ImVec4(1.f, 1.f, 1.f, 1.f), m_state == EState::FadingOut, m_current_fade_opacity);
+    push_style_color(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_Text), m_state == EState::FadingOut,
+                     m_current_fade_opacity);
     push_style_color(ImGuiCol_TextSelectedBg, ImVec4(0, .75f, .75f, 1.f), m_state == EState::FadingOut,
                      m_current_fade_opacity);
 
@@ -935,7 +945,8 @@ void NotificationManager::ExportFinishedNotification::render_eject_button(const 
     ImVec2 win_pos(win_pos_x, win_pos_y);
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(.0f, .0f, .0f, .0f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(.0f, .0f, .0f, .0f));
-    push_style_color(ImGuiCol_Text, ImVec4(1.f, 1.f, 1.f, 1.f), m_state == EState::FadingOut, m_current_fade_opacity);
+    push_style_color(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_Text), m_state == EState::FadingOut,
+                     m_current_fade_opacity);
     push_style_color(ImGuiCol_TextSelectedBg, ImVec4(0, .75f, .75f, 1.f), m_state == EState::FadingOut,
                      m_current_fade_opacity);
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(.0f, .0f, .0f, .0f));
@@ -1139,7 +1150,8 @@ void NotificationManager::ProgressBarWithCancelNotification::render_close_button
     ImVec2 win_pos(win_pos_x, win_pos_y);
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(.0f, .0f, .0f, .0f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(.0f, .0f, .0f, .0f));
-    push_style_color(ImGuiCol_Text, ImVec4(1.f, 1.f, 1.f, 1.f), m_state == EState::FadingOut, m_current_fade_opacity);
+    push_style_color(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_Text), m_state == EState::FadingOut,
+                     m_current_fade_opacity);
     push_style_color(ImGuiCol_TextSelectedBg, ImVec4(0, .75f, .75f, 1.f), m_state == EState::FadingOut,
                      m_current_fade_opacity);
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(.0f, .0f, .0f, .0f));
@@ -1182,7 +1194,8 @@ void NotificationManager::ProgressBarWithCancelNotification::render_cancel_butto
     ImVec2 win_pos(win_pos_x, win_pos_y);
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(.0f, .0f, .0f, .0f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(.0f, .0f, .0f, .0f));
-    push_style_color(ImGuiCol_Text, ImVec4(1.f, 1.f, 1.f, 1.f), m_state == EState::FadingOut, m_current_fade_opacity);
+    push_style_color(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_Text), m_state == EState::FadingOut,
+                     m_current_fade_opacity);
     push_style_color(ImGuiCol_TextSelectedBg, ImVec4(0, .75f, .75f, 1.f), m_state == EState::FadingOut,
                      m_current_fade_opacity);
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(.0f, .0f, .0f, .0f));
@@ -1323,7 +1336,8 @@ void NotificationManager::URLDownloadNotification::render_close_button_inner(con
     ImVec2 win_pos(win_pos_x, win_pos_y);
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(.0f, .0f, .0f, .0f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(.0f, .0f, .0f, .0f));
-    push_style_color(ImGuiCol_Text, ImVec4(1.f, 1.f, 1.f, 1.f), m_state == EState::FadingOut, m_current_fade_opacity);
+    push_style_color(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_Text), m_state == EState::FadingOut,
+                     m_current_fade_opacity);
     push_style_color(ImGuiCol_TextSelectedBg, ImVec4(0, .75f, .75f, 1.f), m_state == EState::FadingOut,
                      m_current_fade_opacity);
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(.0f, .0f, .0f, .0f));
@@ -1374,7 +1388,8 @@ void NotificationManager::URLDownloadNotification::render_pause_button_inner(con
     ImVec2 win_pos(win_pos_x, win_pos_y);
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(.0f, .0f, .0f, .0f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(.0f, .0f, .0f, .0f));
-    push_style_color(ImGuiCol_Text, ImVec4(1.f, 1.f, 1.f, 1.f), m_state == EState::FadingOut, m_current_fade_opacity);
+    push_style_color(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_Text), m_state == EState::FadingOut,
+                     m_current_fade_opacity);
     push_style_color(ImGuiCol_TextSelectedBg, ImVec4(0, .75f, .75f, 1.f), m_state == EState::FadingOut,
                      m_current_fade_opacity);
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(.0f, .0f, .0f, .0f));
@@ -1418,7 +1433,8 @@ void NotificationManager::URLDownloadNotification::render_open_button_inner(cons
     ImVec2 win_pos(win_pos_x, win_pos_y);
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(.0f, .0f, .0f, .0f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(.0f, .0f, .0f, .0f));
-    push_style_color(ImGuiCol_Text, ImVec4(1.f, 1.f, 1.f, 1.f), m_state == EState::FadingOut, m_current_fade_opacity);
+    push_style_color(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_Text), m_state == EState::FadingOut,
+                     m_current_fade_opacity);
     push_style_color(ImGuiCol_TextSelectedBg, ImVec4(0, .75f, .75f, 1.f), m_state == EState::FadingOut,
                      m_current_fade_opacity);
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(.0f, .0f, .0f, .0f));
@@ -1460,7 +1476,8 @@ void NotificationManager::URLDownloadNotification::render_cancel_button_inner(co
     ImVec2 win_pos(win_pos_x, win_pos_y);
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(.0f, .0f, .0f, .0f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(.0f, .0f, .0f, .0f));
-    push_style_color(ImGuiCol_Text, ImVec4(1.f, 1.f, 1.f, 1.f), m_state == EState::FadingOut, m_current_fade_opacity);
+    push_style_color(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_Text), m_state == EState::FadingOut,
+                     m_current_fade_opacity);
     push_style_color(ImGuiCol_TextSelectedBg, ImVec4(0, .75f, .75f, 1.f), m_state == EState::FadingOut,
                      m_current_fade_opacity);
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(.0f, .0f, .0f, .0f));
@@ -1594,15 +1611,20 @@ bool NotificationManager::PrintHostUploadNotification::push_background_color()
     if (m_uj_state == UploadJobState::PB_ERROR)
     {
         ImVec4 backcolor = ImGui::GetStyleColorVec4(ImGuiCol_WindowBg);
-        backcolor.x += 0.3f;
+        const wxColour &c = Slic3r::GUI::active_palette().error; // themed error red, blended over the window bg
+        backcolor.x += (c.Red() / 255.0f - backcolor.x) * 0.55f;
+        backcolor.y += (c.Green() / 255.0f - backcolor.y) * 0.55f;
+        backcolor.z += (c.Blue() / 255.0f - backcolor.z) * 0.55f;
         push_style_color(ImGuiCol_WindowBg, backcolor, m_state == EState::FadingOut, m_current_fade_opacity);
         return true;
     }
     else if (m_uj_state == UploadJobState::PB_COMPLETED_WITH_WARNING)
     {
         ImVec4 backcolor = ImGui::GetStyleColorVec4(ImGuiCol_WindowBg);
-        backcolor.x += 0.3f;
-        backcolor.y += 0.15f;
+        const wxColour &c = Slic3r::GUI::active_palette().warning; // themed warning amber, blended over the window bg
+        backcolor.x += (c.Red() / 255.0f - backcolor.x) * 0.55f;
+        backcolor.y += (c.Green() / 255.0f - backcolor.y) * 0.55f;
+        backcolor.z += (c.Blue() / 255.0f - backcolor.z) * 0.55f;
         push_style_color(ImGuiCol_WindowBg, backcolor, m_state == EState::FadingOut, m_current_fade_opacity);
         return true;
     }
@@ -1854,7 +1876,8 @@ void NotificationManager::PrintHostUploadNotification::render_cancel_button(cons
     ImVec2 win_pos(win_pos_x, win_pos_y);
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(.0f, .0f, .0f, .0f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(.0f, .0f, .0f, .0f));
-    push_style_color(ImGuiCol_Text, ImVec4(1.f, 1.f, 1.f, 1.f), m_state == EState::FadingOut, m_current_fade_opacity);
+    push_style_color(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_Text), m_state == EState::FadingOut,
+                     m_current_fade_opacity);
     push_style_color(ImGuiCol_TextSelectedBg, ImVec4(0, .75f, .75f, 1.f), m_state == EState::FadingOut,
                      m_current_fade_opacity);
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(.0f, .0f, .0f, .0f));
@@ -2324,7 +2347,8 @@ void NotificationManager::SlicingProgressNotification::render_cancel_button(cons
     ImVec2 win_pos(win_pos_x, win_pos_y);
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(.0f, .0f, .0f, .0f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(.0f, .0f, .0f, .0f));
-    push_style_color(ImGuiCol_Text, ImVec4(1.f, 1.f, 1.f, 1.f), m_state == EState::FadingOut, m_current_fade_opacity);
+    push_style_color(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_Text), m_state == EState::FadingOut,
+                     m_current_fade_opacity);
     push_style_color(ImGuiCol_TextSelectedBg, ImVec4(0, .75f, .75f, 1.f), m_state == EState::FadingOut,
                      m_current_fade_opacity);
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(.0f, .0f, .0f, .0f));
@@ -2463,7 +2487,8 @@ void NotificationManager::ProgressIndicatorNotification::render_cancel_button(co
     ImVec2 win_pos(win_pos_x, win_pos_y);
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(.0f, .0f, .0f, .0f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(.0f, .0f, .0f, .0f));
-    push_style_color(ImGuiCol_Text, ImVec4(1.f, 1.f, 1.f, 1.f), m_state == EState::FadingOut, m_current_fade_opacity);
+    push_style_color(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_Text), m_state == EState::FadingOut,
+                     m_current_fade_opacity);
     push_style_color(ImGuiCol_TextSelectedBg, ImVec4(0, .75f, .75f, 1.f), m_state == EState::FadingOut,
                      m_current_fade_opacity);
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(.0f, .0f, .0f, .0f));

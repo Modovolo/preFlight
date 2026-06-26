@@ -15,6 +15,7 @@
 #include "Camera.hpp"
 #include "Plater.hpp"
 #include "MsgDialog.hpp"
+#include "ThemePalette.hpp"
 
 #include "Gizmos/GLGizmoBase.hpp"
 
@@ -39,8 +40,13 @@
 #include <CGAL/Min_sphere_of_spheres_d.h>
 #include <CGAL/Min_sphere_of_points_d_traits_3.h>
 
-static const Slic3r::ColorRGBA UNIFORM_SCALE_COLOR = Slic3r::ColorRGBA::ORANGE();
-static const Slic3r::ColorRGBA SOLID_PLANE_COLOR = Slic3r::ColorRGBA::ORANGE();
+// preFlight: the scale UI (uniform-scale arrows + the scale plane) uses the theme's SECONDARY accent so
+// it stays distinct from the selected object (primary accent). Runtime read -> follows the active theme.
+static Slic3r::ColorRGBA scale_accent_color()
+{
+    const wxColour &c = Slic3r::GUI::active_palette().accent_secondary;
+    return {c.Red() / 255.0f, c.Green() / 255.0f, c.Blue() / 255.0f, 1.0f};
+}
 static const Slic3r::ColorRGBA TRANSPARENT_PLANE_COLOR = {0.8f, 0.8f, 0.8f, 0.5f};
 
 namespace Slic3r
@@ -2695,7 +2701,7 @@ void Selection::render_sidebar_scale_hints(const std::string &sidebar_field, GLS
                                                            const Transform3d &view_matrix,
                                                            const Transform3d &model_matrix)
     {
-        m_arrow.set_color(uniform_scale ? UNIFORM_SCALE_COLOR : get_color(axis));
+        m_arrow.set_color(uniform_scale ? scale_accent_color() : get_color(axis));
         Transform3d matrix = model_matrix * Geometry::translation_transform(5.0 * Vec3d::UnitY());
         shader.set_uniform("view_model_matrix", view_matrix * matrix);
         Matrix3d view_normal_matrix = view_matrix.matrix().block(0, 0, 3, 3) *
@@ -2823,10 +2829,10 @@ void Selection::render_sidebar_layers_hints(const std::string &sidebar_field, GL
     shader.set_uniform("projection_matrix", camera.get_projection_matrix());
 
     m_planes.models[0].set_color(
-        (camera_on_top && type == 1) || (!camera_on_top && type == 2) ? SOLID_PLANE_COLOR : TRANSPARENT_PLANE_COLOR);
+        (camera_on_top && type == 1) || (!camera_on_top && type == 2) ? scale_accent_color() : TRANSPARENT_PLANE_COLOR);
     m_planes.models[0].render();
     m_planes.models[1].set_color(
-        (camera_on_top && type == 2) || (!camera_on_top && type == 1) ? SOLID_PLANE_COLOR : TRANSPARENT_PLANE_COLOR);
+        (camera_on_top && type == 2) || (!camera_on_top && type == 1) ? scale_accent_color() : TRANSPARENT_PLANE_COLOR);
     m_planes.models[1].render();
 
     glsafe(::glEnable(GL_CULL_FACE));

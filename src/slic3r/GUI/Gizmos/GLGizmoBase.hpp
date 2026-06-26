@@ -13,6 +13,7 @@
 #include "slic3r/GUI/MeshUtils.hpp"
 #include "slic3r/GUI/SceneRaycaster.hpp"
 #include "slic3r/GUI/InputEvents.hpp"
+#include "slic3r/GUI/ThemePalette.hpp"
 
 #include <cereal/archives/binary.hpp>
 
@@ -33,7 +34,14 @@ struct Camera;
 
 static const ColorRGBA DEFAULT_BASE_COLOR = {0.625f, 0.625f, 0.625f, 1.0f};
 static const ColorRGBA DEFAULT_DRAG_COLOR = ColorRGBA::WHITE();
-static const ColorRGBA DEFAULT_HIGHLIGHT_COLOR = ColorRGBA::ORANGE();
+// preFlight: the gizmo highlight (scale/rotate grabbers) uses the theme's SECONDARY accent so it stays
+// distinct from the selected object, which uses the primary accent. A function (not a const) so it reads
+// the active theme; gizmos are reconstructed on a theme switch, so this is picked up at construction.
+inline ColorRGBA default_highlight_color()
+{
+    const wxColour &c = active_palette().accent_secondary;
+    return {c.Red() / 255.0f, c.Green() / 255.0f, c.Blue() / 255.0f, 1.0f};
+}
 static const std::array<ColorRGBA, 3> AXES_COLOR = {{ColorRGBA::X(), ColorRGBA::Y(), ColorRGBA::Z()}};
 static const ColorRGBA CONSTRAINED_COLOR = ColorRGBA::GRAY();
 

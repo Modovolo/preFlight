@@ -1147,6 +1147,8 @@ static bool s_python_interpreter_ok = false;
 static bool s_python_setup_ok = false;
 static std::once_flag s_python_init_flag;
 static std::once_flag s_python_setup_flag;
+static std::once_flag s_python_gil_release_flag;
+static PyThreadState *s_main_tstate = nullptr;
 
 static void ensure_python_initialized()
 {
@@ -1291,6 +1293,11 @@ os.chdir(preFlight.exe_dir)
 
     if (!s_python_setup_ok)
         throw Slic3r::RuntimeError("Python post-init setup failed");
+
+    // Release the GIL exactly once after init so any background-slicing worker
+    // thread can acquire it. Otherwise the init thread owns the GIL for the
+    // process lifetime and other threads' Python calls crash (or deadlock).
+    std::call_once(s_python_gil_release_flag, []() { s_main_tstate = PyEval_SaveThread(); });
 }
 
 // -------------------------------------------------------------------------
@@ -1317,8 +1324,25 @@ PreProcessorResult run_pre_processor_scripts(GCodeProcessorResult &result, GCode
     {
         ensure_python_initialized();
 
+        // Background slicing runs on a worker thread that does not own the GIL.
+        py::gil_scoped_acquire gil;
+
+        // signal.signal() and PyErr_SetInterrupt() only work on the interpreter's
+        // main thread. Slicing runs on a background worker, so detect that and skip
+        // signal-based cancellation there - the per-script canceled() check in the
+        // loop below still aborts between scripts.
+        bool is_main_thread = false;
+        try
+        {
+            py::module_ threading_mod = py::module_::import("threading");
+            is_main_thread = threading_mod.attr("current_thread")().is(threading_mod.attr("main_thread")());
+        }
+        catch (...)
+        {
+        }
+
         // Watchdog thread: polls the cancel flag and interrupts Python if canceled
-        if (print)
+        if (print && is_main_thread)
         {
             cancel_watchdog = std::thread(
                 [print, &scripts_running]()
@@ -1369,7 +1393,9 @@ PreProcessorResult run_pre_processor_scripts(GCodeProcessorResult &result, GCode
         // Snapshot mutable interpreter settings
         py::object saved_dont_write_bytecode = sys_mod.attr("dont_write_bytecode");
         py::object saved_excepthook = sys_mod.attr("excepthook");
-        py::object saved_sigint_handler = signal_mod.attr("getsignal")(signal_mod.attr("SIGINT"));
+        // SIGINT handling is only valid on the main thread; skip otherwise.
+        py::object saved_sigint_handler = is_main_thread ? signal_mod.attr("getsignal")(signal_mod.attr("SIGINT"))
+                                                         : py::object(py::none());
 
         // Re-set CWD to exe directory before each slice in case a previous
         // script changed it (os.chdir is process-global).
@@ -1528,7 +1554,8 @@ PreProcessorResult run_pre_processor_scripts(GCodeProcessorResult &result, GCode
         // Restore interpreter settings
         sys_mod.attr("dont_write_bytecode") = saved_dont_write_bytecode;
         sys_mod.attr("excepthook") = saved_excepthook;
-        signal_mod.attr("signal")(signal_mod.attr("SIGINT"), saved_sigint_handler);
+        if (is_main_thread)
+            signal_mod.attr("signal")(signal_mod.attr("SIGINT"), saved_sigint_handler);
 
         // Restore CWD in case a script changed it
         os_mod.attr("chdir")(exe_dir.string());
@@ -1602,6 +1629,9 @@ ExportScriptResult run_export_script(const std::string &script_path, const std::
     try
     {
         ensure_python_initialized();
+
+        // Background slicing runs on a worker thread that does not own the GIL.
+        py::gil_scoped_acquire gil;
 
         std::string script_name = fs::path(script_path).filename().string();
         std::string script_dir = fs::path(script_path).parent_path().string();

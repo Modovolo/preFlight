@@ -1,3 +1,4 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: wxWidgets 3.1\n"
@@ -10,10 +11,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-Bookmarks: 1524,-1,-1,-1,-1,-1,-1,-1,-1,-1\n"
+"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || n%10 == 1 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 12 && n%100 <= 14)) ? 2 : 3);\n"
 "X-Generator: Poedit 2.0.1\n"
+"X-Poedit-Bookmarks: 1524,-1,-1,-1,-1,-1,-1,-1,-1,-1\n"
+"X-Poedit-SourceCharset: UTF-8\n"
 
 #: ../src/common/debugrpt.cpp:586
 msgid ""
@@ -126,6 +127,7 @@ msgid_plural "%ld bytes"
 msgstr[0] "%ld bajt"
 msgstr[1] "%ld bajty"
 msgstr[2] "%ld bajtů"
+msgstr[3] "%ld bajtů"
 
 #: ../src/html/helpwnd.cpp:1033
 #, c-format
@@ -501,7 +503,8 @@ msgstr "&Síť"
 msgid "&New"
 msgstr "&Nový"
 
-#: ../src/aui/tabmdi.cpp:111 ../src/generic/mdig.cpp:100 ../src/msw/mdi.cpp:180
+#: ../src/aui/tabmdi.cpp:111 ../src/generic/mdig.cpp:100
+#: ../src/msw/mdi.cpp:180
 msgid "&Next"
 msgstr "&Další"
 
@@ -575,7 +578,8 @@ msgstr "&Režim pozice:"
 msgid "&Preferences"
 msgstr "&Předvolby"
 
-#: ../src/aui/tabmdi.cpp:112 ../src/generic/mdig.cpp:101 ../src/msw/mdi.cpp:181
+#: ../src/aui/tabmdi.cpp:112 ../src/generic/mdig.cpp:101
+#: ../src/msw/mdi.cpp:181
 msgid "&Previous"
 msgstr "&Předchozí"
 
@@ -2285,7 +2289,8 @@ msgstr "Command"
 msgid ""
 "Command line argument %d couldn't be converted to Unicode and will be "
 "ignored."
-msgstr "Argument příkazové řádky %d nelze převést na Unicode a bude ignorován."
+msgstr ""
+"Argument příkazové řádky %d nelze převést na Unicode a bude ignorován."
 
 #: ../src/msw/fontdlg.cpp:120
 #, c-format
@@ -2297,7 +2302,8 @@ msgid ""
 "Compositing not supported by this system, please enable it in your Window "
 "Manager."
 msgstr ""
-"Skládání není podporováno v tomto systému, povolte ho prosím ve správci oken."
+"Skládání není podporováno v tomto systému, povolte ho prosím ve správci "
+"oken."
 
 #: ../src/html/helpwnd.cpp:1551
 msgid "Compressed HTML Help file (*.chm)|*.chm|"
@@ -2452,7 +2458,8 @@ msgstr "Nelze zavést hash tabulku GIF."
 #: ../src/common/imagpng.cpp:409
 msgid "Couldn't load a PNG image - file is corrupted or not enough memory."
 msgstr ""
-"Nelze načíst PNG obrázek - buď je soubor poškozený nebo není dostatek paměti."
+"Nelze načíst PNG obrázek - buď je soubor poškozený nebo není dostatek "
+"paměti."
 
 #: ../src/unix/sound.cpp:470
 #, c-format
@@ -2702,8 +2709,8 @@ msgstr "Vývojáři"
 
 #: ../src/msw/dialup.cpp:374
 msgid ""
-"Dial up functions are unavailable because the remote access service (RAS) is "
-"not installed on this machine. Please install it."
+"Dial up functions are unavailable because the remote access service (RAS) is"
+" not installed on this machine. Please install it."
 msgstr ""
 "Funkce vytáčeného připojení nejsou dostupné, protože Služba vzdáleného "
 "přístupu (RAS) není nainstalována. Prosím, nainstalujte ji."
@@ -3212,7 +3219,8 @@ msgstr "Nelze vytvořit klíč registru pro soubory '%s'."
 #: ../src/msw/fdrepdlg.cpp:409
 #, c-format
 msgid "Failed to create the standard find/replace dialog (error code %d)"
-msgstr "Nelze vytvořit standardní dialogové okno najít/nahradit (kód chyby %d)"
+msgstr ""
+"Nelze vytvořit standardní dialogové okno najít/nahradit (kód chyby %d)"
 
 #: ../src/unix/wakeuppipe.cpp:52
 msgid "Failed to create wake up pipe used by event loop."
@@ -3313,8 +3321,8 @@ msgstr "Nelze instalovat obslužnou rutinu signálu"
 
 #: ../src/unix/threadpsx.cpp:1167
 msgid ""
-"Failed to join a thread, potential memory leak detected - please restart the "
-"program"
+"Failed to join a thread, potential memory leak detected - please restart the"
+" program"
 msgstr ""
 "Nelze připojit vlákno, zjištěna možná chybná alokace paměti - restartujte "
 "prosím program"
@@ -4085,13 +4093,11 @@ msgstr ""
 
 #: ../src/generic/dbgrptg.cpp:324
 msgid ""
-"If you wish to suppress this debug report completely, please choose the "
-"\"Cancel\" button,\n"
+"If you wish to suppress this debug report completely, please choose the \"Cancel\" button,\n"
 "but be warned that it may hinder improving the program, so if\n"
 "at all possible please do continue with the report generation.\n"
 msgstr ""
-"Pokud chcete úplně zrušit tento protokol ladění, zvolte, prosím, tlačítko "
-"\"Zrušit\",\n"
+"Pokud chcete úplně zrušit tento protokol ladění, zvolte, prosím, tlačítko \"Zrušit\",\n"
 "ale uvědomte si, že tímto můžete brzdit vylepšování programu, takže pokud\n"
 "je to možné, pokračujte, prosím, ve vytváření protokolu.\n"
 
@@ -4136,8 +4142,8 @@ msgstr "Obrázek není typu %s."
 
 #: ../src/msw/textctrl.cpp:488
 msgid ""
-"Impossible to create a rich edit control, using simple text control instead. "
-"Please reinstall riched32.dll"
+"Impossible to create a rich edit control, using simple text control instead."
+" Please reinstall riched32.dll"
 msgstr ""
 "Není možné vytvořit prvek rich edit, místo něj použit obyčejný. "
 "Přeinstalujte prosím riched32.dll."
@@ -4533,6 +4539,7 @@ msgid_plural "Last repeated message (\"%s\", %u times) wasn't output"
 msgstr[0] "Poslední opakovaná zpráva (\"%s\", %ukrát) nebyla vypsána"
 msgstr[1] "Poslední opakovaná zpráva (\"%s\", %ukrát) nebyla vypsána"
 msgstr[2] "Poslední opakovaná zpráva (\"%s\", %ukrát) nebyla vypsána"
+msgstr[3] "Poslední opakovaná zpráva (\"%s\", %ukrát) nebyla vypsána"
 
 #: ../src/common/paper.cpp:103
 msgid "Ledger, 17 x 11 in"
@@ -4694,8 +4701,8 @@ msgid ""
 "MS HTML Help functions are unavailable because the MS HTML Help library is "
 "not installed on this machine. Please install it."
 msgstr ""
-"Funkce MS HTML nápovědy nejsou dostupné, protože chybí příslušná komponenta. "
-"Prosím nainstalujte ji."
+"Funkce MS HTML nápovědy nejsou dostupné, protože chybí příslušná komponenta."
+" Prosím nainstalujte ji."
 
 #: ../src/univ/themes/win32.cpp:3754
 msgid "Ma&ximize"
@@ -5074,8 +5081,7 @@ msgstr "Nenalezeny žádné položky."
 msgid ""
 "No font for displaying text in encoding '%s' found,\n"
 "but an alternative encoding '%s' is available.\n"
-"Do you want to use this encoding (otherwise you will have to choose another "
-"one)?"
+"Do you want to use this encoding (otherwise you will have to choose another one)?"
 msgstr ""
 "Nenalezen žádný font použitelný k zobrazení textu v kódování '%s',\n"
 "ale je k dispozici alternativní kódování '%s'.\n"
@@ -5848,8 +5854,7 @@ msgstr "Výtisk"
 
 #: ../src/common/debugrpt.cpp:560
 #, c-format
-msgid ""
-"Processing debug report has failed, leaving the files in \"%s\" directory."
+msgid "Processing debug report has failed, leaving the files in \"%s\" directory."
 msgstr ""
 "Zpracování protokolu ladění selhalo, ponechávám soubory v adresáři \"%s\"."
 
@@ -6736,13 +6741,11 @@ msgstr ""
 #: ../src/html/htmprint.cpp:271
 #, c-format
 msgid ""
-"The document \"%s\" doesn't fit on the page horizontally and will be "
-"truncated if printed.\n"
+"The document \"%s\" doesn't fit on the page horizontally and will be truncated if printed.\n"
 "\n"
 "Would you like to proceed with printing it nevertheless?"
 msgstr ""
-"Dokument \"%s\" se vodorovně na stránku nevejde a bude zkrácen, pokud bude "
-"vytisknut.\n"
+"Dokument \"%s\" se vodorovně na stránku nevejde a bude zkrácen, pokud bude vytisknut.\n"
 "\n"
 "Chcete přesto pokračovat v tisku?"
 
@@ -6893,6 +6896,7 @@ msgid_plural "The previous message repeated %u times."
 msgstr[0] "Předchozí zpráva opakovaná %ukrát."
 msgstr[1] "Předchozí zpráva opakovaná %ukrát."
 msgstr[2] "Předchozí zpráva opakovaná %ukrát."
+msgstr[3] "Předchozí zpráva opakovaná %ukrát."
 
 #: ../src/common/log.cpp:270
 msgid "The previous message repeated once."
@@ -6905,12 +6909,10 @@ msgstr "Rozsah k zobrazení."
 
 #: ../src/generic/dbgrptg.cpp:322
 msgid ""
-"The report contains the files listed below. If any of these files contain "
-"private information,\n"
+"The report contains the files listed below. If any of these files contain private information,\n"
 "please uncheck them and they will be removed from the report.\n"
 msgstr ""
-"Protokol obsahuje soubory uvedené níže. Pokud některý z těchto souborů "
-"obsahuje citlivé informace,\n"
+"Protokol obsahuje soubory uvedené níže. Pokud některý z těchto souborů obsahuje citlivé informace,\n"
 "prosím odškrtněte je a tyto budou z protokolu odstraněny.\n"
 
 #: ../src/common/cmdline.cpp:1254
@@ -7050,7 +7052,8 @@ msgstr "Svislé posunutí."
 
 #: ../src/richtext/richtextprint.cpp:619 ../src/html/htmprint.cpp:745
 msgid ""
-"There was a problem during page setup: you may need to set a default printer."
+"There was a problem during page setup: you may need to set a default "
+"printer."
 msgstr "Při nastavování stránky nastala chyba: nastavte výchozí tiskárnu."
 
 #: ../src/html/htmprint.cpp:255
@@ -7196,12 +7199,8 @@ msgstr "Typ musí podporovat převod typu enum na long"
 
 #: ../src/propgrid/propgridiface.cpp:401
 #, c-format
-msgid ""
-"Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT "
-"\"%s\"."
-msgstr ""
-"Operace typu \"%s\" selhala: Vlastnost označená \"%s\" je typu \"%s\", NE "
-"\"%s\"."
+msgid "Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT \"%s\"."
+msgstr "Operace typu \"%s\" selhala: Vlastnost označená \"%s\" je typu \"%s\", NE \"%s\"."
 
 #: ../src/common/paper.cpp:133
 msgid "US Std Fanfold, 14 7/8 x 11 in"
@@ -7339,8 +7338,7 @@ msgstr "Volbu '%s' následovaly neočekávané znaky."
 #: ../src/unix/fswatcher_inotify.cpp:274
 #, c-format
 msgid "Unexpected event for \"%s\": no matching watch descriptor."
-msgstr ""
-"Neočekávaná událost pro \"%s\": žádný odpovídající popisovač sledování."
+msgstr "Neočekávaná událost pro \"%s\": žádný odpovídající popisovač sledování."
 
 #: ../src/common/cmdline.cpp:1195
 #, c-format
@@ -7955,8 +7953,7 @@ msgstr "DDEML aplikace způsobila prodloužený souběh."
 
 #: ../src/msw/dde.cpp:1129
 msgid ""
-"a DDEML function was called without first calling the DdeInitialize "
-"function,\n"
+"a DDEML function was called without first calling the DdeInitialize function,\n"
 "or an invalid instance identifier\n"
 "was passed to a DDEML function."
 msgstr ""
@@ -8852,8 +8849,8 @@ msgstr "~"
 #~ msgid ""
 #~ "Cannot create new column's ID. Probably max. number of columns reached."
 #~ msgstr ""
-#~ "Nelze vytvořit nové ID sloupce. Pravděpodobně byl dosažen limit "
-#~ "maximálního počtu sloupců."
+#~ "Nelze vytvořit nové ID sloupce. Pravděpodobně byl dosažen limit maximálního "
+#~ "počtu sloupců."
 
 #~ msgid "Column could not be added."
 #~ msgstr "Sloupec nelze přidat."
@@ -8928,8 +8925,7 @@ msgstr "~"
 #~ msgstr "Vykreslovač data nemůže vykreslit hodnotu; typ hodnoty: "
 
 #~ msgid ""
-#~ "Do you want to overwrite the command used to %s files with extension \"%s"
-#~ "\" ?\n"
+#~ "Do you want to overwrite the command used to %s files with extension \"%s\" ?\n"
 #~ "Current value is \n"
 #~ "%s, \n"
 #~ "New value is \n"
@@ -8971,8 +8967,7 @@ msgstr "~"
 #~ msgid "No column for the specified column position existing."
 #~ msgstr "Žádný sloupec pro zadanou pozici sloupce neexistuje."
 
-#~ msgid ""
-#~ "No renderer or invalid renderer type specified for custom data column."
+#~ msgid "No renderer or invalid renderer type specified for custom data column."
 #~ msgstr ""
 #~ "Pro vlastní sloupec dat byl zadán žádný nebo neplatný typ vykreslovače."
 
@@ -9006,10 +9001,8 @@ msgstr "~"
 #~ msgid "Rendering failed."
 #~ msgstr "Vykreslování selhalo."
 
-#~ msgid ""
-#~ "Setting directory access times is not supported under this OS version"
-#~ msgstr ""
-#~ "V této verzi OS není nastavení času přístupů do adresáře podporováno"
+#~ msgid "Setting directory access times is not supported under this OS version"
+#~ msgstr "V této verzi OS není nastavení času přístupů do adresáře podporováno"
 
 #~ msgid "Show hidden directories"
 #~ msgstr "Zobrazit skryté adresáře"
@@ -9515,8 +9508,8 @@ msgstr "~"
 #~ msgstr "Jdi na stránku"
 
 #~ msgid ""
-#~ "HTML pagination algorithm generated more than the allowed maximum number "
-#~ "of pages and it can't continue any longer!"
+#~ "HTML pagination algorithm generated more than the allowed maximum number of "
+#~ "pages and it can't continue any longer!"
 #~ msgstr ""
 #~ "Algoritmus stránkování HTML vytvořil více než maximálně povolený počet "
 #~ "stránek a nemůže dále pokračovat!"
@@ -9554,18 +9547,17 @@ msgstr "~"
 #~ msgid "SHIFT-JIS"
 #~ msgstr "SHIFT-JIS"
 
-#~ msgid ""
-#~ "Streaming delegates for not already streamed objects not yet supported"
+#~ msgid "Streaming delegates for not already streamed objects not yet supported"
 #~ msgstr "Proudění delegátů pro ještě neproudící objekty není podporováno"
 
 #~ msgid ""
-#~ "The data format for the GET-direction of the to be added data object "
-#~ "already exists"
+#~ "The data format for the GET-direction of the to be added data object already"
+#~ " exists"
 #~ msgstr "Formát data pro směr ZÍSKAT přidávaných dat objektu už existuje"
 
 #~ msgid ""
-#~ "The data format for the SET-direction of the to be added data object "
-#~ "already exists"
+#~ "The data format for the SET-direction of the to be added data object already"
+#~ " exists"
 #~ msgstr "Formát data pro směr NASTAVIT přidávaných dat objektu už existuje"
 
 #~ msgid "The file '%s' doesn't exist and couldn't be opened."
@@ -9622,7 +9614,6 @@ msgstr "~"
 #~ msgid "Cannot convert dialog units: dialog unknown."
 #~ msgstr "Nelze převést dialogové jednotky: dialog není znám."
 
-#, fuzzy
 #~ msgid "Cannot convert from the charset '%s'!"
 #~ msgstr "Text nelze zkonvertovat z kódování '%s'!"
 
@@ -9638,19 +9629,15 @@ msgstr "~"
 #~ msgid "Cannot parse dimension from '%s'."
 #~ msgstr "Nelze ze '%s' získat rozměry."
 
-#, fuzzy
 #~ msgid "Cant create the thread event queue"
 #~ msgstr "Nelze vytvořit vlákno"
 
-#, fuzzy
 #~ msgid "Could not unlock mutex"
 #~ msgstr "Nelze vytvořit časovač"
 
-#, fuzzy
 #~ msgid "Failed to connect to session manager: %s"
 #~ msgstr "Nepodařilo se %s připojení k Internetu: %s"
 
-#, fuzzy
 #~ msgid "Failed to register OpenGL window class."
 #~ msgstr "Nelze inicializovat OpenGL"
 
@@ -9702,16 +9689,13 @@ msgstr "~"
 #~ msgid "XRC resource '%s' (class '%s') not found!"
 #~ msgstr "XRC zdroj '%s' (třída '%s') nenalezen!"
 
-#, fuzzy
 #~ msgid "XRC resource: Cannot create animation from '%s'."
 #~ msgstr "XRC zdroje: Nelze vytvořit bitmapu z '%s'."
 
 #~ msgid "XRC resource: Cannot create bitmap from '%s'."
 #~ msgstr "XRC zdroje: Nelze vytvořit bitmapu z '%s'."
 
-#, fuzzy
-#~ msgid ""
-#~ "XRC resource: Incorrect colour specification '%s' for attribute '%s'."
+#~ msgid "XRC resource: Incorrect colour specification '%s' for attribute '%s'."
 #~ msgstr "XRC zdroje: chybný popis barvy '%s' u vlastnosti '%s'."
 
 #~ msgid "[EMPTY]"
@@ -9720,7 +9704,6 @@ msgstr "~"
 #~ msgid "catalog file for domain '%s' not found."
 #~ msgstr "katalog pro doménu '%s' nenalezen."
 
-#, fuzzy
 #~ msgid "encoding %i"
 #~ msgstr "Neznámá znaková sada %s"
 
@@ -9733,45 +9716,36 @@ msgstr "~"
 #~ msgid "wxSocket: unknown event!."
 #~ msgstr "wxSocket: neznámá událost!"
 
-#, fuzzy
 #~ msgid " Couldn't create the UnicodeConverter"
 #~ msgstr "Nelze vytvořit časovač"
 
-#, fuzzy
 #~ msgid "&Open"
 #~ msgstr "&Otevřít..."
 
-#, fuzzy
 #~ msgid "&Print"
 #~ msgstr "Vytisknout"
 
-#, fuzzy
 #~ msgid "Bitmap resource specification %s not found."
 #~ msgstr "XRC zdroj '%s' (třída '%s') nenalezen!"
 
-#, fuzzy
 #~ msgid "Couldn't end the context on the overlay window"
 #~ msgstr "Nelze získat ukazatel na aktuální vlákno"
 
-#, fuzzy
 #~ msgid "Failed to get clipboard data."
 #~ msgstr "Nelze uložit data do schránky."
 
 #~ msgid "Failed to load shared library '%s' Error '%s'"
 #~ msgstr "Nelze načíst sdílenou knihovnu '%s', chyba '%s'"
 
-#, fuzzy
 #~ msgid "Found "
 #~ msgstr "Najít"
 
-#, fuzzy
 #~ msgid "Icon resource specification %s not found."
 #~ msgstr "XRC zdroj '%s' (třída '%s') nenalezen!"
 
 #~ msgid "Option '%s' requires a value, '=' expected."
 #~ msgstr "Volba '%s' vyžaduje hodnotu, očekávám '='."
 
-#, fuzzy
 #~ msgid "Select all"
 #~ msgstr "Vybrat &vše"
 
@@ -9826,7 +9800,6 @@ msgstr "~"
 #~ msgid "underlined "
 #~ msgstr "podtržené "
 
-#, fuzzy
 #~ msgid ""
 #~ "Failed to get stack backtrace:\n"
 #~ "%s"
@@ -9838,7 +9811,6 @@ msgstr "~"
 #~ msgid "Loading Grey Raw PNM image is not yet implemented."
 #~ msgstr "Načítání šedých raw PNM obrázků není ještě implementováno."
 
-#, fuzzy
 #~ msgid "Cannot wait on thread to exit."
 #~ msgstr "Nelze počkat na ukončení vlákna"
 
@@ -9848,9 +9820,7 @@ msgstr "~"
 #~ msgid "ZIP handler currently supports only local files!"
 #~ msgstr "ZIP soubory lze otevřít jenom z disku!"
 
-#, fuzzy
-#~ msgid ""
-#~ "can't seek on file descriptor %d, large files support is not enabled."
+#~ msgid "can't seek on file descriptor %d, large files support is not enabled."
 #~ msgstr "Nelze seekovat v deskriptoru %d"
 
 #~ msgid "More..."

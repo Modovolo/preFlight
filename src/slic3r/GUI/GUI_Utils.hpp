@@ -71,7 +71,7 @@ inline wxFont get_default_font(const wxWindow *window)
 }
 
 bool check_dark_mode();
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__APPLE__)
 void update_dark_ui(wxWindow *window);
 #endif
 
@@ -113,7 +113,7 @@ public:
          */
         this->SetFont(m_normal_font);
         this->CenterOnParent();
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__APPLE__)
         update_dark_ui(this);
 #endif
 

@@ -359,7 +359,6 @@ void Preview::reload_print()
 
     m_loaded = false;
     load_print();
-    m_layers_slider->seq_top_layer_only(wxGetApp().app_config->get_bool("seq_top_layer_only"));
 }
 
 void Preview::msw_rescale()
@@ -459,7 +458,6 @@ void Preview::create_sliders()
     m_layers_slider->SetEmUnit(wxGetApp().em_unit());
     m_layers_slider->set_imgui_wrapper(wxGetApp().imgui());
     m_layers_slider->show_estimated_times(wxGetApp().app_config->get_bool("show_estimated_times_in_dbl_slider"));
-    m_layers_slider->seq_top_layer_only(wxGetApp().app_config->get_bool("seq_top_layer_only"));
     // Enable ruler and ruler background by default (true if not set in config)
     bool show_ruler = !wxGetApp().app_config->has("show_ruler_in_dbl_slider") ||
                       wxGetApp().app_config->get_bool("show_ruler_in_dbl_slider");
@@ -473,13 +471,8 @@ void Preview::create_sliders()
 
     m_layers_slider->set_callback_on_thumb_move([this]() -> void { Preview::on_layers_slider_scroll_changed(); });
 
-    m_layers_slider->set_callback_on_change_app_config(
-        [this](const std::string &key, const std::string &val) -> void
-        {
-            wxGetApp().app_config->set(key, val);
-            if (key == "seq_top_layer_only")
-                reload_print();
-        });
+    m_layers_slider->set_callback_on_change_app_config([this](const std::string &key, const std::string &val) -> void
+                                                       { wxGetApp().app_config->set(key, val); });
 
     if (wxGetApp().is_editor())
     {
@@ -1209,7 +1202,8 @@ void Preview::update_moves_slider(std::optional<int> visible_range_min, std::opt
     m_moves_slider->SetSelectionSpan(span_min_id, span_max_id);
     m_moves_slider->Thaw();
 
-    m_moves_slider->ShowLowerThumb(get_app_config()->get("seq_top_layer_only") == "0");
+    // preFlight: sequential preview always restricts to the top layer, so the range lower thumb is never shown
+    m_moves_slider->ShowLowerThumb(false);
 
     // Cache layer times for slider tooltip (avoids per-frame vector copy)
     m_cached_layer_times = m_canvas->get_gcode_layers_times();

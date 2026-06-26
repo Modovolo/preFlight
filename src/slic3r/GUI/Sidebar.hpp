@@ -26,6 +26,7 @@ class wxSplitterWindow;
 class CheckBox;
 class ScrollablePanel;
 class SpinInputDouble;
+class SwitchButton;
 
 namespace Slic3r
 {
@@ -102,6 +103,9 @@ public:
     // Update visibility of rows, groups, and sections without rebuilding
     void UpdateSidebarVisibility();
 
+    // Re-assert accent header colors after an external dark-UI pass reset them (build-time fix)
+    void ReapplyTitleAccents();
+
 protected:
     // Tab definition - subclasses return a vector of these
     struct TabDefinition
@@ -131,10 +135,6 @@ protected:
     // Optional: called after content is built to set initial enable/disable state of dependent options
     virtual void ApplyToggleLogic() {}
 
-    // Optional: returns whether a tab should be visible based on sidebar visibility settings
-    // Subclasses override to check if any settings in the tab are visible
-    virtual bool IsTabVisible(int tab_index) const { return true; }
-
     // Optional: called before content is destroyed during RebuildContent()
     // Subclasses should override to clear their m_setting_controls map
     virtual void ClearSettingControls() {}
@@ -145,6 +145,15 @@ protected:
     // Non-setting auxiliary rows (buttons, notes) that should hide when all sibling settings are hidden
     // Each pair: (row_sizer to show/hide, parent_sizer that also contains setting rows)
     std::vector<std::pair<wxSizer *, wxSizer *>> m_auxiliary_rows;
+
+    // Per-row pin checkboxes, created in CreateRowUIBase, shown only in edit mode. A vector of
+    // (opt_key, checkbox) rather than a map keyed by opt_key: the same opt_key can appear in two
+    // groups (e.g. perimeter_generator in both Advanced and Arachne), and a map would drop one
+    // checkbox, leaving an orphan that never gets hidden outside edit mode.
+    std::vector<std::pair<std::string, wxStaticBitmap *>> m_visibility_checkboxes;
+
+    // Show/hide and refresh the pin checkboxes to match the current edit-mode and pinned state
+    void UpdateVisibilityCheckboxes();
 
     // Access for subclasses
     Plater *GetPlater() const { return m_plater; }
@@ -176,6 +185,7 @@ protected:
         wxStaticBitmap *lock_icon{nullptr};
         wxStaticBitmap *undo_icon{nullptr};
         wxStaticText *label_text{nullptr};
+        wxStaticBitmap *visibility_checkbox{nullptr}; // Pin checkbox, shown only in Edit Visibility mode
         wxString tooltip;
         const ConfigOptionDef *opt_def{nullptr};
     };
@@ -183,6 +193,32 @@ protected:
     // Creates the common row UI elements (icons, label, sizers)
     // Returns empty context (row_sizer==nullptr) if opt_key not found in config
     RowUIContext CreateRowUIBase(wxWindow *parent, const std::string &opt_key, const wxString &label);
+
+    // Creates the leading pin checkbox (shown only in Edit Visibility mode) and adds it to left_sizer.
+    // Used by CreateRowUIBase and by the special row builders so their rows pin/hide like normal rows.
+    wxStaticBitmap *AddPinCheckbox(wxWindow *parent, wxSizer *left_sizer, const std::string &opt_key);
+
+    // Build a group box (FlatStaticBox) with an overlay header that hosts the section pin checkbox
+    // (mirrors the main-settings section checkbox). The checkbox toggles every row in the group.
+    wxStaticBoxSizer *CreateFlatStaticBoxSizer(wxWindow *parent, const wxString &label, int orient = wxVERTICAL);
+
+    // Section-header pin checkbox: ticking/unticking toggles all rows in its group. Shown only in edit mode.
+    struct SectionCheckbox
+    {
+        ::CheckBox *checkbox{nullptr};
+        wxSizer *group_sizer{nullptr};
+        wxWindow *header_panel{nullptr};
+        wxWindow *box{nullptr};       // the FlatStaticBox the header overlays (for positioning)
+        wxStaticText *label{nullptr}; // overlay group-box title (accent-colored; re-applied on theme change)
+        int y_pos{0};
+        int full_w{0};  // header width with the checkbox shown (edit mode)
+        int label_w{0}; // header width with only the label (normal mode)
+        int height{0};
+    };
+    std::vector<SectionCheckbox> m_section_checkboxes;
+
+    void UpdateSectionCheckboxes();                         // show/hide + refresh tri-state from the group's rows
+    void SetGroupPinned(wxSizer *group_sizer, bool pinned); // pin/unpin every row in the group
 
     // Binds undo icon click handler to revert the setting value
     void BindUndoHandler(wxStaticBitmap *undo_icon, const std::string &opt_key,
@@ -234,7 +270,6 @@ protected:
     std::vector<TabDefinition> GetTabDefinitions() override;
     wxPanel *BuildTabContent(int tab_index) override;
     void OnSysColorChanged() override;
-    bool IsTabVisible(int tab_index) const override;
     void ClearSettingControls() override { m_setting_controls.clear(); }
 
     // Config access (implements TabbedSettingsPanel abstract methods)
@@ -325,7 +360,6 @@ protected:
     std::vector<TabDefinition> GetTabDefinitions() override;
     wxPanel *BuildTabContent(int tab_index) override;
     void OnSysColorChanged() override;
-    bool IsTabVisible(int tab_index) const override;
     void ClearSettingControls() override
     {
         m_setting_controls.clear();
@@ -425,7 +459,6 @@ protected:
     std::vector<TabDefinition> GetTabDefinitions() override;
     wxPanel *BuildTabContent(int tab_index) override;
     void OnSysColorChanged() override;
-    bool IsTabVisible(int tab_index) const override;
     void ClearSettingControls() override
     {
         m_setting_controls.clear();
@@ -513,6 +546,7 @@ public:
 
     void msw_rescale();
     void sys_color_changed();
+    void ReapplyTitleAccents();
 
 private:
     void BuildUI();
@@ -663,6 +697,11 @@ private:
     void update_nozzle_undo_ui(size_t idx);
     void update_all_nozzle_undo_ui();
 
+    // Bottom button bar
+    void CreateButtonBar();
+    void OnViewModeToggle(wxCommandEvent &evt);
+    void OnEditModeToggle(wxCommandEvent &evt);
+
     Plater *m_plater;
 
     // Main layout
@@ -721,8 +760,10 @@ private:
     ObjectInfo *m_object_info;
     SlicedInfo *m_sliced_info;
 
-    // Action buttons
-    wxPanel *m_buttons_panel;
+    // Bottom button bar (pinned below the scroll area, shared by both views)
+    wxPanel *m_buttons_panel{nullptr};
+    ::SwitchButton *m_view_mode_switch{nullptr}; // Accordion / Tabbed view toggle
+    ::SwitchButton *m_edit_mode_switch{nullptr}; // Pinned Settings / Edit Visibility toggle
     ScalableButton *m_btn_reslice;
     ScalableButton *m_btn_export_gcode;
     ScalableButton *m_btn_send_gcode;

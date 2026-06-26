@@ -7,6 +7,8 @@
 
 #include <wx/colour.h>
 
+#include "../ThemePalette.hpp" // preFlight: data-driven dark palette (active_palette())
+
 // ============================================================================
 // Widget UI Colors - Centralized color definitions for preFlight widgets
 // ============================================================================
@@ -47,19 +49,42 @@ bool IsDarkMode();
 }
 } // namespace Slic3r
 
+// preFlight: pack a wxColour into a 0xRRGGBB int for StateColor (which takes packed ints).
+inline int wxcolour_to_rgb_int(const wxColour &c)
+{
+    return (c.Red() << 16) | (c.Green() << 8) | c.Blue();
+}
+inline int accent_primary_rgb()
+{
+    return wxcolour_to_rgb_int(Slic3r::GUI::active_palette().accent_primary);
+}
+inline int accent_hover_rgb()
+{
+    return wxcolour_to_rgb_int(Slic3r::GUI::active_palette().accent_hover);
+}
+
 // Legacy static constants (for backward compatibility during transition)
-static const int clr_border_normal = 0x30363D;  // GitHub border
-static const int clr_border_hovered = 0xEAA032; // preFlight brand orange
+static const int clr_border_normal = 0x30363D; // GitHub border
+inline int clr_border_hovered()
+{
+    return accent_primary_rgb();
+} // themed accent
 static const int clr_border_disabled = 0x30363D;
 
-static const int clr_background_normal_light = 0xFFFDF8;   // Warm white (255,253,248)
-static const int clr_background_normal_dark = 0x161B22;    // GitHub #161B22 (22,27,34)
-static const int clr_background_focused = 0xEAA032;        // preFlight brand orange
+static const int clr_background_normal_light = 0xFFFDF8; // Warm white (255,253,248)
+static const int clr_background_normal_dark = 0x161B22;  // GitHub #161B22 (22,27,34)
+inline int clr_background_focused()
+{
+    return accent_primary_rgb();
+} // themed accent
 static const int clr_background_disabled_dark = 0x21262D;  // GitHub #21262D (33,38,45)
 static const int clr_background_disabled_light = 0xEBE8E4; // Warm light disabled
 
 static const int clr_foreground_normal = 0x262E30;
-static const int clr_foreground_focused = 0xEAA032; // preFlight brand orange
+inline int clr_foreground_focused()
+{
+    return accent_primary_rgb();
+} // themed accent
 static const int clr_foreground_disabled = 0x909090;
 static const int clr_foreground_disabled_dark = 0x6E7681; // GitHub muted #6E7681
 static const int clr_foreground_disabled_light = 0x909090;
@@ -81,55 +106,55 @@ namespace UIColors
 
 inline wxColour InputBackgroundDark()
 {
-    return wxColour(22, 27, 34); // GitHub #161B22
+    return Slic3r::GUI::active_palette().input_background;
 }
 inline wxColour InputBackgroundLight()
 {
-    return wxColour(250, 248, 244);
+    return Slic3r::GUI::active_palette().input_background;
 }
 inline wxColour InputBackgroundDisabledDark()
 {
-    return wxColour(33, 38, 45); // GitHub #21262D
+    return Slic3r::GUI::active_palette().input_background_disabled;
 }
 inline wxColour InputBackgroundDisabledLight()
 {
-    return wxColour(235, 232, 228);
+    return Slic3r::GUI::active_palette().input_background_disabled;
 }
 
 inline wxColour InputForegroundDark()
 {
-    return wxColour(201, 209, 217); // GitHub #C9D1D9
+    return Slic3r::GUI::active_palette().input_foreground;
 }
 inline wxColour InputForegroundLight()
 {
-    return wxColour(38, 46, 48);
+    return Slic3r::GUI::active_palette().input_foreground;
 }
 inline wxColour InputForegroundDisabledDark()
 {
-    return wxColour(110, 118, 129); // GitHub #6E7681
+    return Slic3r::GUI::active_palette().input_foreground_disabled;
 }
 inline wxColour InputForegroundDisabledLight()
 {
-    return wxColour(144, 144, 144);
+    return Slic3r::GUI::active_palette().input_foreground_disabled;
 }
 
 // --- Panel/Background Colors (Building Blocks) ---
 
 inline wxColour PanelBackgroundDark()
 {
-    return wxColour(13, 17, 23); // GitHub #0D1117
+    return Slic3r::GUI::active_palette().panel_background;
 }
 inline wxColour PanelBackgroundLight()
 {
-    return wxColour(250, 248, 244);
+    return Slic3r::GUI::active_palette().panel_background;
 }
 inline wxColour PanelForegroundDark()
 {
-    return wxColour(201, 209, 217); // GitHub #C9D1D9
+    return Slic3r::GUI::active_palette().panel_foreground;
 }
 inline wxColour PanelForegroundLight()
 {
-    return wxColour(38, 46, 48);
+    return Slic3r::GUI::active_palette().panel_foreground;
 }
 
 // --- Content Area Colors (Building Blocks) ---
@@ -138,244 +163,252 @@ inline wxColour PanelForegroundLight()
 
 inline wxColour ContentBackgroundDark()
 {
-    return wxColour(22, 27, 34); // GitHub #161B22 - same as InputBackgroundDark
+    return Slic3r::GUI::active_palette().content_background;
 }
 inline wxColour ContentBackgroundLight()
 {
-    return wxColour(250, 248, 244);
+    return Slic3r::GUI::active_palette().content_background;
 }
 inline wxColour ContentForegroundDark()
 {
-    return wxColour(201, 209, 217); // GitHub #C9D1D9
+    return Slic3r::GUI::active_palette().content_foreground;
 }
 inline wxColour ContentForegroundLight()
 {
-    return wxColour(38, 46, 48);
+    return Slic3r::GUI::active_palette().content_foreground;
 }
 
 // --- Secondary/Badge Text Colors (Building Blocks) ---
 
 inline wxColour SecondaryTextDark()
 {
-    return wxColour(139, 148, 158); // GitHub #8B949E
+    return Slic3r::GUI::active_palette().secondary_text;
 }
 inline wxColour SecondaryTextLight()
 {
-    return wxColour(100, 100, 100);
+    return Slic3r::GUI::active_palette().secondary_text;
 }
 
 // --- Label/Text Colors (Building Blocks) ---
 
 inline wxColour LabelDefaultDark()
 {
-    return wxColour(230, 237, 243); // GitHub #E6EDF3 (bright text)
+    return Slic3r::GUI::active_palette().label_default;
 }
 inline wxColour LabelDefaultLight()
 {
-    return wxColour(38, 46, 48);
+    return Slic3r::GUI::active_palette().label_default;
 }
 inline wxColour HighlightLabelDark()
 {
-    return wxColour(201, 209, 217); // GitHub #C9D1D9
+    return Slic3r::GUI::active_palette().highlight_label;
 }
 inline wxColour HighlightLabelLight()
 {
-    return wxColour(60, 60, 60);
+    return Slic3r::GUI::active_palette().highlight_label;
 }
 inline wxColour HighlightBackgroundDark()
 {
-    return wxColour(33, 38, 45); // GitHub #21262D
+    return Slic3r::GUI::active_palette().highlight_background;
 }
 inline wxColour HighlightBackgroundLight()
 {
-    return wxColour(220, 215, 210);
+    return Slic3r::GUI::active_palette().highlight_background;
 }
 
 // --- Button Label Colors (Building Blocks) ---
 
 inline wxColour HoveredBtnLabelDark()
 {
-    return wxColour(253, 111, 40);
+    return Slic3r::GUI::active_palette().hovered_btn_label;
 }
 inline wxColour HoveredBtnLabelLight()
 {
-    return wxColour(252, 77, 1);
+    return Slic3r::GUI::active_palette().hovered_btn_label;
 }
 inline wxColour DefaultBtnLabelDark()
 {
-    return wxColour(255, 181, 100);
+    return Slic3r::GUI::active_palette().default_btn_label;
 }
 inline wxColour DefaultBtnLabelLight()
 {
-    return wxColour(203, 61, 0);
+    return Slic3r::GUI::active_palette().default_btn_label;
 }
 inline wxColour SelectedBtnBackgroundDark()
 {
-    return wxColour(48, 54, 61); // GitHub #30363D
+    return Slic3r::GUI::active_palette().selected_btn_background;
 }
 inline wxColour SelectedBtnBackgroundLight()
 {
-    return wxColour(228, 220, 216);
+    return Slic3r::GUI::active_palette().selected_btn_background;
 }
 
 // --- Header/List Colors (Building Blocks) ---
 
 inline wxColour HeaderBackgroundDark()
 {
-    return wxColour(22, 27, 34); // GitHub #161B22
+    return Slic3r::GUI::active_palette().header_background;
 }
 inline wxColour HeaderBackgroundLight()
 {
-    return wxColour(245, 242, 238);
+    return Slic3r::GUI::active_palette().header_background;
 }
 inline wxColour HeaderHoverDark()
 {
-    return wxColour(33, 38, 45); // GitHub #21262D
+    return Slic3r::GUI::active_palette().header_hover;
 }
 inline wxColour HeaderHoverLight()
 {
-    return wxColour(235, 228, 218);
+    return Slic3r::GUI::active_palette().header_hover;
 }
 // Top-level section headers (slightly darker than regular headers for visual hierarchy)
 inline wxColour SectionHeaderBackgroundDark()
 {
-    return wxColour(30, 35, 43);
+    return Slic3r::GUI::active_palette().section_header_background;
 }
 inline wxColour SectionHeaderBackgroundLight()
 {
-    return wxColour(225, 220, 214);
+    return Slic3r::GUI::active_palette().section_header_background;
 }
 inline wxColour SectionHeaderHoverDark()
 {
-    return wxColour(40, 46, 54);
+    return Slic3r::GUI::active_palette().section_header_hover;
 }
 inline wxColour SectionHeaderHoverLight()
 {
-    return wxColour(215, 208, 200);
+    return Slic3r::GUI::active_palette().section_header_hover;
 }
 
 inline wxColour HeaderDividerDark()
 {
-    return wxColour(48, 54, 61); // GitHub #30363D
+    return Slic3r::GUI::active_palette().header_divider;
 }
 inline wxColour HeaderDividerLight()
 {
-    return wxColour(200, 195, 190);
+    return Slic3r::GUI::active_palette().header_divider;
 }
 
 // --- Tab Bar Colors (Building Blocks) ---
 
 inline wxColour TabBackgroundNormalDark()
 {
-    return wxColour(22, 27, 34); // GitHub #161B22
+    return Slic3r::GUI::active_palette().tab_background_normal;
 }
 inline wxColour TabBackgroundNormalLight()
 {
-    return wxColour(245, 242, 238);
+    return Slic3r::GUI::active_palette().tab_background_normal;
 }
 inline wxColour TabBackgroundHoverDark()
 {
-    return wxColour(33, 38, 45); // GitHub #21262D
+    return Slic3r::GUI::active_palette().tab_background_hover;
 }
 inline wxColour TabBackgroundHoverLight()
 {
-    return wxColour(238, 232, 225);
+    return Slic3r::GUI::active_palette().tab_background_hover;
 }
 inline wxColour TabBackgroundSelectedDark()
 {
-    return wxColour(48, 54, 61); // GitHub #30363D
+    return Slic3r::GUI::active_palette().tab_background_selected;
 }
 inline wxColour TabBackgroundSelectedLight()
 {
-    return wxColour(253, 247, 240);
+    return Slic3r::GUI::active_palette().tab_background_selected;
 }
 inline wxColour TabBackgroundDisabledDark()
 {
-    return wxColour(13, 17, 23); // GitHub #0D1117
+    return Slic3r::GUI::active_palette().tab_background_disabled;
 }
 inline wxColour TabBackgroundDisabledLight()
 {
-    return wxColour(200, 197, 193);
+    return Slic3r::GUI::active_palette().tab_background_disabled;
 }
 inline wxColour TabTextNormalDark()
 {
-    return wxColour(139, 148, 158); // GitHub #8B949E
+    return Slic3r::GUI::active_palette().tab_text_normal;
 }
 inline wxColour TabTextNormalLight()
 {
-    return wxColour(102, 102, 102);
+    return Slic3r::GUI::active_palette().tab_text_normal;
 }
 inline wxColour TabTextSelectedDark()
 {
-    return wxColour(201, 209, 217); // GitHub #C9D1D9
+    return Slic3r::GUI::active_palette().tab_text_selected;
 }
 inline wxColour TabTextSelectedLight()
 {
-    return wxColour(51, 51, 51);
+    return Slic3r::GUI::active_palette().tab_text_selected;
 }
 inline wxColour TabTextDisabledDark()
 {
-    return wxColour(72, 79, 88); // GitHub #484F58
+    return Slic3r::GUI::active_palette().tab_text_disabled;
 }
 inline wxColour TabTextDisabledLight()
 {
-    return wxColour(80, 80, 80);
+    return Slic3r::GUI::active_palette().tab_text_disabled;
 }
 inline wxColour TabBorderDark()
 {
-    return wxColour(48, 54, 61); // GitHub #30363D
+    return Slic3r::GUI::active_palette().tab_border;
 }
 inline wxColour TabBorderLight()
 {
-    return wxColour(224, 218, 212);
+    return Slic3r::GUI::active_palette().tab_border;
 }
 
 // --- StaticBox Border Colors (Building Blocks) ---
 
 inline wxColour StaticBoxBorderDark()
 {
-    return wxColour(48, 54, 61); // GitHub #30363D
+    return Slic3r::GUI::active_palette().static_box_border;
 }
 inline wxColour StaticBoxBorderLight()
 {
-    return wxColour(180, 175, 165);
+    return Slic3r::GUI::active_palette().static_box_border;
 }
 
 // --- FlatStaticBox (Section Group) Border Colors ---
 
 inline wxColour SectionBorderDark()
 {
-    return wxColour(255, 255, 255); // White — section group borders in dark mode
+    return Slic3r::GUI::active_palette().section_border;
 }
 inline wxColour SectionBorderLight()
 {
-    return wxColour(0, 0, 0); // Black — section group borders in light mode
+    return Slic3r::GUI::active_palette().section_border;
 }
 
-// --- Accent Colors (Theme-independent) ---
+// --- Accent Colors (themed; default to preFlight orange when a theme omits them) ---
 
 inline wxColour AccentPrimary()
 {
-    return wxColour(234, 160, 50);
+    return Slic3r::GUI::active_palette().accent_primary;
 }
 inline wxColour AccentHover()
 {
-    return wxColour(245, 176, 65);
+    return Slic3r::GUI::active_palette().accent_hover;
+}
+inline wxColour AccentDark()
+{
+    return Slic3r::GUI::active_palette().accent_dark;
+}
+inline wxColour AccentSecondary()
+{
+    return Slic3r::GUI::active_palette().accent_secondary;
+}
+inline wxColour AccentText()
+{
+    return Slic3r::GUI::active_palette().accent_text;
 }
 
-// --- Border Colors (Theme-independent) ---
+// --- Semantic status colors (themed) ---
 
-inline wxColour BorderNormal()
+inline wxColour Error()
 {
-    return wxColour(48, 54, 61); // GitHub #30363D
+    return Slic3r::GUI::active_palette().error;
 }
-inline wxColour BorderHovered()
+inline wxColour Warning()
 {
-    return wxColour(234, 160, 50);
-}
-inline wxColour BorderDisabled()
-{
-    return wxColour(48, 54, 61); // GitHub #30363D
+    return Slic3r::GUI::active_palette().warning;
 }
 
 // ============================================================================
@@ -553,11 +586,11 @@ inline wxColour SectionBorder()
 
 inline wxColour CanvasBackgroundDark()
 {
-    return wxColour(28, 33, 40); // #1C2128 - lighter than toolbar for contrast
+    return Slic3r::GUI::active_palette().canvas_background;
 }
 inline wxColour CanvasBackgroundLight()
 {
-    return wxColour(192, 189, 185); // Warm light gray
+    return Slic3r::GUI::active_palette().canvas_background;
 }
 
 // --- Canvas Gradient Top (lighter part of background gradient) ---
@@ -565,62 +598,62 @@ inline wxColour CanvasBackgroundLight()
 
 inline wxColour CanvasGradientTopDark()
 {
-    return wxColour(33, 38, 45); // #21262D - creates gradient from toolbar
+    return Slic3r::GUI::active_palette().canvas_gradient_top;
 }
 inline wxColour CanvasGradientTopLight()
 {
-    return wxColour(200, 197, 193); // Warm light for gradient
+    return Slic3r::GUI::active_palette().canvas_gradient_top;
 }
 
 // --- Bed/Platter Surface ---
 
 inline wxColour BedSurfaceDark()
 {
-    return wxColour(48, 54, 61); // GitHub #30363D
+    return Slic3r::GUI::active_palette().bed_surface;
 }
 inline wxColour BedSurfaceLight()
 {
-    return wxColour(180, 177, 173); // Light warm gray bed
+    return Slic3r::GUI::active_palette().bed_surface;
 }
 
 // --- Bed Grid Lines ---
 
 inline wxColour BedGridDark()
 {
-    return wxColour(68, 76, 86); // GitHub #444C56
+    return Slic3r::GUI::active_palette().bed_grid;
 }
 inline wxColour BedGridLight()
 {
-    return wxColour(160, 157, 153); // Subtle grid for light mode
+    return Slic3r::GUI::active_palette().bed_grid;
 }
 
 // --- Menu Bar Background ---
 
 inline wxColour MenuBackgroundDark()
 {
-    return wxColour(22, 27, 34); // GitHub #161B22
+    return Slic3r::GUI::active_palette().menu_background;
 }
 inline wxColour MenuBackgroundLight()
 {
-    return wxColour(250, 248, 244); // Warm white matching sidebar
+    return Slic3r::GUI::active_palette().menu_background;
 }
 
 inline wxColour MenuHoverDark()
 {
-    return wxColour(33, 38, 45); // GitHub #21262D
+    return Slic3r::GUI::active_palette().menu_hover;
 }
 inline wxColour MenuHoverLight()
 {
-    return wxColour(235, 232, 228); // Subtle hover
+    return Slic3r::GUI::active_palette().menu_hover;
 }
 
 inline wxColour MenuTextDark()
 {
-    return wxColour(201, 209, 217); // GitHub #C9D1D9
+    return Slic3r::GUI::active_palette().menu_text;
 }
 inline wxColour MenuTextLight()
 {
-    return wxColour(38, 46, 48); // Match other text
+    return Slic3r::GUI::active_palette().menu_text;
 }
 
 // --- Window Title Bar Colors (Windows 11 custom caption) ---
@@ -628,27 +661,27 @@ inline wxColour MenuTextLight()
 
 inline wxColour TitleBarBackgroundDark()
 {
-    return wxColour(13, 17, 23); // GitHub #0D1117 - darkest layer
+    return Slic3r::GUI::active_palette().title_bar_background;
 }
 inline wxColour TitleBarBackgroundLight()
 {
-    return wxColour(245, 242, 238); // Slightly darker than content
+    return Slic3r::GUI::active_palette().title_bar_background;
 }
 inline wxColour TitleBarTextDark()
 {
-    return wxColour(201, 209, 217); // GitHub #C9D1D9
+    return Slic3r::GUI::active_palette().title_bar_text;
 }
 inline wxColour TitleBarTextLight()
 {
-    return wxColour(38, 46, 48); // Dark text
+    return Slic3r::GUI::active_palette().title_bar_text;
 }
 inline wxColour TitleBarBorderDark()
 {
-    return wxColour(48, 54, 61); // GitHub #30363D
+    return Slic3r::GUI::active_palette().title_bar_border;
 }
 inline wxColour TitleBarBorderLight()
 {
-    return wxColour(200, 195, 190); // Light border
+    return Slic3r::GUI::active_palette().title_bar_border;
 }
 
 // --- Legend Combo Box Colors (ImGui combo in Preview legend) ---
@@ -656,19 +689,19 @@ inline wxColour TitleBarBorderLight()
 
 inline wxColour LegendComboBackgroundDark()
 {
-    return wxColour(22, 27, 34); // GitHub #161B22 - matches InputBackground
+    return Slic3r::GUI::active_palette().legend_combo_background;
 }
 inline wxColour LegendComboBackgroundLight()
 {
-    return wxColour(240, 237, 233); // Light warm gray
+    return Slic3r::GUI::active_palette().legend_combo_background;
 }
 inline wxColour LegendComboBackgroundHoveredDark()
 {
-    return wxColour(33, 38, 45); // GitHub #21262D - matches hover states
+    return Slic3r::GUI::active_palette().legend_combo_background_hovered;
 }
 inline wxColour LegendComboBackgroundHoveredLight()
 {
-    return wxColour(225, 220, 215); // Slightly darker on hover
+    return Slic3r::GUI::active_palette().legend_combo_background_hovered;
 }
 
 // --- Canvas Unified Accessors ---
@@ -752,175 +785,99 @@ inline float LegendComboAlpha()
 
 inline void RulerBackgroundRGBA(float &r, float &g, float &b, float &a)
 {
-    if (Slic3r::GUI::IsDarkMode())
-    {
-        r = 0.13f;
-        g = 0.13f;
-        b = 0.13f;
-        a = 0.5f;
-    }
-    else
-    {
-        // Light mode: warm gray, slightly darker than before
-        r = 0.70f;
-        g = 0.68f;
-        b = 0.66f;
-        a = 0.6f;
-    }
+    const Slic3r::GUI::RGBAf &c = Slic3r::GUI::active_palette().ruler_background;
+    r = c.r;
+    g = c.g;
+    b = c.b;
+    a = c.a;
 }
 
 // --- Legend/GCode Window Background ---
 
 inline void LegendWindowBackgroundRGBA(float &r, float &g, float &b, float &a)
 {
-    if (Slic3r::GUI::IsDarkMode())
-    {
-        // Dark mode: same as ruler background
-        r = 0.13f;
-        g = 0.13f;
-        b = 0.13f;
-        a = 0.5f;
-    }
-    else
-    {
-        // Light mode: light cream for good contrast with dark text
-        r = 0.95f;
-        g = 0.94f;
-        b = 0.92f;
-        a = 0.9f;
-    }
+    const Slic3r::GUI::RGBAf &c = Slic3r::GUI::active_palette().legend_window_background;
+    r = c.r;
+    g = c.g;
+    b = c.b;
+    a = c.a;
 }
 
 // --- Slider Groove Background (the track thumbs slide along) ---
 
 inline void SliderGrooveBackgroundRGBA(float &r, float &g, float &b, float &a)
 {
-    if (Slic3r::GUI::IsDarkMode())
-    {
-        // GitHub #161B22 - dark mode groove
-        r = 0.086f;
-        g = 0.106f;
-        b = 0.133f;
-        a = 0.95f;
-    }
-    else
-    {
-        // Light warm gray groove
-        r = 0.70f;
-        g = 0.68f;
-        b = 0.66f;
-        a = 0.95f;
-    }
+    const Slic3r::GUI::RGBAf &c = Slic3r::GUI::active_palette().slider_groove;
+    r = c.r;
+    g = c.g;
+    b = c.b;
+    a = c.a;
 }
 
 // --- Slider Border (outline around the groove) ---
 
 inline void SliderBorderRGBA(float &r, float &g, float &b, float &a)
 {
-    if (Slic3r::GUI::IsDarkMode())
-    {
-        // White border for dark mode
-        r = 1.0f;
-        g = 1.0f;
-        b = 1.0f;
-        a = 1.0f;
-    }
-    else
-    {
-        // Dark gray border for light mode
-        r = 0.20f;
-        g = 0.20f;
-        b = 0.20f;
-        a = 1.0f;
-    }
+    const Slic3r::GUI::RGBAf &c = Slic3r::GUI::active_palette().slider_border;
+    r = c.r;
+    g = c.g;
+    b = c.b;
+    a = c.a;
 }
 
 // --- Ruler Tick Marks (the small lines on the ruler) ---
 
 inline void RulerTickRGBA(float &r, float &g, float &b, float &a)
 {
-    if (Slic3r::GUI::IsDarkMode())
-    {
-        // White ticks for dark mode
-        r = 1.0f;
-        g = 1.0f;
-        b = 1.0f;
-        a = 1.0f;
-    }
-    else
-    {
-        // Dark gray ticks for light mode (matches text)
-        r = 0.15f;
-        g = 0.18f;
-        b = 0.19f;
-        a = 1.0f;
-    }
+    const Slic3r::GUI::RGBAf &c = Slic3r::GUI::active_palette().ruler_tick;
+    r = c.r;
+    g = c.g;
+    b = c.b;
+    a = c.a;
 }
 
 // --- Slider Label Background (the tooltip-style label showing current value) ---
 
 inline void SliderLabelBackgroundRGBA(float &r, float &g, float &b, float &a)
 {
-    if (Slic3r::GUI::IsDarkMode())
-    {
-        // GitHub #30363D - dark mode label background
-        r = 0.188f;
-        g = 0.212f;
-        b = 0.239f;
-        a = 1.0f;
-    }
-    else
-    {
-        // Light warm gray for light mode
-        r = 0.90f;
-        g = 0.88f;
-        b = 0.86f;
-        a = 1.0f;
-    }
+    const Slic3r::GUI::RGBAf &c = Slic3r::GUI::active_palette().slider_label_background;
+    r = c.r;
+    g = c.g;
+    b = c.b;
+    a = c.a;
 }
 
 // --- Legend/GCode Text Color (for value text in legends and g-code viewer) ---
 
 inline void LegendTextRGBA(float &r, float &g, float &b, float &a)
 {
-    if (Slic3r::GUI::IsDarkMode())
-    {
-        // White text for dark mode
-        r = 1.0f;
-        g = 1.0f;
-        b = 1.0f;
-        a = 1.0f;
-    }
-    else
-    {
-        // Dark text for light mode
-        r = 0.15f;
-        g = 0.18f;
-        b = 0.19f;
-        a = 1.0f;
-    }
+    const Slic3r::GUI::RGBAf &c = Slic3r::GUI::active_palette().legend_text;
+    r = c.r;
+    g = c.g;
+    b = c.b;
+    a = c.a;
 }
 
 // --- GCode Comment Color (lighter gray for comments) ---
 
 inline void GCodeCommentRGBA(float &r, float &g, float &b, float &a)
 {
-    if (Slic3r::GUI::IsDarkMode())
-    {
-        // Light gray for dark mode
-        r = 0.7f;
-        g = 0.7f;
-        b = 0.7f;
-        a = 1.0f;
-    }
-    else
-    {
-        // Darker gray for light mode
-        r = 0.4f;
-        g = 0.4f;
-        b = 0.4f;
-        a = 1.0f;
-    }
+    const Slic3r::GUI::RGBAf &c = Slic3r::GUI::active_palette().gcode_comment;
+    r = c.r;
+    g = c.g;
+    b = c.b;
+    a = c.a;
+}
+
+// --- GCode Command Color (G/M command tokens in the preview legend) ---
+
+inline void GCodeCommandRGBA(float &r, float &g, float &b, float &a)
+{
+    const Slic3r::GUI::RGBAf &c = Slic3r::GUI::active_palette().gcode_command;
+    r = c.r;
+    g = c.g;
+    b = c.b;
+    a = c.a;
 }
 
 } // namespace UIColors
@@ -935,123 +892,134 @@ inline void GCodeCommentRGBA(float &r, float &g, float &b, float &a)
 namespace UIColorsWin
 {
 
+// preFlight: convert a palette wxColour token to a Win32 COLORREF (single source of truth).
+inline COLORREF to_colorref(const wxColour &c)
+{
+    return RGB(c.Red(), c.Green(), c.Blue());
+}
+
 // ============================================================================
 // Building Blocks (Dark/Light specific)
 // ============================================================================
 
 inline COLORREF InputBackgroundDark()
 {
-    return RGB(22, 27, 34); // GitHub #161B22
+    return to_colorref(Slic3r::GUI::active_palette().input_background);
 }
 inline COLORREF InputBackgroundLight()
 {
-    return RGB(250, 248, 244);
+    return to_colorref(Slic3r::GUI::active_palette().input_background);
 }
 inline COLORREF InputBackgroundDisabledDark()
 {
-    return RGB(33, 38, 45); // GitHub #21262D
+    return to_colorref(Slic3r::GUI::active_palette().input_background_disabled);
 }
 inline COLORREF InputBackgroundDisabledLight()
 {
-    return RGB(235, 232, 228);
+    return to_colorref(Slic3r::GUI::active_palette().input_background_disabled);
 }
 
 inline COLORREF TextDark()
 {
-    return RGB(230, 237, 243); // GitHub #E6EDF3
+    return to_colorref(Slic3r::GUI::active_palette().label_default);
 }
 inline COLORREF TextLight()
 {
-    return RGB(38, 46, 48);
+    return to_colorref(Slic3r::GUI::active_palette().label_default);
 }
 inline COLORREF TextDisabledDark()
 {
-    return RGB(110, 118, 129); // GitHub #6E7681
+    return to_colorref(Slic3r::GUI::active_palette().input_foreground_disabled);
 }
 inline COLORREF TextDisabledLight()
 {
-    return RGB(144, 144, 144);
+    return to_colorref(Slic3r::GUI::active_palette().input_foreground_disabled);
 }
 
 inline COLORREF HeaderBackgroundDark()
 {
-    return RGB(22, 27, 34); // GitHub #161B22
+    return to_colorref(Slic3r::GUI::active_palette().header_background);
 }
 inline COLORREF HeaderBackgroundLight()
 {
-    return RGB(245, 242, 238);
+    return to_colorref(Slic3r::GUI::active_palette().header_background);
 }
 inline COLORREF HeaderDividerDark()
 {
-    return RGB(48, 54, 61); // GitHub #30363D
+    return to_colorref(Slic3r::GUI::active_palette().header_divider);
 }
 inline COLORREF HeaderDividerLight()
 {
-    return RGB(200, 195, 190);
+    return to_colorref(Slic3r::GUI::active_palette().header_divider);
 }
 
 inline COLORREF SelectionBorderDark()
 {
-    return RGB(255, 255, 255);
+    return to_colorref(Slic3r::GUI::active_palette().section_border);
 }
 inline COLORREF SelectionBorderLight()
 {
-    return RGB(0, 0, 0);
+    return to_colorref(Slic3r::GUI::active_palette().section_border);
+}
+
+inline COLORREF AccentPrimary()
+{
+    return to_colorref(Slic3r::GUI::active_palette().accent_primary);
 }
 
 inline COLORREF SofterBackgroundDark()
 {
-    return RGB(33, 38, 45); // GitHub #21262D
+    return to_colorref(Slic3r::GUI::active_palette().highlight_background);
 }
 inline COLORREF WindowBackgroundDark()
 {
-    return RGB(13, 17, 23); // GitHub #0D1117
+    return to_colorref(Slic3r::GUI::active_palette().panel_background);
 }
 inline COLORREF WindowTextDark()
 {
-    return RGB(230, 237, 243); // GitHub #E6EDF3
+    return to_colorref(Slic3r::GUI::active_palette().label_default);
 }
 
 inline COLORREF MenuBackgroundDark()
 {
-    return RGB(22, 27, 34); // GitHub #161B22
+    return to_colorref(Slic3r::GUI::active_palette().menu_background);
 }
 inline COLORREF MenuBackgroundLight()
 {
-    return RGB(250, 248, 244);
+    return to_colorref(Slic3r::GUI::active_palette().menu_background);
 }
 inline COLORREF MenuHotBackgroundDark()
 {
-    return RGB(33, 38, 45); // GitHub #21262D
+    return to_colorref(Slic3r::GUI::active_palette().menu_hover);
 }
 inline COLORREF MenuHotBackgroundLight()
 {
-    return RGB(235, 232, 228);
+    return to_colorref(Slic3r::GUI::active_palette().menu_hover);
 }
 inline COLORREF MenuTextDark()
 {
-    return RGB(201, 209, 217); // GitHub #C9D1D9
+    return to_colorref(Slic3r::GUI::active_palette().menu_text);
 }
 inline COLORREF MenuTextLight()
 {
-    return RGB(38, 46, 48);
+    return to_colorref(Slic3r::GUI::active_palette().menu_text);
 }
 inline COLORREF MenuDisabledTextDark()
 {
-    return RGB(110, 118, 129); // GitHub #6E7681
+    return to_colorref(Slic3r::GUI::active_palette().input_foreground_disabled);
 }
 inline COLORREF MenuDisabledTextLight()
 {
-    return RGB(144, 144, 144);
+    return to_colorref(Slic3r::GUI::active_palette().input_foreground_disabled);
 }
 
 inline COLORREF StaticBoxBorderDark()
 {
-    return RGB(48, 54, 61); // GitHub #30363D
+    return to_colorref(Slic3r::GUI::active_palette().static_box_border);
 }
 inline COLORREF StaticBoxBorderLight()
 {
-    return RGB(180, 175, 165);
+    return to_colorref(Slic3r::GUI::active_palette().static_box_border);
 }
 
 // --- Window Title Bar Colors (Windows 11 custom caption) ---
@@ -1059,27 +1027,27 @@ inline COLORREF StaticBoxBorderLight()
 
 inline COLORREF TitleBarBackgroundDark()
 {
-    return RGB(13, 17, 23); // GitHub #0D1117 - darkest layer
+    return to_colorref(Slic3r::GUI::active_palette().title_bar_background);
 }
 inline COLORREF TitleBarBackgroundLight()
 {
-    return RGB(245, 242, 238); // Slightly darker than content
+    return to_colorref(Slic3r::GUI::active_palette().title_bar_background);
 }
 inline COLORREF TitleBarTextDark()
 {
-    return RGB(201, 209, 217); // GitHub #C9D1D9
+    return to_colorref(Slic3r::GUI::active_palette().title_bar_text);
 }
 inline COLORREF TitleBarTextLight()
 {
-    return RGB(38, 46, 48); // Dark text
+    return to_colorref(Slic3r::GUI::active_palette().title_bar_text);
 }
 inline COLORREF TitleBarBorderDark()
 {
-    return RGB(48, 54, 61); // GitHub #30363D
+    return to_colorref(Slic3r::GUI::active_palette().title_bar_border);
 }
 inline COLORREF TitleBarBorderLight()
 {
-    return RGB(200, 195, 190); // Light border
+    return to_colorref(Slic3r::GUI::active_palette().title_bar_border);
 }
 
 // ============================================================================

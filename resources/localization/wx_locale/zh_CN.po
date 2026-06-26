@@ -1,9 +1,3 @@
-# Simplified Chinese Messages for wxWidgets
-# Copyright (C) 2005 Free Software Foundation, Inc.
-# This file is distributed under the same license as the wxWidgets package.
-# mrfx <mrfx@fm365.com>
-# Liu Xiao Xi <liouxiao@hotmail.com>, 2005
-# Jiawei Huang <hjiawei@gmail.com>, 2011-2014
 #
 msgid ""
 msgstr ""
@@ -20,6 +14,470 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 1.5.7\n"
 
+msgid "%u of %u"
+msgstr "%u / %u"
+
+msgid "Deleting password for \"%s/%s\" failed: %s."
+msgstr "删除\"%s/%s\"的密码失败：%s。"
+
+msgid "Failed to prepare playing \"%s\"."
+msgstr "准备播放\"%s\"失败。"
+
+msgid "Last repeated message (\"%s\", %u time) wasn't output"
+msgid_plural "Last repeated message (\"%s\", %u times) wasn't output"
+msgstr[0] "最后重复的消息（\"%s\"，%u 次）未被输出"
+
+msgid "Reading password for \"%s/%s\" failed: %s."
+msgstr "读取\"%s/%s\"的密码失败：%s。"
+
+msgid "Saving password for \"%s/%s\" failed: %s."
+msgstr "保存\"%s/%s\"的密码失败：%s。"
+
+msgid "The previous message repeated %u time."
+msgid_plural "The previous message repeated %u times."
+msgstr[0] "之前的消息重复了 %u 次。"
+
+msgid " "
+msgstr " "
+
+msgid " (while overwriting an existing item)"
+msgstr "（在覆盖现有项目时）"
+
+msgid "%i of %u"
+msgstr "第 %i 项，共 %u 项"
+
+msgid "%s (%d items)"
+msgstr "%s（%d 个项目）"
+
+msgid "&Blur distance:"
+msgstr "模糊距离(&B)："
+
+msgid "&Horizontal offset:"
+msgstr "水平偏移(&H)："
+
+msgid "&Synchronize values"
+msgstr "同步数值(&S)"
+
+msgid "Absolute"
+msgstr "绝对"
+
+msgid "ActiveCaption"
+msgstr "ActiveCaption"
+
+msgid "An optional corner radius for adding rounded corners."
+msgstr "用于添加圆角的可选圆角半径。"
+
+msgid "AppWorkspace"
+msgstr "AppWorkspace"
+
+msgid "Aqua"
+msgstr "浅绿色"
+
+msgid "Black"
+msgstr "黑色"
+
+msgid "Blank"
+msgstr "空白"
+
+msgid "Blue"
+msgstr "蓝色"
+
+msgid "Blue:"
+msgstr "蓝："
+
+msgid "ButtonFace"
+msgstr "ButtonFace"
+
+msgid "ButtonHighlight"
+msgstr "ButtonHighlight"
+
+msgid "ButtonShadow"
+msgstr "ButtonShadow"
+
+msgid "ButtonText"
+msgstr "ButtonText"
+
+msgid "CaptionText"
+msgstr "CaptionText"
+
+msgid "Check to suppress hyphenation."
+msgstr "勾选以禁止断字连字符。"
+
+msgid "Collapse"
+msgstr "折叠"
+
+msgid "Column %u"
+msgstr "第 %u 列"
+
+msgid "Command"
+msgstr "Command"
+
+msgid "ControlDark"
+msgstr "ControlDark"
+
+msgid "ControlLight"
+msgstr "ControlLight"
+
+msgid "Corner"
+msgstr "圆角"
+
+msgid "Corner &radius:"
+msgstr "圆角半径(&R)："
+
+msgid "Cross"
+msgstr "十字"
+
+msgid "Dashed"
+msgstr "虚线"
+
+msgid "Decimal"
+msgstr "小数点"
+
+msgid "Displays help as you browse the books on the left."
+msgstr "在您浏览左侧书籍时显示帮助。"
+
+msgid "Divide"
+msgstr "除号"
+
+msgid "End"
+msgstr "End"
+
+msgid "Esc"
+msgstr "Esc"
+
+msgid "Expand"
+msgstr "展开"
+
+msgid "Failed to load sound from \"%s\" (error %d)."
+msgstr "无法从 \"%s\" 加载声音（错误 %d）。"
+
+msgid "Fuchsia"
+msgstr "紫红色"
+
+msgid "Gray"
+msgstr "灰色"
+
+msgid "GrayText"
+msgstr "GrayText"
+
+msgid "Groove"
+msgstr "凹槽"
+
+msgid "Hand"
+msgstr "手形"
+
+msgid "I-Beam"
+msgstr "工字形"
+
+msgid "InactiveCaption"
+msgstr "InactiveCaption"
+
+msgid "InactiveCaptionText"
+msgstr "InactiveCaptionText"
+
+msgid "KP_Begin"
+msgstr "KP_Begin"
+
+msgid "KP_Decimal"
+msgstr "KP_Decimal"
+
+msgid "KP_Divide"
+msgstr "KP_Divide"
+
+msgid "KP_Equal"
+msgstr "KP_Equal"
+
+msgid "KP_Multiply"
+msgstr "KP_Multiply"
+
+msgid "KP_PageDown"
+msgstr "KP_PageDown"
+
+msgid "KP_PageUp"
+msgstr "KP_PageUp"
+
+msgid "KP_Prior"
+msgstr "KP_Prior"
+
+msgid "KP_Separator"
+msgstr "KP_Separator"
+
+msgid "KP_Space"
+msgstr "KP_Space"
+
+msgid "KP_Subtract"
+msgstr "KP_Subtract"
+
+msgid "Left Button"
+msgstr "左键"
+
+msgid "Lime"
+msgstr "黄绿色"
+
+msgid "Magnifier"
+msgstr "放大镜"
+
+msgid "Maroon"
+msgstr "栗色"
+
+msgid "Middle Button"
+msgstr "中键"
+
+msgid "Navy"
+msgstr "藏青色"
+
+msgid "No Entry"
+msgstr "禁止"
+
+msgid "Num *"
+msgstr "Num *"
+
+msgid "Num +"
+msgstr "Num +"
+
+msgid "Num ,"
+msgstr "Num ,"
+
+msgid "Num -"
+msgstr "Num -"
+
+msgid "Num ."
+msgstr "Num ."
+
+msgid "Num /"
+msgstr "Num /"
+
+msgid "Num ="
+msgstr "Num ="
+
+msgid "Num Begin"
+msgstr "Num Begin"
+
+msgid "Num End"
+msgstr "Num End"
+
+msgid "Num Enter"
+msgstr "Num Enter"
+
+msgid "Num Lock"
+msgstr "Num Lock"
+
+msgid "Num Page Down"
+msgstr "Num Page Down"
+
+msgid "Num Page Up"
+msgstr "Num Page Up"
+
+msgid "Num Space"
+msgstr "Num Space"
+
+msgid "Num Tab"
+msgstr "Num Tab"
+
+msgid "Num Up"
+msgstr "Num Up"
+
+msgid "Num left"
+msgstr "Num left"
+
+msgid "Num_lock"
+msgstr "Num_lock"
+
+msgid "Olive"
+msgstr "橄榄色"
+
+msgid "Opaci&ty:"
+msgstr "不透明度(&T)："
+
+msgid "Opacity:"
+msgstr "不透明度："
+
+msgid "OpenGL 3.0 or later is not supported by the OpenGL driver."
+msgstr "OpenGL 驱动程序不支持 OpenGL 3.0 或更高版本。"
+
+msgid "Orange"
+msgstr "橙色"
+
+msgid "Outline"
+msgstr "轮廓"
+
+msgid "Outset"
+msgstr "凸起"
+
+msgid "Paint Brush"
+msgstr "画刷"
+
+msgid "Pause"
+msgstr "Pause"
+
+msgid "Pencil"
+msgstr "铅笔"
+
+msgid "Peri&od"
+msgstr "句点(&O)"
+
+msgid "PgDn"
+msgstr "PgDn"
+
+msgid "PgUp"
+msgstr "PgUp"
+
+msgid "Purple"
+msgstr "紫色"
+
+msgid "Red:"
+msgstr "红："
+
+msgid "Registry value \"%s\" is not binary (but of type %s)"
+msgstr "注册表值 \"%s\" 不是二进制类型（而是 %s 类型）"
+
+msgid "Registry value \"%s\" is not numeric (but of type %s)"
+msgstr "注册表值 \"%s\" 不是数字类型（而是 %s 类型）"
+
+msgid "Registry value \"%s\" is not text (but of type %s)"
+msgstr "注册表值 \"%s\" 不是文本类型（而是 %s 类型）"
+
+msgid "Return"
+msgstr "Return"
+
+msgid "Right Button"
+msgstr "右键"
+
+msgid "Row %i"
+msgstr "第 %i 行"
+
+msgid "Scroll Lock"
+msgstr "Scroll Lock"
+
+msgid "Scroll_lock"
+msgstr "Scroll_lock"
+
+msgid "Scrollbar"
+msgstr "Scrollbar"
+
+msgid "Separator"
+msgstr "分隔符"
+
+msgid "Sh&adow spread:"
+msgstr "阴影扩展(&A)："
+
+msgid "Shadow"
+msgstr "阴影"
+
+msgid "Silver"
+msgstr "银色"
+
+msgid "Single"
+msgstr "单线"
+
+msgid "Sizing"
+msgstr "调整大小"
+
+msgid "Sizing N-S"
+msgstr "上下调整大小"
+
+msgid "Sizing NE-SW"
+msgstr "东北-西南调整大小"
+
+msgid "Sizing NW-SE"
+msgstr "西北-东南调整大小"
+
+msgid "Sizing W-E"
+msgstr "左右调整大小"
+
+msgid "Snapshot"
+msgstr "快照"
+
+msgid "Spraycan"
+msgstr "喷罐"
+
+msgid "Subtract"
+msgstr "减号"
+
+msgid "Suppress hyphe&nation"
+msgstr "禁止断字连字符(&N)"
+
+msgid "Teal"
+msgstr "青色"
+
+msgid "The shadow blur distance."
+msgstr "阴影模糊距离。"
+
+msgid "The shadow opacity."
+msgstr "阴影不透明度。"
+
+msgid "The shadow spread."
+msgstr "阴影扩展。"
+
+msgid "The value of the corner radius."
+msgstr "圆角半径的值。"
+
+msgid "Tooltip"
+msgstr "工具提示"
+
+msgid "TooltipText"
+msgstr "TooltipText"
+
+msgid "Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT \"%s\"."
+msgstr "类型操作 \"%s\" 失败：标签为 \"%s\" 的属性类型为 \"%s\"，而非 \"%s\"。"
+
+msgid "Unable to remove inotify watch %i"
+msgstr "无法移除 inotify 监视 %i"
+
+msgid "Unexpected event for \"%s\": no matching watch descriptor."
+msgstr "\"%s\" 出现意外事件：没有匹配的监视描述符。"
+
+msgid "Unexpectedly new I/O completion port was created"
+msgstr "意外创建了新的 I/O 完成端口"
+
+msgid "Use &shadow"
+msgstr "使用阴影(&S)"
+
+msgid "Wait"
+msgstr "等待"
+
+msgid "Wait Arrow"
+msgstr "等待箭头"
+
+msgid "Watch"
+msgstr "表形"
+
+msgid "White"
+msgstr "白色"
+
+msgid "Yellow"
+msgstr "黄色"
+
+msgid "checked"
+msgstr "已勾选"
+
+msgid "file '%s', line %zu: '%s' ignored after group header."
+msgstr "文件 '%s'，第 %zu 行：组头之后的 '%s' 被忽略。"
+
+msgid "file '%s', line %zu: '=' expected."
+msgstr "文件 '%s'，第 %zu 行：应为 '='。"
+
+msgid "file '%s', line %zu: key '%s' was first found at line %d."
+msgstr "文件 '%s'，第 %zu 行：键 '%s' 首次出现于第 %d 行。"
+
+msgid "file '%s', line %zu: value for immutable key '%s' ignored."
+msgstr "文件 '%s'，第 %zu 行：不可变键 '%s' 的值被忽略。"
+
+msgid "file '%s': unexpected character %c at line %zu."
+msgstr "文件 '%s'：第 %zu 行出现意外字符 %c。"
+
+msgid "true"
+msgstr "true"
+
+msgid "unchecked"
+msgstr "未勾选"
+
+msgid "unknown (%lu)"
+msgstr "未知 (%lu)"
+
+msgid "encoding %i"
+msgstr "编码 %i"
+
 #: ../src/common/debugrpt.cpp:586
 msgid ""
 "\n"
@@ -27,11 +485,6 @@ msgid ""
 msgstr ""
 "\n"
 "请将报告发送给程序维护人员，谢谢！\n"
-
-#: ../src/richtext/richtextstyledlg.cpp:210
-#: ../src/richtext/richtextstyledlg.cpp:222
-msgid " "
-msgstr " "
 
 #: ../src/generic/dbgrptg.cpp:326
 msgid "              Thank you and we're sorry for the inconvenience!\n"
@@ -51,10 +504,6 @@ msgstr " (错误 %ld: %s)"
 #, c-format
 msgid " (in module \"%s\")"
 msgstr " (于模块: \"%s\")"
-
-#: ../src/osx/core/secretstore.cpp:138
-msgid " (while overwriting an existing item)"
-msgstr ""
 
 #: ../src/common/docview.cpp:1642
 msgid " - "
@@ -119,11 +568,6 @@ msgstr "%"
 msgid "%d of %lu"
 msgstr "%d / %lu"
 
-#: ../src/html/helpwnd.cpp:1678
-#, fuzzy, c-format
-msgid "%i of %u"
-msgstr "%i / %i"
-
 #: ../src/generic/filectrlg.cpp:279
 #, c-format
 msgid "%ld byte"
@@ -134,11 +578,6 @@ msgstr[0] "%ld 字节"
 #, c-format
 msgid "%lu of %lu"
 msgstr "%lu / %lu"
-
-#: ../src/generic/datavgen.cpp:6028
-#, fuzzy, c-format
-msgid "%s (%d items)"
-msgstr "%s (或 %s)"
 
 #: ../src/common/cmdline.cpp:1221
 #, c-format
@@ -174,11 +613,6 @@ msgstr "%s 不符合tar项目 '%s' 的标头"
 #, c-format
 msgid "%s files (%s)|%s"
 msgstr "%s 文件 (%s)|%s"
-
-#: ../src/html/helpwnd.cpp:1716
-#, fuzzy, c-format
-msgid "%u of %u"
-msgstr "%lu / %lu"
 
 #: ../src/common/stockitem.cpp:139
 msgid "&About"
@@ -229,10 +663,6 @@ msgstr "段落之前(&B):"
 msgid "&Bg colour:"
 msgstr "背景颜色(&B):"
 
-#: ../src/richtext/richtextbackgroundpage.cpp:298
-msgid "&Blur distance:"
-msgstr ""
-
 #: ../src/common/stockitem.cpp:143
 msgid "&Bold"
 msgstr "粗体(&B)"
@@ -251,7 +681,6 @@ msgid "&Bottom:"
 msgstr "底端(&B):"
 
 #: ../include/wx/richtext/richtextbuffer.h:3866
-#, fuzzy
 msgid "&Box"
 msgstr "粗体(&B)"
 
@@ -275,7 +704,6 @@ msgid "&Cascade"
 msgstr "层叠(&C)"
 
 #: ../include/wx/richtext/richtextbuffer.h:5960
-#, fuzzy
 msgid "&Cell"
 msgstr "取消(&C)"
 
@@ -427,10 +855,6 @@ msgstr "隐藏细节(&H)"
 msgid "&Home"
 msgstr "Home(&H)"
 
-#: ../src/richtext/richtextbackgroundpage.cpp:212
-msgid "&Horizontal offset:"
-msgstr ""
-
 #: ../src/richtext/richtextindentspage.cpp:184
 #: ../src/richtext/richtextliststylepage.cpp:372
 msgid "&Indentation (tenths of a mm)"
@@ -438,7 +862,6 @@ msgstr "缩进(&I) (十分之一毫米)"
 
 #: ../src/richtext/richtextindentspage.cpp:167
 #: ../src/richtext/richtextliststylepage.cpp:356
-#, fuzzy
 msgid "&Indeterminate"
 msgstr "下划线(&U)"
 
@@ -708,11 +1131,6 @@ msgstr "子集(&S):"
 msgid "&Symbol:"
 msgstr "符号(&S):"
 
-#: ../src/richtext/richtextborderspage.cpp:381
-#: ../src/richtext/richtextborderspage.cpp:549
-msgid "&Synchronize values"
-msgstr ""
-
 #: ../include/wx/richtext/richtextbuffer.h:6069
 msgid "&Table"
 msgstr "表格(&T)"
@@ -761,7 +1179,6 @@ msgid "&Vertical alignment:"
 msgstr "垂直对齐(&V)"
 
 #: ../src/richtext/richtextbackgroundpage.cpp:235
-#, fuzzy
 msgid "&Vertical offset:"
 msgstr "垂直对齐(&V)"
 
@@ -1203,20 +1620,10 @@ msgstr "关于 %s"
 msgid "About..."
 msgstr "关于..."
 
-#: ../src/richtext/richtextsizepage.cpp:520
-msgid "Absolute"
-msgstr ""
-
 #. TRANSLATORS: Keyword of system colour
 #: ../src/propgrid/advprops.cpp:873
-#, fuzzy
 msgid "ActiveBorder"
 msgstr "边框"
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:874
-msgid "ActiveCaption"
-msgstr ""
 
 #: ../src/common/stockitem.cpp:207
 msgid "Actual Size"
@@ -1313,11 +1720,6 @@ msgstr "已经拨接 ISP 。"
 msgid "Alt+"
 msgstr "Alt+"
 
-#: ../src/richtext/richtextborderspage.cpp:577
-#: ../src/richtext/richtextborderspage.cpp:579
-msgid "An optional corner radius for adding rounded corners."
-msgstr ""
-
 #: ../src/common/debugrpt.cpp:576
 msgid "And includes the following files:\n"
 msgstr "并且包含以下文件:\n"
@@ -1326,11 +1728,6 @@ msgstr "并且包含以下文件:\n"
 #, c-format
 msgid "Animation file is not of type %ld."
 msgstr "动画文件的类型不是 %ld。"
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:872
-msgid "AppWorkspace"
-msgstr ""
 
 #: ../src/generic/logg.cpp:1014
 #, c-format
@@ -1344,10 +1741,6 @@ msgstr "应用程序"
 #: ../src/common/stockitem.cpp:141
 msgid "Apply"
 msgstr "应用"
-
-#: ../src/propgrid/advprops.cpp:1609
-msgid "Aqua"
-msgstr ""
 
 #: ../src/richtext/richtextliststylepage.cpp:482
 #: ../src/richtext/richtextbulletspage.cpp:274
@@ -1365,7 +1758,6 @@ msgstr "找不到参数 %u。"
 
 #. TRANSLATORS: System cursor name
 #: ../src/propgrid/advprops.cpp:1753
-#, fuzzy
 msgid "Arrow"
 msgstr "明天"
 
@@ -1484,7 +1876,6 @@ msgstr "背景颜色"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:52
-#, fuzzy
 msgid "Backspace"
 msgstr "返回"
 
@@ -1504,23 +1895,6 @@ msgstr "段落之前:"
 #: ../src/richtext/richtextbulletspage.cpp:281
 msgid "Bitmap"
 msgstr "位图"
-
-#: ../src/propgrid/advprops.cpp:1594
-msgid "Black"
-msgstr ""
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1755
-msgid "Blank"
-msgstr ""
-
-#: ../src/propgrid/advprops.cpp:1603
-msgid "Blue"
-msgstr ""
-
-#: ../src/generic/colrdlgg.cpp:345
-msgid "Blue:"
-msgstr ""
 
 #: ../src/generic/fontdlgg.cpp:333 ../src/richtext/richtextfontpage.cpp:355
 #: ../src/osx/carbon/fontdlg.cpp:354 ../src/common/stockitem.cpp:143
@@ -1553,7 +1927,6 @@ msgid "Box styles"
 msgstr "方块样式"
 
 #: ../src/propgrid/advprops.cpp:1602
-#, fuzzy
 msgid "Brown"
 msgstr "浏览"
 
@@ -1576,29 +1949,8 @@ msgstr "项目符号"
 
 #. TRANSLATORS: System cursor name
 #: ../src/propgrid/advprops.cpp:1756
-#, fuzzy
 msgid "Bullseye"
 msgstr "项目符号样式"
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:875
-msgid "ButtonFace"
-msgstr ""
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:876
-msgid "ButtonHighlight"
-msgstr ""
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:877
-msgid "ButtonShadow"
-msgstr ""
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:878
-msgid "ButtonText"
-msgstr ""
 
 #: ../src/common/paper.cpp:98
 msgid "C sheet, 17 x 22 in"
@@ -1921,14 +2273,8 @@ msgstr "无法等候线程终止"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:75
-#, fuzzy
 msgid "Capital"
 msgstr "大写(&P)"
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:879
-msgid "CaptionText"
-msgstr ""
 
 #: ../src/html/helpwnd.cpp:533
 msgid "Case sensitive"
@@ -2003,13 +2349,12 @@ msgid "Changes won't be saved to avoid overwriting the existing file \"%s\""
 msgstr "为了防止重写已有文件 \"%s\" 更改不会被保存"
 
 #: ../src/gtk/filepicker.cpp:190 ../src/gtk/filedlg.cpp:87
-#, fuzzy, c-format
+#, c-format
 msgid "Changing current directory to \"%s\" failed"
 msgstr "无法创建目录 \"%s\""
 
 #. TRANSLATORS: System cursor name
 #: ../src/propgrid/advprops.cpp:1757
-#, fuzzy
 msgid "Character"
 msgstr "字符编码(&C):"
 
@@ -2079,7 +2424,6 @@ msgstr "勾选显示为大写。"
 
 #: ../src/richtext/richtextfontpage.cpp:291
 #: ../src/richtext/richtextfontpage.cpp:293
-#, fuzzy
 msgid "Check to show the text in small capitals."
 msgstr "勾选显示为大写。"
 
@@ -2092,11 +2436,6 @@ msgstr "勾选显示为下标。"
 #: ../src/richtext/richtextfontpage.cpp:300
 msgid "Check to show the text in superscript."
 msgstr "勾选显示为上标。"
-
-#: ../src/richtext/richtextfontpage.cpp:322
-#: ../src/richtext/richtextfontpage.cpp:324
-msgid "Check to suppress hyphenation."
-msgstr ""
 
 #: ../src/msw/dialup.cpp:763
 msgid "Choose ISP to dial"
@@ -2264,11 +2603,6 @@ msgstr "关闭当前文档"
 msgid "Close this window"
 msgstr "关闭此窗口"
 
-#. TRANSLATORS: Action for manipulating a tree control
-#: ../src/generic/datavgen.cpp:6006
-msgid "Collapse"
-msgstr ""
-
 #: ../src/common/stockitem.cpp:193
 msgid "Color"
 msgstr "颜色"
@@ -2285,16 +2619,6 @@ msgstr "颜色选择对话框错误，错误码 %0lx。"
 #: ../src/osx/carbon/fontdlg.cpp:380
 msgid "Colour:"
 msgstr "颜色:"
-
-#: ../src/generic/datavgen.cpp:6077
-#, fuzzy, c-format
-msgid "Column %u"
-msgstr "添加列"
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:114
-msgid "Command"
-msgstr ""
 
 #: ../src/common/init.cpp:196
 #, c-format
@@ -2339,16 +2663,6 @@ msgstr "正在连接..."
 msgid "Contents"
 msgstr "目录"
 
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:880
-msgid "ControlDark"
-msgstr ""
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:881
-msgid "ControlLight"
-msgstr ""
-
 #: ../src/common/strconv.cpp:2262
 #, c-format
 msgid "Conversion to charset '%s' doesn't work."
@@ -2375,15 +2689,6 @@ msgstr "复制"
 msgid "Copy selection"
 msgstr "复制选区"
 
-#: ../src/richtext/richtextborderspage.cpp:566
-#: ../src/richtext/richtextborderspage.cpp:601
-msgid "Corner"
-msgstr ""
-
-#: ../src/richtext/richtextborderspage.cpp:575
-msgid "Corner &radius:"
-msgstr ""
-
 #: ../src/html/chm.cpp:718
 #, c-format
 msgid "Could not create temporary file '%s'"
@@ -2399,7 +2704,6 @@ msgid "Could not find tab for id"
 msgstr "找不到 id 的标签"
 
 #: ../src/gtk/notifmsg.cpp:108
-#, fuzzy
 msgid "Could not initalize libnotify."
 msgstr "无法设定对齐。"
 
@@ -2433,7 +2737,6 @@ msgstr "无法把图像加到图象列表。"
 
 #: ../src/osx/glcanvas_osx.cpp:414 ../src/unix/glx11.cpp:558
 #: ../src/msw/glcanvas.cpp:616
-#, fuzzy
 msgid "Couldn't create OpenGL context"
 msgstr "无法创建计时器"
 
@@ -2459,7 +2762,6 @@ msgid "Couldn't get the current thread pointer"
 msgstr "无法获得当前线程指针"
 
 #: ../src/osx/carbon/overlay.cpp:129
-#, fuzzy
 msgid "Couldn't init the context on the overlay window"
 msgstr "无法获得当前线程指针"
 
@@ -2518,14 +2820,9 @@ msgid "Create new directory"
 msgstr "创建新目录"
 
 #: ../src/xrc/xmlres.cpp:2460
-#, fuzzy, c-format
+#, c-format
 msgid "Creating %s \"%s\" failed."
 msgstr "将 '%s' 解压至 '%s' 失败。"
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1758
-msgid "Cross"
-msgstr ""
 
 #: ../src/common/accelcmn.cpp:333
 msgid "Ctrl+"
@@ -2543,7 +2840,6 @@ msgstr "当前目录:"
 #. TRANSLATORS: Custom colour choice entry
 #: ../src/propgrid/advprops.cpp:896 ../src/propgrid/advprops.cpp:1574
 #: ../src/propgrid/advprops.cpp:1612
-#, fuzzy
 msgid "Custom"
 msgstr "自定义大小"
 
@@ -2599,10 +2895,6 @@ msgstr "DIB头: 文件编码未知。"
 msgid "DL Envelope, 110 x 220 mm"
 msgstr "DL 信封, 110 x 220 毫米"
 
-#: ../src/richtext/richtextborderspage.cpp:613
-msgid "Dashed"
-msgstr ""
-
 #: ../src/generic/dbgrptg.cpp:300
 #, c-format
 msgid "Debug report \"%s\""
@@ -2616,18 +2908,12 @@ msgstr "无法创建调试报告。"
 msgid "Debug report generation has failed."
 msgstr "无法生成调试报告。"
 
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:84
-msgid "Decimal"
-msgstr ""
-
 #: ../src/generic/fontdlgg.cpp:323
 msgid "Decorative"
 msgstr "修饰"
 
 #. TRANSLATORS: System cursor name
 #: ../src/propgrid/advprops.cpp:1752
-#, fuzzy
 msgid "Default"
 msgstr "缺省值"
 
@@ -2645,7 +2931,6 @@ msgstr "缺省的打印机"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:51
-#, fuzzy
 msgid "Del"
 msgstr "删除"
 
@@ -2693,11 +2978,6 @@ msgstr "删除样式 %s?"
 msgid "Deleted stale lock file '%s'."
 msgstr "已删除过期的锁文件 '%s'。"
 
-#: ../src/common/secretstore.cpp:220
-#, fuzzy, c-format
-msgid "Deleting password for \"%s/%s\" failed: %s."
-msgstr "将 '%s' 解压至 '%s' 失败。"
-
 #: ../src/common/module.cpp:124
 #, c-format
 msgid "Dependency \"%s\" of module \"%s\" doesn't exist."
@@ -2722,8 +3002,8 @@ msgstr "开发者"
 
 #: ../src/msw/dialup.cpp:374
 msgid ""
-"Dial up functions are unavailable because the remote access service (RAS) is "
-"not installed on this machine. Please install it."
+"Dial up functions are unavailable because the remote access service (RAS) is"
+" not installed on this machine. Please install it."
 msgstr "由于远程访问服务(RAS)没有安装在本机，拨号功能无法使用。请安装它。"
 
 #: ../src/generic/tipdlg.cpp:211
@@ -2771,15 +3051,6 @@ msgstr "显示包含给定子串的所有索引项. 搜索是大小写无关的.
 msgid "Display options dialog"
 msgstr "显示选项对话框"
 
-#: ../src/html/helpwnd.cpp:322
-msgid "Displays help as you browse the books on the left."
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:85
-msgid "Divide"
-msgstr ""
-
 #: ../src/common/docview.cpp:533
 #, c-format
 msgid "Do you want to save changes to %s?"
@@ -2810,12 +3081,10 @@ msgid "Done."
 msgstr "完成."
 
 #: ../src/richtext/richtextborderspage.cpp:612
-#, fuzzy
 msgid "Dotted"
 msgstr "完成"
 
 #: ../src/richtext/richtextborderspage.cpp:614
-#, fuzzy
 msgid "Double"
 msgstr "完成"
 
@@ -2897,42 +3166,31 @@ msgstr "启用背景颜色。"
 
 #: ../src/richtext/richtextbackgroundpage.cpp:196
 #: ../src/richtext/richtextbackgroundpage.cpp:198
-#, fuzzy
 msgid "Enables a shadow."
 msgstr "启用背景颜色。"
 
 #: ../src/richtext/richtextbackgroundpage.cpp:300
 #: ../src/richtext/richtextbackgroundpage.cpp:302
-#, fuzzy
 msgid "Enables the blur distance."
 msgstr "启用宽度值。"
 
 #: ../src/richtext/richtextbackgroundpage.cpp:260
 #: ../src/richtext/richtextbackgroundpage.cpp:262
-#, fuzzy
 msgid "Enables the shadow colour."
 msgstr "启用背景颜色。"
 
 #: ../src/richtext/richtextbackgroundpage.cpp:327
 #: ../src/richtext/richtextbackgroundpage.cpp:329
-#, fuzzy
 msgid "Enables the shadow opacity."
 msgstr "启用宽度值。"
 
 #: ../src/richtext/richtextbackgroundpage.cpp:273
 #: ../src/richtext/richtextbackgroundpage.cpp:275
-#, fuzzy
 msgid "Enables the shadow spread."
 msgstr "启用宽度值。"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:66
-msgid "End"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:55
-#, fuzzy
 msgid "Enter"
 msgstr "打印机"
 
@@ -2994,7 +3252,7 @@ msgid "Error closing kqueue instance"
 msgstr "关闭 kqueue 实例时发生错误"
 
 #: ../src/common/filefn.cpp:1049
-#, fuzzy, c-format
+#, c-format
 msgid "Error copying the file '%s' to '%s'."
 msgstr "无法复制文件 '%s' 至 '%s'"
 
@@ -3028,13 +3286,7 @@ msgid "Error: "
 msgstr "错误: "
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:69
-msgid "Esc"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:70
-#, fuzzy
 msgid "Escape"
 msgstr "横向"
 
@@ -3063,11 +3315,6 @@ msgstr "命令 '%s' 执行失败"
 #: ../src/common/paper.cpp:105
 msgid "Executive, 7 1/4 x 10 1/2 in"
 msgstr "实用纸张(Executive), 7 1/4 x 10 1/2 英寸"
-
-#. TRANSLATORS: Action for manipulating a tree control
-#: ../src/generic/datavgen.cpp:6009
-msgid "Expand"
-msgstr ""
 
 #: ../src/msw/registry.cpp:1240
 #, c-format
@@ -3337,8 +3584,8 @@ msgstr "无法安装信号句柄"
 
 #: ../src/unix/threadpsx.cpp:1167
 msgid ""
-"Failed to join a thread, potential memory leak detected - please restart the "
-"program"
+"Failed to join a thread, potential memory leak detected - please restart the"
+" program"
 msgstr "无法合并线程，检测到潜在地内存丢失 - 请重新启动系统"
 
 #: ../src/msw/utils.cpp:629
@@ -3357,7 +3604,7 @@ msgid "Failed to load icon \"%s\" from resources."
 msgstr "无法从资源中载入图标 \"%s\"。"
 
 #: ../src/common/iconbndl.cpp:225
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to load icons from resource '%s'."
 msgstr "无法从资源中载入图标 \"%s\"。"
 
@@ -3394,11 +3641,6 @@ msgstr "无法载入资源 \"%s\"。"
 #, c-format
 msgid "Failed to load shared library '%s'"
 msgstr "无法装载共享库 '%s'"
-
-#: ../src/osx/core/sound.cpp:145
-#, fuzzy, c-format
-msgid "Failed to load sound from \"%s\" (error %d)."
-msgstr "无法载入资源 \"%s\"。"
 
 #: ../src/msw/utils.cpp:960
 #, c-format
@@ -3466,11 +3708,6 @@ msgstr "无法打开剪贴板。"
 #, c-format
 msgid "Failed to parse Plural-Forms: '%s'"
 msgstr "无法解析复数形式: '%s'"
-
-#: ../src/unix/mediactrl.cpp:1214
-#, fuzzy, c-format
-msgid "Failed to prepare playing \"%s\"."
-msgstr "打开 '%s'(为 %s) 失败"
 
 #: ../src/msw/clipbrd.cpp:600
 msgid "Failed to put data on the clipboard"
@@ -3681,7 +3918,6 @@ msgstr "False"
 
 #. TRANSLATORS: Label of font family
 #: ../src/propgrid/advprops.cpp:694
-#, fuzzy
 msgid "Family"
 msgstr "字体(&F):"
 
@@ -3827,10 +4063,6 @@ msgstr "找到 %i 个匹配项"
 msgid "From:"
 msgstr "从:"
 
-#: ../src/propgrid/advprops.cpp:1604
-msgid "Fuchsia"
-msgstr ""
-
 #: ../src/common/imaggif.cpp:138
 msgid "GIF: data stream seems to be truncated."
 msgstr "GIF: 数据流似乎已被截断。"
@@ -3905,32 +4137,17 @@ msgstr "进入父目录"
 msgid "Graphics art by "
 msgstr "图形艺术设计由 "
 
-#: ../src/propgrid/advprops.cpp:1599
-msgid "Gray"
-msgstr ""
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:883
-msgid "GrayText"
-msgstr ""
-
 #: ../src/common/fmapbase.cpp:154
 msgid "Greek (ISO-8859-7)"
 msgstr "希腊语 (ISO-8859-7)"
 
 #: ../src/propgrid/advprops.cpp:1600
-#, fuzzy
 msgid "Green"
 msgstr "MacGreek"
 
 #: ../src/generic/colrdlgg.cpp:342
-#, fuzzy
 msgid "Green:"
 msgstr "MacGreek"
-
-#: ../src/richtext/richtextborderspage.cpp:615
-msgid "Groove"
-msgstr ""
 
 #: ../src/common/zstream.cpp:158 ../src/common/zstream.cpp:318
 msgid "Gzip not supported by this version of zlib"
@@ -3948,11 +4165,6 @@ msgstr "HTML 锚 %s 不存在。"
 #: ../src/html/helpwnd.cpp:1547
 msgid "HTML files (*.html;*.htm)|*.html;*.htm|"
 msgstr "HTML文件 (*.html;*.htm)|*.html;*.htm|"
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1759
-msgid "Hand"
-msgstr ""
 
 #: ../src/common/stockitem.cpp:162
 msgid "Harddisk"
@@ -4019,13 +4231,11 @@ msgstr "隐藏此通知消息。"
 
 #. TRANSLATORS: Keyword of system colour
 #: ../src/propgrid/advprops.cpp:884
-#, fuzzy
 msgid "Highlight"
 msgstr "细体"
 
 #. TRANSLATORS: Keyword of system colour
 #: ../src/propgrid/advprops.cpp:885
-#, fuzzy
 msgid "HighlightText"
 msgstr "文本右对齐"
 
@@ -4042,11 +4252,6 @@ msgstr "Home 目录"
 #: ../src/richtext/richtextsizepage.cpp:255
 msgid "How the object will float relative to the text."
 msgstr "对象怎样浮动与文本有关。"
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1760
-msgid "I-Beam"
-msgstr ""
 
 #: ../src/common/imagbmp.cpp:1196
 msgid "ICO: Error in reading mask DIB."
@@ -4108,8 +4313,7 @@ msgstr ""
 
 #: ../src/generic/dbgrptg.cpp:324
 msgid ""
-"If you wish to suppress this debug report completely, please choose the "
-"\"Cancel\" button,\n"
+"If you wish to suppress this debug report completely, please choose the \"Cancel\" button,\n"
 "but be warned that it may hinder improving the program, so if\n"
 "at all possible please do continue with the report generation.\n"
 msgstr ""
@@ -4158,10 +4362,9 @@ msgstr "图像的类型不是 %s。"
 
 #: ../src/msw/textctrl.cpp:488
 msgid ""
-"Impossible to create a rich edit control, using simple text control instead. "
-"Please reinstall riched32.dll"
-msgstr ""
-"无法创建富文本编辑器控件，使用简单文本编辑器控件代替。请重新安装 riched32.dll"
+"Impossible to create a rich edit control, using simple text control instead."
+" Please reinstall riched32.dll"
+msgstr "无法创建富文本编辑器控件，使用简单文本编辑器控件代替。请重新安装 riched32.dll"
 
 #: ../src/unix/utilsunx.cpp:301
 msgid "Impossible to get child process input"
@@ -4184,19 +4387,8 @@ msgstr "不可能设置文件 '%s' 的许可权限"
 
 #. TRANSLATORS: Keyword of system colour
 #: ../src/propgrid/advprops.cpp:886
-#, fuzzy
 msgid "InactiveBorder"
 msgstr "边框"
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:887
-msgid "InactiveCaption"
-msgstr ""
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:888
-msgid "InactiveCaptionText"
-msgstr ""
 
 #: ../src/common/gifdecod.cpp:792
 #, c-format
@@ -4233,7 +4425,6 @@ msgstr "在后初始化阶段出错，退出..."
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:54
-#, fuzzy
 msgid "Ins"
 msgstr "缩进"
 
@@ -4243,7 +4434,6 @@ msgid "Insert"
 msgstr "插入"
 
 #: ../src/richtext/richtextbuffer.cpp:8067
-#, fuzzy
 msgid "Insert Field"
 msgstr "插入"
 
@@ -4269,7 +4459,6 @@ msgid "Inserts a page break before the paragraph."
 msgstr "在段落前插入断页符。"
 
 #: ../src/richtext/richtextborderspage.cpp:617
-#, fuzzy
 msgid "Inset"
 msgstr "缩进"
 
@@ -4422,128 +4611,61 @@ msgstr "KP_"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:106
-#, fuzzy
 msgid "KP_Add"
 msgstr "KP_ADD"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:101
-msgid "KP_Begin"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:109
-msgid "KP_Decimal"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:103
-#, fuzzy
 msgid "KP_Delete"
 msgstr "删除"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:110
-msgid "KP_Divide"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:95
-#, fuzzy
 msgid "KP_Down"
 msgstr "向下"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:100
-#, fuzzy
 msgid "KP_End"
 msgstr "KP_END"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:90
-#, fuzzy
 msgid "KP_Enter"
 msgstr "打印机"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:104
-msgid "KP_Equal"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:91
-#, fuzzy
 msgid "KP_Home"
 msgstr "Home"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:102
-#, fuzzy
 msgid "KP_Insert"
 msgstr "插入"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:92
-#, fuzzy
 msgid "KP_Left"
 msgstr "左"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:105
-msgid "KP_Multiply"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:99
-#, fuzzy
 msgid "KP_Next"
 msgstr "下一个"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:97
-msgid "KP_PageDown"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:96
-msgid "KP_PageUp"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:98
-msgid "KP_Prior"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:94
-#, fuzzy
 msgid "KP_Right"
 msgstr "右"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:107
-msgid "KP_Separator"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:88
-msgid "KP_Space"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:108
-msgid "KP_Subtract"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:89
-#, fuzzy
 msgid "KP_Tab"
 msgstr "KP_TAB"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:93
-#, fuzzy
 msgid "KP_Up"
 msgstr "KP_UP"
 
@@ -4562,12 +4684,6 @@ msgstr "最后"
 #: ../src/common/prntbase.cpp:1572
 msgid "Last page"
 msgstr "最后一页"
-
-#: ../src/common/log.cpp:305
-#, fuzzy, c-format
-msgid "Last repeated message (\"%s\", %u time) wasn't output"
-msgid_plural "Last repeated message (\"%s\", %u times) wasn't output"
-msgstr[0] "最后重复消息(\"%s\", %lu time)未输出"
 
 #: ../src/common/paper.cpp:103
 msgid "Ledger, 17 x 11 in"
@@ -4590,11 +4706,6 @@ msgstr "左"
 #: ../src/richtext/richtextliststylepage.cpp:390
 msgid "Left (&first line):"
 msgstr "左(第一行)(&F):"
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1761
-msgid "Left Button"
-msgstr ""
 
 #: ../src/generic/prntdlgg.cpp:880
 msgid "Left margin (mm):"
@@ -4650,10 +4761,6 @@ msgstr "授权"
 #: ../src/generic/fontdlgg.cpp:332
 msgid "Light"
 msgstr "细"
-
-#: ../src/propgrid/advprops.cpp:1608
-msgid "Lime"
-msgstr ""
 
 #: ../src/generic/helpext.cpp:294
 #, c-format
@@ -4894,11 +5001,6 @@ msgstr "MacTurkish"
 msgid "MacVietnamese"
 msgstr "MacVietnamese"
 
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1762
-msgid "Magnifier"
-msgstr ""
-
 #: ../src/propgrid/advprops.cpp:2143
 msgid "Make a selection:"
 msgstr "请选择:"
@@ -4907,10 +5009,6 @@ msgstr "请选择:"
 #: ../src/richtext/richtextmarginspage.cpp:171
 msgid "Margins"
 msgstr "边距"
-
-#: ../src/propgrid/advprops.cpp:1595
-msgid "Maroon"
-msgstr ""
 
 #: ../src/generic/fdrepdlg.cpp:147
 msgid "Match case"
@@ -4955,11 +5053,6 @@ msgstr "找不到方法或属性。"
 #: ../src/univ/themes/win32.cpp:3752
 msgid "Mi&nimize"
 msgstr "最小化(&n)"
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1763
-msgid "Middle Button"
-msgstr ""
 
 #: ../src/richtext/richtextsizepage.cpp:409
 msgid "Min height:"
@@ -5020,10 +5113,6 @@ msgstr "多重单元属性"
 msgid "Name"
 msgstr "名称"
 
-#: ../src/propgrid/advprops.cpp:1596
-msgid "Navy"
-msgstr ""
-
 #: ../src/common/stockitem.cpp:175
 msgid "Network"
 msgstr "网络"
@@ -5079,18 +5168,13 @@ msgstr "下一页"
 msgid "No"
 msgstr "否"
 
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1764
-msgid "No Entry"
-msgstr ""
-
 #: ../src/generic/animateg.cpp:150
 #, c-format
 msgid "No animation handler for type %ld defined."
 msgstr "没有类型 %ld 的动画句柄定义。"
 
 #: ../src/dfb/bitmap.cpp:642 ../src/dfb/bitmap.cpp:676
-#, fuzzy, c-format
+#, c-format
 msgid "No bitmap handler for type %d defined."
 msgstr "没有类型 %d 的图像处理器."
 
@@ -5107,8 +5191,7 @@ msgstr "没找到条目。"
 msgid ""
 "No font for displaying text in encoding '%s' found,\n"
 "but an alternative encoding '%s' is available.\n"
-"Do you want to use this encoding (otherwise you will have to choose another "
-"one)?"
+"Do you want to use this encoding (otherwise you will have to choose another one)?"
 msgstr ""
 "编码 '%s' 的字体未找到，无法显示文本。\n"
 "但发现另一替代编码 '%s'。\n"
@@ -5209,124 +5292,29 @@ msgid "Notice"
 msgstr "注意"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:105
-msgid "Num *"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:106
-msgid "Num +"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:107
-msgid "Num ,"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:108
-msgid "Num -"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:109
-msgid "Num ."
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:110
-msgid "Num /"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:104
-msgid "Num ="
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:101
-msgid "Num Begin"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:103
-#, fuzzy
 msgid "Num Delete"
 msgstr "删除"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:95
-#, fuzzy
 msgid "Num Down"
 msgstr "向下"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:100
-msgid "Num End"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:90
-msgid "Num Enter"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:91
-#, fuzzy
 msgid "Num Home"
 msgstr "Home"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:102
-#, fuzzy
 msgid "Num Insert"
 msgstr "插入"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:86
-msgid "Num Lock"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:97
-msgid "Num Page Down"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:96
-msgid "Num Page Up"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:94
-#, fuzzy
 msgid "Num Right"
 msgstr "右"
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:88
-msgid "Num Space"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:89
-msgid "Num Tab"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:93
-msgid "Num Up"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:92
-msgid "Num left"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:86
-msgid "Num_lock"
-msgstr ""
 
 #: ../src/richtext/richtextliststylepage.cpp:487
 #: ../src/richtext/richtextbulletspage.cpp:279
@@ -5356,18 +5344,6 @@ msgstr "对象实现不支持命名参数"
 msgid "Objects must have an id attribute"
 msgstr "对象必须有一个id属性"
 
-#: ../src/propgrid/advprops.cpp:1601
-msgid "Olive"
-msgstr ""
-
-#: ../src/richtext/richtextbackgroundpage.cpp:325
-msgid "Opaci&ty:"
-msgstr ""
-
-#: ../src/generic/colrdlgg.cpp:354
-msgid "Opacity:"
-msgstr ""
-
 #: ../src/common/docview.cpp:1773 ../src/common/docview.cpp:1815
 msgid "Open File"
 msgstr "打开文件"
@@ -5385,17 +5361,13 @@ msgstr "打开文件 \"%s\""
 msgid "Open..."
 msgstr "打开..."
 
-#: ../src/unix/glx11.cpp:506 ../src/msw/glcanvas.cpp:592
-msgid "OpenGL 3.0 or later is not supported by the OpenGL driver."
-msgstr ""
-
 #: ../src/generic/dirctrlg.cpp:599 ../src/generic/dirdlgg.cpp:323
 #: ../src/generic/filectrlg.cpp:642 ../src/generic/filectrlg.cpp:786
 msgid "Operation not permitted."
 msgstr "不允许的操作。"
 
 #: ../src/common/cmdline.cpp:900
-#, fuzzy, c-format
+#, c-format
 msgid "Option '%s' can't be negated"
 msgstr "目录'%s'不能被创建"
 
@@ -5413,10 +5385,6 @@ msgstr "选项 '%s': '%s' 无法转成日期。"
 msgid "Options"
 msgstr "选项"
 
-#: ../src/propgrid/advprops.cpp:1606
-msgid "Orange"
-msgstr ""
-
 #: ../src/generic/prntdlgg.cpp:615 ../src/generic/prntdlgg.cpp:869
 msgid "Orientation"
 msgstr "方向"
@@ -5424,15 +5392,6 @@ msgstr "方向"
 #: ../src/common/windowid.cpp:242
 msgid "Out of window IDs.  Recommend shutting down application."
 msgstr "window ID已用完。建议关闭应用。"
-
-#: ../src/richtext/richtextborderspage.cpp:398
-#: ../src/richtext/richtextborderspage.cpp:556
-msgid "Outline"
-msgstr ""
-
-#: ../src/richtext/richtextborderspage.cpp:618
-msgid "Outset"
-msgstr ""
 
 #: ../src/msw/ole/automtn.cpp:656
 msgid "Overflow while coercing argument values."
@@ -5580,7 +5539,6 @@ msgid "PRC Envelope #9 Rotated 324 x 229 mm"
 msgstr "中国标准信封9#(横向), 324 x 229 毫米"
 
 #: ../src/richtext/richtextmarginspage.cpp:285
-#, fuzzy
 msgid "Padding"
 msgstr "正在读入"
 
@@ -5596,7 +5554,6 @@ msgstr "页 %d / %d"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:58
-#, fuzzy
 msgid "Page Down"
 msgstr "页 %d"
 
@@ -5606,7 +5563,6 @@ msgstr "页面设置"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:57
-#, fuzzy
 msgid "Page Up"
 msgstr "页 %d"
 
@@ -5616,24 +5572,17 @@ msgstr "页面设置"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:58
-#, fuzzy
 msgid "PageDown"
 msgstr "向下"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:57
-#, fuzzy
 msgid "PageUp"
 msgstr "页"
 
 #: ../src/generic/prntdlgg.cpp:216
 msgid "Pages"
 msgstr "页"
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1765
-msgid "Paint Brush"
-msgstr ""
 
 #: ../src/generic/prntdlgg.cpp:602 ../src/generic/prntdlgg.cpp:801
 #: ../src/generic/prntdlgg.cpp:842 ../src/generic/prntdlgg.cpp:855
@@ -5662,34 +5611,9 @@ msgstr "粘贴"
 msgid "Paste selection"
 msgstr "粘贴选区"
 
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:74
-msgid "Pause"
-msgstr ""
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1766
-msgid "Pencil"
-msgstr ""
-
-#: ../src/richtext/richtextliststylepage.cpp:222
-#: ../src/richtext/richtextbulletspage.cpp:159
-msgid "Peri&od"
-msgstr ""
-
 #: ../src/generic/filectrlg.cpp:430
 msgid "Permissions"
 msgstr "允许"
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:60
-msgid "PgDn"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:59
-msgid "PgUp"
-msgstr ""
 
 #: ../src/richtext/richtextbuffer.cpp:12868
 msgid "Picture Properties"
@@ -5725,13 +5649,11 @@ msgstr "打印，请等待..."
 
 #. TRANSLATORS: System cursor name
 #: ../src/propgrid/advprops.cpp:1767
-#, fuzzy
 msgid "Point Left"
 msgstr "字体大小(磅值)"
 
 #. TRANSLATORS: System cursor name
 #: ../src/propgrid/advprops.cpp:1768
-#, fuzzy
 msgid "Point Right"
 msgstr "右对齐"
 
@@ -5868,7 +5790,7 @@ msgid "Printing Error"
 msgstr "打印出错"
 
 #: ../src/common/prntbase.cpp:565
-#, fuzzy, c-format
+#, c-format
 msgid "Printing page %d"
 msgstr "正在打印页 %d..."
 
@@ -5893,8 +5815,7 @@ msgstr "打印"
 
 #: ../src/common/debugrpt.cpp:560
 #, c-format
-msgid ""
-"Processing debug report has failed, leaving the files in \"%s\" directory."
+msgid "Processing debug report has failed, leaving the files in \"%s\" directory."
 msgstr "处理调试报告失败, 文件被保存在目录 \"%s\" 中."
 
 #: ../src/common/prntbase.cpp:545
@@ -5914,10 +5835,6 @@ msgstr "属性"
 msgid "Property Error"
 msgstr "属性错误"
 
-#: ../src/propgrid/advprops.cpp:1597
-msgid "Purple"
-msgstr ""
-
 #: ../src/common/paper.cpp:112
 msgid "Quarto, 215 x 275 mm"
 msgstr "四开, 215 x 275 毫米"
@@ -5928,7 +5845,6 @@ msgstr "问题"
 
 #. TRANSLATORS: System cursor name
 #: ../src/propgrid/advprops.cpp:1769
-#, fuzzy
 msgid "Question Arrow"
 msgstr "问题"
 
@@ -5954,23 +5870,13 @@ msgstr "RawCtrl+"
 msgid "Read error on file '%s'"
 msgstr "读文件 '%s'出错"
 
-#: ../src/common/secretstore.cpp:199
-#, fuzzy, c-format
-msgid "Reading password for \"%s/%s\" failed: %s."
-msgstr "将 '%s' 解压至 '%s' 失败。"
-
 #: ../src/common/prntbase.cpp:272
 msgid "Ready"
 msgstr "就绪"
 
 #: ../src/propgrid/advprops.cpp:1605
-#, fuzzy
 msgid "Red"
 msgstr "恢复"
-
-#: ../src/generic/colrdlgg.cpp:339
-msgid "Red:"
-msgstr ""
 
 #: ../src/common/stockitem.cpp:185 ../src/stc/stc_i18n.cpp:16
 msgid "Redo"
@@ -6005,21 +5911,6 @@ msgstr ""
 "删除它将使系统进入不可用状态:\n"
 "操作终止."
 
-#: ../src/msw/registry.cpp:954
-#, c-format
-msgid "Registry value \"%s\" is not binary (but of type %s)"
-msgstr ""
-
-#: ../src/msw/registry.cpp:917
-#, c-format
-msgid "Registry value \"%s\" is not numeric (but of type %s)"
-msgstr ""
-
-#: ../src/msw/registry.cpp:1003
-#, c-format
-msgid "Registry value \"%s\" is not text (but of type %s)"
-msgstr ""
-
 #: ../src/msw/registry.cpp:521
 #, c-format
 msgid "Registry value '%s' already exists."
@@ -6031,7 +5922,6 @@ msgid "Regular"
 msgstr "一般"
 
 #: ../src/richtext/richtextsizepage.cpp:519
-#, fuzzy
 msgid "Relative"
 msgstr "修饰"
 
@@ -6093,17 +5983,11 @@ msgstr "所需的项目信息为空"
 msgid "Resource '%s' is not a valid message catalog."
 msgstr "资源 '%s' 不是有效的消息目录。"
 
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:56
-msgid "Return"
-msgstr ""
-
 #: ../src/common/stockitem.cpp:189
 msgid "Revert to Saved"
 msgstr "还原为上次保存的文件"
 
 #: ../src/richtext/richtextborderspage.cpp:616
-#, fuzzy
 msgid "Ridge"
 msgstr "细"
 
@@ -6122,14 +6006,8 @@ msgstr "右"
 
 #. TRANSLATORS: System cursor name
 #: ../src/propgrid/advprops.cpp:1754
-#, fuzzy
 msgid "Right Arrow"
 msgstr "右"
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1770
-msgid "Right Button"
-msgstr ""
 
 #: ../src/generic/prntdlgg.cpp:892
 msgid "Right margin (mm):"
@@ -6145,11 +6023,6 @@ msgstr "文本右对齐"
 #: ../src/generic/fontdlgg.cpp:322
 msgid "Roman"
 msgstr "罗马"
-
-#: ../src/generic/datavgen.cpp:5916
-#, c-format
-msgid "Row %i"
-msgstr ""
 
 #: ../src/richtext/richtextliststylepage.cpp:299
 #: ../src/richtext/richtextbulletspage.cpp:239
@@ -6193,29 +6066,9 @@ msgstr "保存当前文档至重命名"
 msgid "Save log contents to file"
 msgstr "把日志内容保存到文件"
 
-#: ../src/common/secretstore.cpp:179
-#, fuzzy, c-format
-msgid "Saving password for \"%s/%s\" failed: %s."
-msgstr "将 '%s' 解压至 '%s' 失败。"
-
 #: ../src/generic/fontdlgg.cpp:325
 msgid "Script"
 msgstr "Script"
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:87
-msgid "Scroll Lock"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:87
-msgid "Scroll_lock"
-msgstr ""
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:890
-msgid "Scrollbar"
-msgstr ""
 
 #: ../src/generic/srchctlg.cpp:56 ../src/html/helpwnd.cpp:535
 #: ../src/html/helpwnd.cpp:550
@@ -6260,7 +6113,6 @@ msgstr "文件 '%s' 定位错误 (stdio 不支持大文件)"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:76
-#, fuzzy
 msgid "Select"
 msgstr "选区"
 
@@ -6305,11 +6157,6 @@ msgstr "选区"
 msgid "Selects the list level to edit."
 msgstr "选择并辨析列表层级"
 
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:82
-msgid "Separator"
-msgstr ""
-
 #: ../src/common/cmdline.cpp:1083
 #, c-format
 msgid "Separator expected after the option '%s'."
@@ -6335,16 +6182,7 @@ msgstr "设置..."
 msgid "Several active dialup connections found, choosing one randomly."
 msgstr "找到多个活动拨号连接, 随机选择一个."
 
-#: ../src/richtext/richtextbackgroundpage.cpp:271
-msgid "Sh&adow spread:"
-msgstr ""
-
-#: ../src/richtext/richtextbackgroundpage.cpp:179
-msgid "Shadow"
-msgstr ""
-
 #: ../src/richtext/richtextbackgroundpage.cpp:258
-#, fuzzy
 msgid "Shadow c&olour:"
 msgstr "选择颜色"
 
@@ -6410,18 +6248,9 @@ msgstr "预览段落设定"
 msgid "Shows the font preview."
 msgstr "显示字体预览。"
 
-#: ../src/propgrid/advprops.cpp:1607
-msgid "Silver"
-msgstr ""
-
 #: ../src/univ/themes/mono.cpp:516
 msgid "Simple monochrome theme"
 msgstr "简单黑白主题"
-
-#: ../src/richtext/richtextindentspage.cpp:275
-#: ../src/richtext/richtextliststylepage.cpp:449
-msgid "Single"
-msgstr ""
 
 #: ../src/generic/filectrlg.cpp:425 ../src/richtext/richtextformatdlg.cpp:369
 #: ../src/richtext/richtextsizepage.cpp:299
@@ -6432,31 +6261,6 @@ msgstr "大小"
 msgid "Size:"
 msgstr "大小:"
 
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1775
-msgid "Sizing"
-msgstr ""
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1772
-msgid "Sizing N-S"
-msgstr ""
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1771
-msgid "Sizing NE-SW"
-msgstr ""
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1773
-msgid "Sizing NW-SE"
-msgstr ""
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1774
-msgid "Sizing W-E"
-msgstr ""
-
 #: ../src/msw/progdlg.cpp:801
 msgid "Skip"
 msgstr "跳过"
@@ -6466,14 +6270,8 @@ msgid "Slant"
 msgstr "倾斜"
 
 #: ../src/richtext/richtextfontpage.cpp:289
-#, fuzzy
 msgid "Small C&apitals"
 msgstr "大写(&P)"
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:79
-msgid "Snapshot"
-msgstr ""
 
 #: ../src/richtext/richtextborderspage.cpp:611
 msgid "Solid"
@@ -6510,7 +6308,6 @@ msgstr "声音文件 '%s' 为不支持的格式。"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:67
-#, fuzzy
 msgid "Space"
 msgstr "空格"
 
@@ -6521,11 +6318,6 @@ msgstr "空格"
 #: ../src/common/stockitem.cpp:197
 msgid "Spell Check"
 msgstr "拼写检查"
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1776
-msgid "Spraycan"
-msgstr ""
 
 #: ../src/richtext/richtextliststylepage.cpp:490
 #: ../src/richtext/richtextbulletspage.cpp:282
@@ -6575,11 +6367,6 @@ msgstr "样式:"
 msgid "Subscrip&t"
 msgstr "下标(&T)"
 
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:83
-msgid "Subtract"
-msgstr ""
-
 #: ../src/richtext/richtextfontpage.cpp:296
 msgid "Supe&rscript"
 msgstr "上标(&R)"
@@ -6591,10 +6378,6 @@ msgstr "SuperA/SuperA/A4 纸张，227 x 356 毫米"
 #: ../src/common/paper.cpp:151
 msgid "SuperB/SuperB/A3 305 x 487 mm"
 msgstr "SuperB/SuperB/A3 纸张，305 x 487 毫米"
-
-#: ../src/richtext/richtextfontpage.cpp:320
-msgid "Suppress hyphe&nation"
-msgstr ""
 
 #: ../src/generic/fontdlgg.cpp:326
 msgid "Swiss"
@@ -6641,7 +6424,6 @@ msgstr "TIFF: 图像大小过大。"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:68
-#, fuzzy
 msgid "Tab"
 msgstr "标签"
 
@@ -6660,10 +6442,6 @@ msgstr "小报，11 x 17 英寸"
 #: ../src/richtext/richtextformatdlg.cpp:354
 msgid "Tabs"
 msgstr "标签"
-
-#: ../src/propgrid/advprops.cpp:1598
-msgid "Teal"
-msgstr ""
 
 #: ../src/generic/fontdlgg.cpp:327
 msgid "Teletype"
@@ -6786,8 +6564,7 @@ msgstr ""
 #: ../src/html/htmprint.cpp:271
 #, c-format
 msgid ""
-"The document \"%s\" doesn't fit on the page horizontally and will be "
-"truncated if printed.\n"
+"The document \"%s\" doesn't fit on the page horizontally and will be truncated if printed.\n"
 "\n"
 "Would you like to proceed with printing it nevertheless?"
 msgstr ""
@@ -6857,7 +6634,6 @@ msgstr "无法确定文件 '%s' 格式。"
 
 #: ../src/richtext/richtextbackgroundpage.cpp:219
 #: ../src/richtext/richtextbackgroundpage.cpp:221
-#, fuzzy
 msgid "The horizontal offset."
 msgstr "水平排布(&H)"
 
@@ -6936,12 +6712,6 @@ msgstr "对象宽度。"
 msgid "The outline level."
 msgstr "大纲层级"
 
-#: ../src/common/log.cpp:277
-#, fuzzy, c-format
-msgid "The previous message repeated %u time."
-msgid_plural "The previous message repeated %u times."
-msgstr[0] "前一消息重复 %lu 次"
-
 #: ../src/common/log.cpp:270
 msgid "The previous message repeated once."
 msgstr "前一消息重复一次"
@@ -6953,8 +6723,7 @@ msgstr "显示的范围。"
 
 #: ../src/generic/dbgrptg.cpp:322
 msgid ""
-"The report contains the files listed below. If any of these files contain "
-"private information,\n"
+"The report contains the files listed below. If any of these files contain private information,\n"
 "please uncheck them and they will be removed from the report.\n"
 msgstr ""
 "报告包含了以下文件。如果这些文件含有私人信息，\n"
@@ -6989,26 +6758,10 @@ msgstr "右内衬"
 msgid "The right position."
 msgstr "又位置"
 
-#: ../src/richtext/richtextbackgroundpage.cpp:309
-#: ../src/richtext/richtextbackgroundpage.cpp:311
-msgid "The shadow blur distance."
-msgstr ""
-
 #: ../src/richtext/richtextbackgroundpage.cpp:266
 #: ../src/richtext/richtextbackgroundpage.cpp:268
-#, fuzzy
 msgid "The shadow colour."
 msgstr "字体颜色。"
-
-#: ../src/richtext/richtextbackgroundpage.cpp:336
-#: ../src/richtext/richtextbackgroundpage.cpp:338
-msgid "The shadow opacity."
-msgstr ""
-
-#: ../src/richtext/richtextbackgroundpage.cpp:282
-#: ../src/richtext/richtextbackgroundpage.cpp:284
-msgid "The shadow spread."
-msgstr ""
 
 #: ../src/richtext/richtextindentspage.cpp:267
 #: ../src/richtext/richtextliststylepage.cpp:439
@@ -7077,11 +6830,6 @@ msgstr "顶部位置。"
 msgid "The value for the option '%s' must be specified."
 msgstr "选项 '%s' 的值必须被指定。"
 
-#: ../src/richtext/richtextborderspage.cpp:585
-#: ../src/richtext/richtextborderspage.cpp:587
-msgid "The value of the corner radius."
-msgstr ""
-
 #: ../src/msw/dialup.cpp:433
 #, c-format
 msgid ""
@@ -7091,13 +6839,13 @@ msgstr "安装在本机的远程访问服务(RAS)太旧, 请更新它 (缺少下
 
 #: ../src/richtext/richtextbackgroundpage.cpp:242
 #: ../src/richtext/richtextbackgroundpage.cpp:244
-#, fuzzy
 msgid "The vertical offset."
 msgstr "启用垂直对齐。"
 
 #: ../src/richtext/richtextprint.cpp:619 ../src/html/htmprint.cpp:745
 msgid ""
-"There was a problem during page setup: you may need to set a default printer."
+"There was a problem during page setup: you may need to set a default "
+"printer."
 msgstr "在页面建立时发生问题: 您可能需要设置一台默认的打印机。"
 
 #: ../src/html/htmprint.cpp:255
@@ -7169,16 +6917,6 @@ msgstr "到:"
 msgid "Too many EndStyle calls!"
 msgstr "呼叫 EndStyle 太多次！"
 
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:891
-msgid "Tooltip"
-msgstr ""
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:892
-msgid "TooltipText"
-msgstr ""
-
 #: ../src/richtext/richtextsizepage.cpp:286
 #: ../src/richtext/richtextsizepage.cpp:290 ../src/common/stockitem.cpp:200
 msgid "Top"
@@ -7233,13 +6971,6 @@ msgstr "参数 %u 的类型不匹配。"
 #: ../src/common/xtistrm.cpp:318
 msgid "Type must have enum - long conversion"
 msgstr "必须进行 enum - long 的类型转换"
-
-#: ../src/propgrid/propgridiface.cpp:401
-#, c-format
-msgid ""
-"Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT "
-"\"%s\"."
-msgstr ""
 
 #: ../src/common/paper.cpp:133
 msgid "US Std Fanfold, 14 7/8 x 11 in"
@@ -7329,11 +7060,6 @@ msgstr "无法贴上完成状态"
 msgid "Unable to read from inotify descriptor"
 msgstr "无法读取 inotify 描述符"
 
-#: ../src/unix/fswatcher_inotify.cpp:141
-#, fuzzy, c-format
-msgid "Unable to remove inotify watch %i"
-msgstr "无法删除 inotify watch"
-
 #: ../src/unix/fswatcher_kqueue.cpp:153
 msgid "Unable to remove kqueue watch"
 msgstr "无法删除 kqueue watch"
@@ -7374,19 +7100,10 @@ msgstr "撤销上一次操作"
 msgid "Unexpected characters following option '%s'."
 msgstr "选项 '%s' 后有意外字符。"
 
-#: ../src/unix/fswatcher_inotify.cpp:274
-#, c-format
-msgid "Unexpected event for \"%s\": no matching watch descriptor."
-msgstr ""
-
 #: ../src/common/cmdline.cpp:1195
 #, c-format
 msgid "Unexpected parameter '%s'"
 msgstr "意外参数 '%s'"
-
-#: ../include/wx/msw/private/fswatcher.h:148
-msgid "Unexpectedly new I/O completion port was created"
-msgstr ""
 
 #: ../src/msw/fswatcher.cpp:70
 msgid "Ungraceful worker thread termination"
@@ -7461,7 +7178,6 @@ msgstr "下位置单位"
 
 #: ../src/richtext/richtextborderspage.cpp:596
 #: ../src/richtext/richtextborderspage.cpp:598
-#, fuzzy
 msgid "Units for the corner radius."
 msgstr "上内衬单位"
 
@@ -7578,7 +7294,6 @@ msgstr "上位置单位"
 #: ../src/richtext/richtextbackgroundpage.cpp:295
 #: ../src/richtext/richtextbackgroundpage.cpp:320
 #: ../src/richtext/richtextbackgroundpage.cpp:322
-#, fuzzy
 msgid "Units for this value."
 msgstr "左边距单位"
 
@@ -7691,10 +7406,6 @@ msgstr "大写罗马数字"
 msgid "Usage: %s"
 msgstr "用法: %s"
 
-#: ../src/richtext/richtextbackgroundpage.cpp:194
-msgid "Use &shadow"
-msgstr ""
-
 #: ../src/richtext/richtextindentspage.cpp:169
 #: ../src/richtext/richtextindentspage.cpp:171
 #: ../src/richtext/richtextliststylepage.cpp:358
@@ -7747,16 +7458,6 @@ msgstr "按列表视图观看文件"
 msgid "Views"
 msgstr "视图"
 
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1777
-msgid "Wait"
-msgstr ""
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1779
-msgid "Wait Arrow"
-msgstr ""
-
 #: ../src/unix/epolldispatcher.cpp:213
 #, c-format
 msgid "Waiting for IO on epoll descriptor %d failed"
@@ -7765,11 +7466,6 @@ msgstr "等待 epoll 描述符 %d 的 IO 时失败"
 #: ../src/common/log.cpp:223
 msgid "Warning: "
 msgstr "警告: "
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1778
-msgid "Watch"
-msgstr ""
 
 #. TRANSLATORS: Label of font weight
 #: ../src/propgrid/advprops.cpp:685
@@ -7788,10 +7484,6 @@ msgstr "西欧带欧元符号 (ISO-8859-15)"
 msgid "Whether the font is underlined."
 msgstr "字体是否为下划线。"
 
-#: ../src/propgrid/advprops.cpp:1611
-msgid "White"
-msgstr ""
-
 #: ../src/generic/fdrepdlg.cpp:144
 msgid "Whole word"
 msgstr "整字"
@@ -7806,19 +7498,16 @@ msgstr "Win32 主题"
 
 #. TRANSLATORS: Keyword of system colour
 #: ../src/propgrid/advprops.cpp:893
-#, fuzzy
 msgid "Window"
 msgstr "窗口(&W)"
 
 #. TRANSLATORS: Keyword of system colour
 #: ../src/propgrid/advprops.cpp:894
-#, fuzzy
 msgid "WindowFrame"
 msgstr "窗口(&W)"
 
 #. TRANSLATORS: Keyword of system colour
 #: ../src/propgrid/advprops.cpp:895
-#, fuzzy
 msgid "WindowText"
 msgstr "窗口(&W)"
 
@@ -7892,19 +7581,16 @@ msgstr "Windows/DOS OEM 西里尔语 (CP 866)"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:111
-#, fuzzy
 msgid "Windows_Left"
 msgstr "Windows 7"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:113
-#, fuzzy
 msgid "Windows_Menu"
 msgstr "Windows ME"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:112
-#, fuzzy
 msgid "Windows_Right"
 msgstr "Windows Vista"
 
@@ -7944,10 +7630,6 @@ msgstr "XPM: 没有剩下可供选择的掩码颜色！"
 #, c-format
 msgid "XPM: truncated image data at line %d!"
 msgstr "XPM: 图像数据被截断，位于行 %d！"
-
-#: ../src/propgrid/advprops.cpp:1610
-msgid "Yellow"
-msgstr ""
 
 #: ../include/wx/msgdlg.h:276 ../src/common/stockitem.cpp:206
 #: ../src/motif/msgdlg.cpp:196
@@ -8000,8 +7682,7 @@ msgstr "DDEML 应用程序已创建延时 race 条件."
 
 #: ../src/msw/dde.cpp:1129
 msgid ""
-"a DDEML function was called without first calling the DdeInitialize "
-"function,\n"
+"a DDEML function was called without first calling the DdeInitialize function,\n"
 "or an invalid instance identifier\n"
 "was passed to a DDEML function."
 msgstr ""
@@ -8241,11 +7922,6 @@ msgstr "无法写文件描述符 %d"
 msgid "can't write user configuration file."
 msgstr "无法写用户配置文件。"
 
-#. TRANSLATORS: Checkbox state name
-#: ../src/generic/treelist.cpp:482 ../src/generic/datavgen.cpp:1261
-msgid "checked"
-msgstr ""
-
 #: ../src/html/chm.cpp:345
 msgid "checksum error"
 msgstr "校验和错误"
@@ -8365,7 +8041,6 @@ msgstr "刷新文件 '%s' 失败"
 
 #. TRANSLATORS: Name of Boolean false value
 #: ../src/generic/datavgen.cpp:1030
-#, fuzzy
 msgid "false"
 msgstr "False"
 
@@ -8376,31 +8051,6 @@ msgstr "第十五"
 #: ../src/common/datetimefmt.cpp:1956
 msgid "fifth"
 msgstr "第五"
-
-#: ../src/common/fileconf.cpp:579
-#, fuzzy, c-format
-msgid "file '%s', line %zu: '%s' ignored after group header."
-msgstr "文件 '%s'，行 %d: 组头之后的 '%s' 被忽略。"
-
-#: ../src/common/fileconf.cpp:608
-#, fuzzy, c-format
-msgid "file '%s', line %zu: '=' expected."
-msgstr "文件 '%s'，行 %d: 期待出现 '='。"
-
-#: ../src/common/fileconf.cpp:631
-#, fuzzy, c-format
-msgid "file '%s', line %zu: key '%s' was first found at line %d."
-msgstr "文件 '%s'，行 %d: 键 '%s' 第一次出现在行 %d。"
-
-#: ../src/common/fileconf.cpp:621
-#, fuzzy, c-format
-msgid "file '%s', line %zu: value for immutable key '%s' ignored."
-msgstr "文件 '%s'，行 %d: 忽略不可变键 '%s' 的值。"
-
-#: ../src/common/fileconf.cpp:543
-#, fuzzy, c-format
-msgid "file '%s': unexpected character %c at line %zu."
-msgstr "文件 '%s': 非预期的字符 %c 存在于行 %d。"
 
 #: ../src/richtext/richtextbuffer.cpp:8738
 msgid "files"
@@ -8768,11 +8418,6 @@ msgstr "'%s'尾部的斜线将被忽略"
 msgid "translator-credits"
 msgstr "翻译人员"
 
-#. TRANSLATORS: Name of Boolean true value
-#: ../src/generic/datavgen.cpp:1028
-msgid "true"
-msgstr ""
-
 #: ../src/common/datetimefmt.cpp:1963
 msgid "twelfth"
 msgstr "第十二"
@@ -8781,18 +8426,12 @@ msgstr "第十二"
 msgid "twentieth"
 msgstr "第二十"
 
-#. TRANSLATORS: Checkbox state name
-#: ../src/generic/treelist.cpp:486 ../src/generic/datavgen.cpp:1263
-msgid "unchecked"
-msgstr ""
-
 #: ../src/common/fontcmn.cpp:802 ../src/common/fontcmn.cpp:978
 msgid "underlined"
 msgstr "下划线"
 
 #. TRANSLATORS: Checkbox state name
 #: ../src/generic/treelist.cpp:490
-#, fuzzy
 msgid "undetermined"
 msgstr "下划线"
 
@@ -8808,11 +8447,6 @@ msgstr "意外到达文件结尾"
 #: ../src/generic/progdlgg.cpp:370 ../src/common/tarstrm.cpp:371
 #: ../src/common/tarstrm.cpp:394 ../src/common/tarstrm.cpp:425
 msgid "unknown"
-msgstr "未知"
-
-#: ../src/msw/registry.cpp:150
-#, fuzzy, c-format
-msgid "unknown (%lu)"
 msgstr "未知"
 
 #: ../src/common/xtixml.cpp:253
@@ -8973,8 +8607,7 @@ msgstr "~"
 #~ msgstr "数据渲染器无法渲染该值; 类型为:"
 
 #~ msgid ""
-#~ "Do you want to overwrite the command used to %s files with extension \"%s"
-#~ "\" ?\n"
+#~ "Do you want to overwrite the command used to %s files with extension \"%s\" ?\n"
 #~ "Current value is \n"
 #~ "%s, \n"
 #~ "New value is \n"
@@ -9016,8 +8649,7 @@ msgstr "~"
 #~ msgid "No column for the specified column position existing."
 #~ msgstr "没有指定的列位置存在。"
 
-#~ msgid ""
-#~ "No renderer or invalid renderer type specified for custom data column."
+#~ msgid "No renderer or invalid renderer type specified for custom data column."
 #~ msgstr "无渲染器或为该数据列指定了无效的渲染器"
 
 #~ msgid "No renderer specified for column."
@@ -9050,8 +8682,7 @@ msgstr "~"
 #~ msgid "Rendering failed."
 #~ msgstr "渲染失败。"
 
-#~ msgid ""
-#~ "Setting directory access times is not supported under this OS version"
+#~ msgid "Setting directory access times is not supported under this OS version"
 #~ msgstr "当前操作系统不支持目录访问次数设定"
 
 #~ msgid "Show hidden directories"
@@ -9086,7 +8717,6 @@ msgstr "~"
 #~ msgid "Win32s on Windows 3.1"
 #~ msgstr "Windows 3.1 上的 Win32s"
 
-#, fuzzy
 #~ msgid "Windows 10"
 #~ msgstr "Windows 8.1"
 
@@ -9126,7 +8756,6 @@ msgstr "~"
 #~ msgid "Windows NT %lu.%lu"
 #~ msgstr "Windows NT %lu.%lu"
 
-#, fuzzy
 #~ msgid "Windows Server 10"
 #~ msgstr "Windows Server 2003"
 
@@ -9506,15 +9135,12 @@ msgstr "~"
 #~ msgid "Cannot open file '%s'."
 #~ msgstr "不能打开文件 '%s'."
 
-#, fuzzy
 #~ msgid "Click to cancel this window."
 #~ msgstr "关闭此窗口"
 
-#, fuzzy
 #~ msgid "Click to confirm your selection."
 #~ msgstr "点击确认字体选择."
 
-#, fuzzy
 #~ msgid "Column could not be added to native control."
 #~ msgstr "文件不能被装载."
 
@@ -9530,30 +9156,24 @@ msgstr "~"
 #~ msgid "Internal error, illegal wxCustomTypeInfo"
 #~ msgstr "整数错误, 非法的wxCustomTypeInfo"
 
-#, fuzzy
 #~ msgid "Model pointer not initialized."
 #~ msgstr "不能初始化显示."
 
-#, fuzzy
 #~ msgid "No image handler for type %ld defined."
 #~ msgstr "没有类型 %d 的图像处理器."
 
-#, fuzzy
 #~ msgid "Owner not initialized."
 #~ msgstr "不能初始化显示."
 
-#, fuzzy
 #~ msgid "Passed item is invalid."
 #~ msgstr "'%s' 是无效的"
 
 #~ msgid "Passing a already registered object to SetObjectName"
 #~ msgstr "传递一个已注册的对象给SetObjectName"
 
-#~ msgid ""
-#~ "Streaming delegates for not already streamed objects not yet supported"
+#~ msgid "Streaming delegates for not already streamed objects not yet supported"
 #~ msgstr "不支持针对尚未形成流的对象的流委派"
 
-#, fuzzy
 #~ msgid "The file '%s' doesn't exist and couldn't be opened."
 #~ msgstr ""
 #~ "文件 '%s' 不存在,不能被打开.\n"
@@ -9562,7 +9182,6 @@ msgstr "~"
 #~ msgid "The path '%s' contains too many \"..\"!"
 #~ msgstr "路径 '%s' 包含了过多的\"..\"!"
 
-#, fuzzy
 #~ msgid "To be deleted item is invalid."
 #~ msgstr "'%s' 是无效的"
 
@@ -9611,7 +9230,6 @@ msgstr "~"
 #~ msgid "Error while waiting on semaphore"
 #~ msgstr "等待信号量时出错"
 
-#, fuzzy
 #~ msgid "Failed to connect to session manager: %s"
 #~ msgstr "到 %s 的拨号连接失败: %s"
 
@@ -9624,7 +9242,6 @@ msgstr "~"
 #~ msgid "Fatal error: "
 #~ msgstr "致命错误: "
 
-#, fuzzy
 #~ msgid "Help : %s"
 #~ msgstr "帮助: %s"
 
@@ -9643,7 +9260,6 @@ msgstr "~"
 #~ msgid "Resource files must have same version number!"
 #~ msgstr "资源文件必须有相同的版本号!"
 
-#, fuzzy
 #~ msgid "Search!"
 #~ msgstr "搜索"
 
@@ -9677,16 +9293,13 @@ msgstr "~"
 #~ msgid "XRC resource '%s' (class '%s') not found!"
 #~ msgstr "没有找到XRC资源 '%s' （类 '%s')!"
 
-#, fuzzy
 #~ msgid "XRC resource: Cannot create animation from '%s'."
 #~ msgstr "XRC资源: 不能从 '%s'创建位图."
 
 #~ msgid "XRC resource: Cannot create bitmap from '%s'."
 #~ msgstr "XRC资源: 不能从 '%s'创建位图."
 
-#, fuzzy
-#~ msgid ""
-#~ "XRC resource: Incorrect colour specification '%s' for attribute '%s'."
+#~ msgid "XRC resource: Incorrect colour specification '%s' for attribute '%s'."
 #~ msgstr "XRC资源: 错误的颜色 '%s' 对于 属性 '%s'."
 
 #~ msgid "[EMPTY]"
@@ -9694,10 +9307,6 @@ msgstr "~"
 
 #~ msgid "catalog file for domain '%s' not found."
 #~ msgstr "找不到域 '%s'的目录文件."
-
-#, fuzzy
-#~ msgid "encoding %i"
-#~ msgstr "编码 %s"
 
 #~ msgid "looking for catalog '%s' in path '%s'."
 #~ msgstr "查找目录 '%s' 在路径 '%s'下."
@@ -9711,7 +9320,6 @@ msgstr "~"
 #~ msgid "\t%s: %s\n"
 #~ msgstr "\t%s: %s\n"
 
-#, fuzzy
 #~ msgid " Couldn't create the UnicodeConverter"
 #~ msgstr "不能创建计时器"
 
@@ -9750,8 +9358,7 @@ msgstr "~"
 #~ msgstr "找不到位图规格 %s."
 
 #~ msgid ""
-#~ "Could not resolve control class or id '%s'. Use (non-zero) integer "
-#~ "instead\n"
+#~ "Could not resolve control class or id '%s'. Use (non-zero) integer instead\n"
 #~ " or provide #define (see manual for caveats)"
 #~ msgstr ""
 #~ "不能解析控件类或者id '%s'. 用(非零)整数代替\n"
@@ -9764,7 +9371,6 @@ msgstr "~"
 #~ "不能解析菜单id '%s'. 用(非零)整数代替\n"
 #~ "或 提供 #define (详细信息见手册)"
 
-#, fuzzy
 #~ msgid "Couldn't end the context on the overlay window"
 #~ msgstr "不能获得当前线程指针"
 
@@ -9822,7 +9428,6 @@ msgstr "~"
 #~ msgid "Option '%s' requires a value, '=' expected."
 #~ msgstr "选项 '%s' 要求一个值, 期望 '='."
 
-#, fuzzy
 #~ msgid "Select all"
 #~ msgstr "全部选择(&A)"
 
@@ -9889,7 +9494,6 @@ msgstr "~"
 #~ msgid "can't query for GUI plugins name in console applications"
 #~ msgstr "无法在控制台程序里查询GUI插件"
 
-#, fuzzy
 #~ msgid "light "
 #~ msgstr "细 "
 

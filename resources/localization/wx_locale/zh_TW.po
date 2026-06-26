@@ -534,7 +534,8 @@ msgstr "網路(&N)"
 msgid "&New"
 msgstr "新增(&N)"
 
-#: ../src/aui/tabmdi.cpp:111 ../src/generic/mdig.cpp:100 ../src/msw/mdi.cpp:178
+#: ../src/aui/tabmdi.cpp:111 ../src/generic/mdig.cpp:100
+#: ../src/msw/mdi.cpp:178
 msgid "&Next"
 msgstr "下一個(&N)"
 
@@ -608,7 +609,8 @@ msgstr "位置模式(&P)："
 msgid "&Preferences"
 msgstr "偏好設定(&P)"
 
-#: ../src/aui/tabmdi.cpp:112 ../src/generic/mdig.cpp:101 ../src/msw/mdi.cpp:179
+#: ../src/aui/tabmdi.cpp:112 ../src/generic/mdig.cpp:101
+#: ../src/msw/mdi.cpp:179
 msgid "&Previous"
 msgstr "上一個(&P)"
 
@@ -2706,8 +2708,8 @@ msgstr "開發者"
 
 #: ../src/msw/dialup.cpp:373
 msgid ""
-"Dial up functions are unavailable because the remote access service (RAS) is "
-"not installed on this machine. Please install it."
+"Dial up functions are unavailable because the remote access service (RAS) is"
+" not installed on this machine. Please install it."
 msgstr "由於沒有安裝遠端存取服務（RAS），撥號功能無法使用。請先安裝。"
 
 #: ../src/generic/tipdlg.cpp:211
@@ -3347,8 +3349,8 @@ msgstr "無法安裝信號處理函式"
 
 #: ../src/unix/threadpsx.cpp:1192
 msgid ""
-"Failed to join a thread, potential memory leak detected - please restart the "
-"program"
+"Failed to join a thread, potential memory leak detected - please restart the"
+" program"
 msgstr "無法停止執行緒，偵測到潛在的記憶體流失 - 請重新啟動程式"
 
 #: ../src/msw/utils.cpp:629
@@ -3841,9 +3843,7 @@ msgstr "字型粗細(&W)："
 
 #: ../src/osx/fontutil.cpp:92
 #, c-format
-msgid ""
-"Font file \"%s\" cannot be used as it is not inside the font directory \"%s"
-"\"."
+msgid "Font file \"%s\" cannot be used as it is not inside the font directory \"%s\"."
 msgstr "「%s」字型檔因為不在「%s」字型目錄內而無法使用。"
 
 #: ../src/msw/font.cpp:1135
@@ -4173,8 +4173,7 @@ msgstr ""
 
 #: ../src/generic/dbgrptg.cpp:327
 msgid ""
-"If you wish to suppress this debug report completely, please choose the "
-"\"Cancel\" button,\n"
+"If you wish to suppress this debug report completely, please choose the \"Cancel\" button,\n"
 "but be warned that it may hinder improving the program, so if\n"
 "at all possible please do continue with the report generation.\n"
 msgstr ""
@@ -4227,11 +4226,9 @@ msgstr "影像不是 %s 類型。"
 
 #: ../src/msw/textctrl.cpp:512
 msgid ""
-"Impossible to create a rich edit control, using simple text control instead. "
-"Please reinstall riched32.dll"
-msgstr ""
-"無法建立 rich edit 控制元件，使用 simple text 控制元件代替。請重新安裝 "
-"riched32.dll"
+"Impossible to create a rich edit control, using simple text control instead."
+" Please reinstall riched32.dll"
+msgstr "無法建立 rich edit 控制元件，使用 simple text 控制元件代替。請重新安裝 riched32.dll"
 
 #: ../src/unix/utilsunx.cpp:306
 msgid "Impossible to get child process input"
@@ -5183,8 +5180,7 @@ msgstr "找不到項目。"
 msgid ""
 "No font for displaying text in encoding '%s' found,\n"
 "but an alternative encoding '%s' is available.\n"
-"Do you want to use this encoding (otherwise you will have to choose another "
-"one)?"
+"Do you want to use this encoding (otherwise you will have to choose another one)?"
 msgstr ""
 "找不到「%s」編碼的字型，無法顯示文字。\n"
 "但是系統有另一種編碼「%s」。\n"
@@ -5962,8 +5958,7 @@ msgstr "列印"
 
 #: ../src/common/debugrpt.cpp:564
 #, c-format
-msgid ""
-"Processing debug report has failed, leaving the files in \"%s\" directory."
+msgid "Processing debug report has failed, leaving the files in \"%s\" directory."
 msgstr "處理除錯報告失敗, 檔案儲存在「%s」目錄。"
 
 #: ../src/common/prntbase.cpp:545
@@ -6854,8 +6849,7 @@ msgstr ""
 #: ../src/html/htmprint.cpp:286
 #, c-format
 msgid ""
-"The document \"%s\" doesn't fit on the page horizontally and will be "
-"truncated if printed.\n"
+"The document \"%s\" doesn't fit on the page horizontally and will be truncated if printed.\n"
 "\n"
 "Would you like to proceed with printing it nevertheless?"
 msgstr ""
@@ -7020,8 +7014,7 @@ msgstr "顯示範圍。"
 
 #: ../src/generic/dbgrptg.cpp:325
 msgid ""
-"The report contains the files listed below. If any of these files contain "
-"private information,\n"
+"The report contains the files listed below. If any of these files contain private information,\n"
 "please uncheck them and they will be removed from the report.\n"
 msgstr ""
 "報告包含了以下檔案。如果這些檔案含有私人資訊，\n"
@@ -7162,7 +7155,8 @@ msgstr "垂直偏移值。"
 
 #: ../src/html/htmprint.cpp:752 ../src/richtext/richtextprint.cpp:618
 msgid ""
-"There was a problem during page setup: you may need to set a default printer."
+"There was a problem during page setup: you may need to set a default "
+"printer."
 msgstr "頁面設定時有問題：必須設定預設印表機。"
 
 #: ../src/html/htmprint.cpp:270
@@ -7301,9 +7295,7 @@ msgstr "必須進行 enum - long 的類型轉換"
 
 #: ../src/propgrid/propgridiface.cpp:388
 #, c-format
-msgid ""
-"Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT "
-"\"%s\"."
+msgid "Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT \"%s\"."
 msgstr "類型操作「%s」失敗：標示為「%s」的性質是「%s」類型，而非「%s」。"
 
 #: ../src/common/paper.cpp:133
@@ -8075,8 +8067,7 @@ msgstr "DDEML 應用程式已建立延長的競賽環境(race condition)。"
 
 #: ../src/msw/dde.cpp:1196
 msgid ""
-"a DDEML function was called without first calling the DdeInitialize "
-"function,\n"
+"a DDEML function was called without first calling the DdeInitialize function,\n"
 "or an invalid instance identifier\n"
 "was passed to a DDEML function."
 msgstr ""
@@ -9004,8 +8995,7 @@ msgstr "寫入失敗"
 #: ../src/gtk/glcanvas.cpp:167
 msgid ""
 "wxGLCanvas is only supported on X11 currently.  You may be able to\n"
-"work around this by setting environment variable GDK_BACKEND=x11 before "
-"starting\n"
+"work around this by setting environment variable GDK_BACKEND=x11 before starting\n"
 "your program."
 msgstr ""
 "wxGLCanvas 目前只支援 X11。啟動程式前，你可能需要透過設定\n"
@@ -9189,8 +9179,7 @@ msgstr "~"
 #~ msgstr "資料渲染器無法渲染該值，型態為: "
 
 #~ msgid ""
-#~ "Do you want to overwrite the command used to %s files with extension \"%s"
-#~ "\" ?\n"
+#~ "Do you want to overwrite the command used to %s files with extension \"%s\" ?\n"
 #~ "Current value is \n"
 #~ "%s, \n"
 #~ "New value is \n"
@@ -9232,8 +9221,7 @@ msgstr "~"
 #~ msgid "No column for the specified column position existing."
 #~ msgstr "不存在指定的欄位位置。"
 
-#~ msgid ""
-#~ "No renderer or invalid renderer type specified for custom data column."
+#~ msgid "No renderer or invalid renderer type specified for custom data column."
 #~ msgstr "自訂資料欄位無渲染器，或該欄位指定了一個無效的渲染器類型。"
 
 #~ msgid "No renderer specified for column."
@@ -9266,8 +9254,7 @@ msgstr "~"
 #~ msgid "Rendering failed."
 #~ msgstr "潤算失敗。"
 
-#~ msgid ""
-#~ "Setting directory access times is not supported under this OS version"
+#~ msgid "Setting directory access times is not supported under this OS version"
 #~ msgstr "此作業系統不支援設定目錄存取次數"
 
 #~ msgid "Show hidden directories"
@@ -9305,7 +9292,6 @@ msgstr "~"
 #~ msgid "Win32s on Windows 3.1"
 #~ msgstr "Windows 3.1 上的 Win32s"
 
-#, fuzzy
 #~ msgid "Windows 10"
 #~ msgstr "Windows 98"
 
@@ -9315,11 +9301,9 @@ msgstr "~"
 #~ msgid "Windows 7"
 #~ msgstr "Windows 7"
 
-#, fuzzy
 #~ msgid "Windows 8"
 #~ msgstr "Windows 98"
 
-#, fuzzy
 #~ msgid "Windows 8.1"
 #~ msgstr "Windows 98"
 
@@ -9347,7 +9331,6 @@ msgstr "~"
 #~ msgid "Windows NT %lu.%lu"
 #~ msgstr "Windows NT %lu.%lu"
 
-#, fuzzy
 #~ msgid "Windows Server 10"
 #~ msgstr "Windows Server 2003"
 
@@ -9360,11 +9343,9 @@ msgstr "~"
 #~ msgid "Windows Server 2008 R2"
 #~ msgstr "Windows Server 2008 R2"
 
-#, fuzzy
 #~ msgid "Windows Server 2012"
 #~ msgstr "Windows Server 2003"
 
-#, fuzzy
 #~ msgid "Windows Server 2012 R2"
 #~ msgstr "Windows Server 2008 R2"
 

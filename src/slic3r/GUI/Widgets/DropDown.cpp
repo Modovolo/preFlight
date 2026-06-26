@@ -39,16 +39,6 @@ static int GetScaledStandardMargin()
     return Slic3r::GUI::wxGetApp().em_unit(); // 10px at 100% DPI
 }
 
-static int GetScaledDeflateX()
-{
-    return (Slic3r::GUI::wxGetApp().em_unit() * 4) / 10; // 4px at 100% DPI
-}
-
-static int GetScaledDeflateY()
-{
-    return Slic3r::GUI::wxGetApp().em_unit() / 10; // 1px at 100% DPI
-}
-
 static int GetScaledScrollbarRadius()
 {
     return Slic3r::GUI::wxGetApp().em_unit() / 5; // 2px at 100% DPI
@@ -98,11 +88,13 @@ DropDown::DropDown(std::vector<wxString> &texts, std::vector<wxBitmapBundle> &ic
     , icons(icons)
     , radius(Slic3r::GUI::wxGetApp().suppress_round_corners() ? 0 : GetScaledCornerRadius())
     , state_handler(this)
-    , text_color(0x363636)
-    , border_color(0xDBDBDB)
-    , selector_border_color(std::make_pair(0xEAA032, (int) StateColor::Hovered), // preFlight brand orange
+    , text_color(std::make_pair(wxcolour_to_rgb_int(UIColors::InputForegroundDisabled()), (int) StateColor::Disabled),
+                 std::make_pair(wxcolour_to_rgb_int(UIColors::InputForeground()), (int) StateColor::Normal))
+    , border_color(wxcolour_to_rgb_int(UIColors::StaticBoxBorder()))
+    , selector_border_color(std::make_pair(accent_primary_rgb(), (int) StateColor::Hovered), // themed accent
                             std::make_pair(clr_background_normal_light, (int) StateColor::Normal))
-    , selector_background_color(std::make_pair(0xFDF2E3, (int) StateColor::Checked), // preFlight warm cream
+    , selector_background_color(std::make_pair(wxcolour_to_rgb_int(UIColors::HighlightBackground()),
+                                               (int) StateColor::Checked), // themed selection highlight
                                 std::make_pair(clr_background_normal_light, (int) StateColor::Normal))
 {
 }
@@ -352,10 +344,10 @@ void DropDown::render(wxDC &dc)
     if (radius > 0. && !wxOSX)
         SetTransparentBG(dc, this);
 
+#ifdef _WIN32
+    // Original Windows rendering - left unchanged so the already-correct Windows look is preserved.
     dc.SetPen(wxPen(border_color.colorForStates(states)));
     dc.SetBrush(wxBrush(GetBackgroundColour()));
-    // if (GetWindowStyle() & wxBORDER_NONE)
-    //    dc.SetPen(wxNullPen);
 
     const bool is_retina = wxOSX && dc.GetContentScaleFactor() > 1.0;
 
@@ -364,11 +356,29 @@ void DropDown::render(wxDC &dc)
     if (is_retina)
         rc.x = rc.y = 1;
 
-    // draw background
     if (radius == 0.0 || wxOSX)
         dc.DrawRectangle(rc);
     else
         dc.DrawRoundedRectangle(rc, radius);
+#else
+    // preFlight (Linux/macOS): clear the ENTIRE popup first so no uninitialized/stale buffer pixels
+    // survive at the edge - a deflated fill left a 1px ring the buffered DC never cleared, so on the
+    // first open it showed as a thick, dark, uneven frame until a reopen reallocated the buffer.
+    dc.SetPen(*wxTRANSPARENT_PEN);
+    dc.SetBrush(wxBrush(GetBackgroundColour()));
+    dc.DrawRectangle(0, 0, size.x, size.y);
+
+    // Stroke a single thin, light, fixed theme frame 1px inside every edge - it must not render black
+    // at rest or flip to the gold hover accent when the cursor enters the popup; only the rows react.
+    wxRect rc(0, 0, size.x, size.y);
+    rc.Deflate(1, 1);
+    dc.SetPen(wxPen(Slic3r::GUI::active_palette().static_box_border));
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    if (radius == 0.0 || wxOSX)
+        dc.DrawRectangle(rc);
+    else
+        dc.DrawRoundedRectangle(rc, radius);
+#endif
 
     // draw hover rectangle
     wxRect rcContent = {{0, offset.y}, rowSize};
@@ -378,9 +388,10 @@ void DropDown::render(wxDC &dc)
     if (has_bar)
         rcContent.width -= GetScaledSliderWidth();
 
-    // DPI-scaled deflate values
-    const int deflate_x = GetScaledDeflateX();
-    const int deflate_y = GetScaledDeflateY();
+#ifdef _WIN32
+    // Original Windows highlight rendering - unchanged.
+    const int deflate_x = (Slic3r::GUI::wxGetApp().em_unit() * 4) / 10; // 4px at 100% DPI
+    const int deflate_y = Slic3r::GUI::wxGetApp().em_unit() / 10;       // 1px at 100% DPI
 
     if (hover_item >= 0 && (states & StateColor::Hovered))
     {
@@ -414,6 +425,41 @@ void DropDown::render(wxDC &dc)
         }
         rcContent.y = offset.y;
     }
+#else
+    // preFlight (Linux/macOS): deterministic row highlight. The selector StateColors get reset from
+    // several places (sometimes gold, sometimes cream/dark), so paint explicitly here instead.
+    // Selected row = subtle theme fill (full width, all sides); hovered row = light-gold outline
+    // (gold on hover only), inset 1px so the outline is visible on every side.
+    const wxColour hover_outline = wxColour(0xEC, 0xB7, 0x5A); // light gold accent
+    const wxColour selected_fill = Slic3r::GUI::active_palette().highlight_background;
+    const int inset = std::max(1, Slic3r::GUI::wxGetApp().em_unit() / 10);
+
+    if (hover_item >= 0 && (states & StateColor::Hovered))
+    {
+        rcContent.y += rowSize.y * hover_item;
+        if (rcContent.GetBottom() > 0 && rcContent.y < size.y)
+        {
+            dc.SetBrush(*wxTRANSPARENT_BRUSH);
+            dc.SetPen(wxPen(hover_outline));
+            rcContent.Deflate(inset, inset);
+            dc.DrawRectangle(rcContent);
+            rcContent.Inflate(inset, inset);
+        }
+        rcContent.y = offset.y;
+    }
+    // draw checked rectangle
+    if (selection >= 0 && (selection != hover_item || (states & StateColor::Hovered) == 0))
+    {
+        rcContent.y += rowSize.y * selection;
+        if (rcContent.GetBottom() > 0 && rcContent.y < size.y)
+        {
+            dc.SetBrush(wxBrush(selected_fill));
+            dc.SetPen(wxPen(selected_fill));
+            dc.DrawRectangle(rcContent);
+        }
+        rcContent.y = offset.y;
+    }
+#endif
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     {
         wxSize offset = (rowSize - textSize) / 2;

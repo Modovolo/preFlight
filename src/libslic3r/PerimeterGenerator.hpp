@@ -109,19 +109,6 @@ private:
     Parameters() = delete;
 };
 
-void process_classic(
-    // Inputs:
-    const Parameters &params, const Surface &surface, const ExPolygons *lower_slices, const ExPolygons *upper_slices,
-    // Cache:
-    Polygons &lower_slices_polygons_cache,
-    // Output:
-    // Loops with the external thin walls
-    ExtrusionEntityCollection &out_loops,
-    // Gaps without the thin walls
-    ExtrusionEntityCollection &out_gap_fill,
-    // Infills without the gap fills
-    ExPolygons &out_fill_expolygons);
-
 void process_arachne(
     // Inputs:
     const Parameters &params, const Surface &surface, const ExPolygons *lower_slices, const ExPolygons *upper_slices,

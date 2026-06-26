@@ -313,7 +313,9 @@ CONFIG_OPTION_ENUM_DEFINE_STATIC_MAPS(LabelObjectsStyle)
 
 static const t_config_enum_values s_keys_map_GCodeThumbnailsFormat = {{"PNG", int(GCodeThumbnailsFormat::PNG)},
                                                                       {"JPG", int(GCodeThumbnailsFormat::JPG)},
-                                                                      {"QOI", int(GCodeThumbnailsFormat::QOI)}};
+                                                                      {"QOI", int(GCodeThumbnailsFormat::QOI)},
+                                                                      {"BTT_TFT", int(GCodeThumbnailsFormat::BTT_TFT)},
+                                                                      {"COLPIC", int(GCodeThumbnailsFormat::COLPIC)}};
 CONFIG_OPTION_ENUM_DEFINE_STATIC_MAPS(GCodeThumbnailsFormat)
 
 static const t_config_enum_values s_keys_map_ForwardCompatibilitySubstitutionRule = {
@@ -437,7 +439,7 @@ void PrintConfigDef::init_common_params()
     def->label = L("G-code thumbnails");
     def->tooltip = L(
         "Picture sizes to be stored into a .gcode / .bgcode and .sl1 / .sl1s files, in the following format: \"XxY/EXT, XxY/EXT, ...\"\n"
-        "Currently supported extensions are PNG, QOI and JPG.");
+        "Currently supported extensions are PNG, QOI, JPG, BTT_TFT and COLPIC.");
     def->mode = comExpert;
     def->gui_type = ConfigOptionDef::GUIType::one_string;
     def->set_default_value(new ConfigOptionString("48x48/PNG, 160x160/PNG"));
@@ -445,9 +447,10 @@ void PrintConfigDef::init_common_params()
     def = this->add("thumbnails_format", coEnum);
     def->label = L("Format of G-code thumbnails");
     def->tooltip = L(
-        "Format of G-code thumbnails: PNG for best quality, JPG for smallest size, QOI for low memory firmware");
+        "Format of G-code thumbnails: PNG for best quality, JPG for smallest size, QOI for low memory firmware, "
+        "BTT_TFT for BigTreeTech touchscreens, COLPIC for Elegoo Neptune-series on-screen previews");
     def->mode = comExpert;
-    def->set_enum<GCodeThumbnailsFormat>({"PNG", "JPG", "QOI"});
+    def->set_enum<GCodeThumbnailsFormat>({"PNG", "JPG", "QOI", "BTT_TFT", "COLPIC"});
     def->set_default_value(new ConfigOptionEnum<GCodeThumbnailsFormat>(GCodeThumbnailsFormat::PNG));
 
     def = this->add("layer_height", coFloat);
@@ -884,16 +887,6 @@ void PrintConfigDef::init_fff_params()
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionInts{0});
 
-    def = this->add("manual_fan_speed_gap_fill", coInts);
-    def->label = L("Gap fill");
-    def->tooltip = L("Fan speed for gap fill extrusions when auto cooling is disabled. "
-                     "Set to 0 to use no fan for this feature type.");
-    def->sidetext = L("%");
-    def->min = 0;
-    def->max = 100;
-    def->mode = comAdvanced;
-    def->set_default_value(new ConfigOptionInts{0});
-
     def = this->add("manual_fan_speed_skirt", coInts);
     def->label = L("Skirt/Brim");
     def->tooltip = L("Fan speed for skirt and brim when auto cooling is disabled. "
@@ -1006,7 +999,7 @@ void PrintConfigDef::init_fff_params()
         "Note that the speeds generated to gcode will never exceed the max volumetric speed value.");
 
     def = this->add("overhang_speed_0", coFloatOrPercent);
-    def->label = L("speed for 0% overlap (bridge)");
+    def->label = L("Overhang speed 0%");
     def->category = L("Speed");
     def->tooltip = overhang_speed_setting_description;
     def->sidetext = L("mm/s or %");
@@ -1015,7 +1008,7 @@ void PrintConfigDef::init_fff_params()
     def->set_default_value(new ConfigOptionFloatOrPercent(40, true));
 
     def = this->add("overhang_speed_1", coFloatOrPercent);
-    def->label = L("speed for 25% overlap");
+    def->label = L("Overhang speed 25%");
     def->category = L("Speed");
     def->tooltip = overhang_speed_setting_description;
     def->sidetext = L("mm/s or %");
@@ -1024,7 +1017,7 @@ void PrintConfigDef::init_fff_params()
     def->set_default_value(new ConfigOptionFloatOrPercent(55, true));
 
     def = this->add("overhang_speed_2", coFloatOrPercent);
-    def->label = L("speed for 50% overlap");
+    def->label = L("Overhang speed 50%");
     def->category = L("Speed");
     def->tooltip = overhang_speed_setting_description;
     def->sidetext = L("mm/s or %");
@@ -1033,7 +1026,7 @@ void PrintConfigDef::init_fff_params()
     def->set_default_value(new ConfigOptionFloatOrPercent(70, true));
 
     def = this->add("overhang_speed_3", coFloatOrPercent);
-    def->label = L("speed for 75% overlap");
+    def->label = L("Overhang speed 75%");
     def->category = L("Speed");
     def->tooltip = overhang_speed_setting_description;
     def->sidetext = L("mm/s or %");
@@ -1054,7 +1047,7 @@ void PrintConfigDef::init_fff_params()
         "Fan speeds for overhang sizes in between are calculated via linear interpolation.");
 
     def = this->add("overhang_fan_speed_0", coInts);
-    def->label = L("speed for 0% overlap (bridge)");
+    def->label = L("Overhang fan speed 0%");
     def->tooltip = fan_speed_setting_description;
     def->sidetext = L("%");
     def->min = 0;
@@ -1063,7 +1056,7 @@ void PrintConfigDef::init_fff_params()
     def->set_default_value(new ConfigOptionInts{0});
 
     def = this->add("overhang_fan_speed_1", coInts);
-    def->label = L("speed for 25% overlap");
+    def->label = L("Overhang fan speed 25%");
     def->tooltip = fan_speed_setting_description;
     def->sidetext = L("%");
     def->min = 0;
@@ -1072,7 +1065,7 @@ void PrintConfigDef::init_fff_params()
     def->set_default_value(new ConfigOptionInts{0});
 
     def = this->add("overhang_fan_speed_2", coInts);
-    def->label = L("speed for 50% overlap");
+    def->label = L("Overhang fan speed 50%");
     def->tooltip = fan_speed_setting_description;
     def->sidetext = L("%");
     def->min = 0;
@@ -1081,7 +1074,7 @@ void PrintConfigDef::init_fff_params()
     def->set_default_value(new ConfigOptionInts{0});
 
     def = this->add("overhang_fan_speed_3", coInts);
-    def->label = L("speed for 75% overlap");
+    def->label = L("Overhang fan speed 75%");
     def->tooltip = fan_speed_setting_description;
     def->sidetext = L("%");
     def->min = 0;
@@ -2301,13 +2294,6 @@ void PrintConfigDef::init_fff_params()
     def->set_default_value(
         new ConfigOptionEnum<FuzzySkinVisibilityDetection>(FuzzySkinVisibilityDetection::fsvdStandard));
 
-    def = this->add("gap_fill_enabled", coBool);
-    def->label = L("Fill gaps");
-    def->category = L("Layers and Perimeters");
-    def->tooltip = L("Enables filling of gaps between perimeters and between the inner most perimeters and infill.");
-    def->mode = comAdvanced;
-    def->set_default_value(new ConfigOptionBool(false));
-
     def = this->add("perimeter_compression", coEnum);
     def->label = L("Perimeter compression");
     def->category = L("Layers and Perimeters");
@@ -2356,16 +2342,6 @@ void PrintConfigDef::init_fff_params()
                                                                              {"0.1", L("0.1 mm")}});
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionEnum<ThinWallPrecision>(twp01));
-
-    def = this->add("gap_fill_speed", coFloat);
-    def->label = L("Gap fill");
-    def->category = L("Speed");
-    def->tooltip = L("Speed for filling small gaps using short zigzag moves. Keep this reasonably low "
-                     "to avoid too much shaking and resonance issues. Set zero to disable gaps filling.");
-    def->sidetext = L("mm/s");
-    def->min = 0;
-    def->mode = comAdvanced;
-    def->set_default_value(new ConfigOptionFloat(20));
 
     def = this->add("gcode_comments", coBool);
     def->label = L("Verbose G-code");
@@ -6338,23 +6314,53 @@ void PrintConfigDef::init_sla_tilt_params()
 
 // Ignore the following obsolete configuration keys:
 static std::set<std::string> PrintConfigDef_ignore = {
-    "clip_multipart_objects", "duplicate_x", "duplicate_y", "gcode_arcs", "multiply_x", "multiply_y",
-    "support_material_tool", "acceleration", "adjust_overhang_flow", "standby_temperature", "scale", "rotate",
-    "duplicate", "duplicate_grid", "start_perimeters_at_concave_points", "start_perimeters_at_non_overhang",
-    "randomize_start", "seal_position", "vibration_limit", "bed_size", "print_center", "g0", "threads",
-    "pressure_advance", "wipe_tower_per_color_wipe", "serial_port", "serial_speed",
+    "clip_multipart_objects",
+    "duplicate_x",
+    "duplicate_y",
+    "gcode_arcs",
+    "multiply_x",
+    "multiply_y",
+    "support_material_tool",
+    "acceleration",
+    "adjust_overhang_flow",
+    "standby_temperature",
+    "scale",
+    "rotate",
+    "duplicate",
+    "duplicate_grid",
+    "start_perimeters_at_concave_points",
+    "start_perimeters_at_non_overhang",
+    "randomize_start",
+    "seal_position",
+    "vibration_limit",
+    "bed_size",
+    "print_center",
+    "g0",
+    "threads",
+    "pressure_advance",
+    "wipe_tower_per_color_wipe",
+    "serial_port",
+    "serial_speed",
     // Legacy option, renamed or removed.
-    "fuzzy_skin_perimeter_mode", "fuzzy_skin_shape",
+    "fuzzy_skin_perimeter_mode",
+    "fuzzy_skin_shape",
     // Legacy option, replaced by automatic calculation based on extrusion width.
-    "wall_add_middle_threshold", "wall_split_middle_threshold",
+    "wall_add_middle_threshold",
+    "wall_split_middle_threshold",
     // Disabled in 2.6.0-alpha6, this option is problematic
     "infill_only_where_needed",
     "gcode_binary",             // Introduced in 2.7.0-alpha1, removed in 2.7.1 (replaced by binary_gcode).
     "wiping_volumes_extruders", // Removed in 2.7.3-alpha1.
-    "wipe_tower_x", "wipe_tower_y", "wipe_tower_rotation_angle", // Removed in 2.9.0
+    "wipe_tower_x",
+    "wipe_tower_y",
+    "wipe_tower_rotation_angle",          // Removed in 2.9.0
     "support_points_minimal_distance",    // End of the using in 2.9.1 (change algorithm for the support generator)
     "filament_shrinkage_compensation_xy", // Replaced by separate _x and _y options
     "min_wipe_length",                    // Replaced by wipe_length
+    // Gap fill removed; the classic perimeter generator is gone and Athena/Arachne absorb thin features.
+    "gap_fill_speed",
+    "gap_fill_enabled",
+    "manual_fan_speed_gap_fill",
 };
 
 void PrintConfigDef::handle_legacy(t_config_option_key &opt_key, std::string &value)
@@ -6599,15 +6605,10 @@ void PrintConfigDef::handle_legacy_composite(DynamicPrintConfig &config)
         std::string thumbnails_str = config.opt_string("thumbnails");
         auto [thumbnails_list, errors] = GCodeThumbnails::make_and_check_thumbnail_list(thumbnails_str, extention);
 
-        if (errors != enum_bitmask<ThumbnailError>())
-        {
-            std::string error_str = "\n" + format("Invalid value provided for parameter %1%: %2%", "thumbnails",
-                                                  thumbnails_str);
-            error_str += GCodeThumbnails::get_error_string(errors);
-            throw BadOptionValueException(error_str);
-        }
-
-        if (!thumbnails_list.empty())
+        // An unknown or malformed thumbnail entry must not reject the whole preset. Keep the profile
+        // loadable; the problem is surfaced as a non-blocking warning at slice time. Only normalize the
+        // stored value when it is fully valid, so the user's original text is preserved on error.
+        if (errors == enum_bitmask<ThumbnailError>() && !thumbnails_list.empty())
         {
             const auto &extentions = ConfigOptionEnum<GCodeThumbnailsFormat>::get_enum_names();
             thumbnails_str.clear();

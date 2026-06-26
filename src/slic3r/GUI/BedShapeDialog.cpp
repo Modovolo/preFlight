@@ -12,6 +12,11 @@
 #include "BedShapeDialog.hpp"
 #include "GUI_App.hpp"
 #include "OptionsGroup.hpp"
+#include "Widgets/ComboBox.hpp"
+#include "Widgets/DropDown.hpp"
+#include "Widgets/FlatStaticBox.hpp"
+
+#include <wx/simplebook.h>
 
 #include <wx/wx.h>
 #include <wx/numformatter.h>
@@ -195,7 +200,7 @@ void BedShapeDialog::build_dialog(const ConfigOptionPoints &default_pt, const Co
 void BedShapeDialog::on_dpi_changed(const wxRect &suggested_rect)
 {
     const int &em = em_unit();
-    m_panel->m_shape_options_book->SetMinSize(wxSize(25 * em, -1));
+    m_panel->m_shape_combo->SetMinSize(wxSize(25 * em, -1));
 
     for (auto og : m_panel->m_optgroups)
         og->msw_rescale();
@@ -215,20 +220,42 @@ void BedShapePanel::build_panel(const ConfigOptionPoints &default_pt, const Conf
                                 const ConfigOptionString &custom_model)
 {
     wxGetApp().UpdateDarkUI(this);
+#ifdef __APPLE__
+    update_dark_ui(this); // macOS: theme the container background (GUI_App::UpdateDarkUI is a no-op here)
+#endif
     m_shape = default_pt.values;
     m_custom_texture = custom_texture.value.empty() ? NONE : custom_texture.value;
     m_custom_model = custom_model.value.empty() ? NONE : custom_model.value;
 
-    auto sbsizer = new wxStaticBoxSizer(wxVERTICAL, this, _L("Shape"));
-    sbsizer->GetStaticBox()->SetFont(wxGetApp().bold_font());
-    wxGetApp().UpdateDarkUI(sbsizer->GetStaticBox());
+    // Use FlatStaticBox so the group frame follows the theme (matches the sidebar group frames).
+    auto *shape_stb = new FlatStaticBox(this, wxID_ANY, _L("Shape"));
+#ifdef _WIN32
+    shape_stb->SetBackgroundStyle(wxBG_STYLE_PAINT);
+#endif
+    shape_stb->SetFont(wxGetApp().bold_font());
+    wxGetApp().UpdateDarkUI(shape_stb);
+    auto sbsizer = new wxStaticBoxSizer(shape_stb, wxVERTICAL);
+#if defined(__WXGTK__) || defined(__WXOSX__)
+    // GTK/macOS draw the title themselves; add top padding so content clears the custom border.
+    sbsizer->AddSpacer(wxGetApp().em_unit());
+#endif
 
-    // shape options
-    m_shape_options_book = new wxChoicebook(this, wxID_ANY, wxDefaultPosition, wxSize(25 * wxGetApp().em_unit(), -1),
-                                            wxCHB_TOP);
-    wxGetApp().UpdateDarkUI(m_shape_options_book->GetChoiceCtrl());
+    // shape options - preFlight: a custom themed dropdown drives a page container, replacing the native
+    // wxChoicebook (whose wxChoice never picked up the dark theme).
+    m_shape_combo = new ::ComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition,
+                                   wxSize(25 * wxGetApp().em_unit(), -1), 0, nullptr, wxCB_READONLY | DD_NO_CHECK_ICON);
+    m_shape_pages = new wxSimplebook(this, wxID_ANY);
+    wxGetApp().UpdateDarkUI(m_shape_pages);
 
-    sbsizer->Add(m_shape_options_book);
+    m_shape_combo->Bind(wxEVT_COMBOBOX,
+                        [this](wxCommandEvent &)
+                        {
+                            m_shape_pages->SetSelection(m_shape_combo->GetSelection());
+                            update_shape();
+                        });
+
+    sbsizer->Add(m_shape_combo, 0, wxEXPAND | wxBOTTOM, wxGetApp().em_unit() / 2);
+    sbsizer->Add(m_shape_pages, 0, wxEXPAND);
 
     auto optgroup = init_shape_options_page(BedShape::get_name(BedShape::PageType::Rectangle));
     BedShape::append_option_line(optgroup, BedShape::Parameter::RectSize);
@@ -265,8 +292,6 @@ void BedShapePanel::build_panel(const ConfigOptionPoints &default_pt, const Conf
     update_texture_label();
     update_model_label();
 
-    Bind(wxEVT_CHOICEBOOK_PAGE_CHANGED, ([this](wxCommandEvent &e) { update_shape(); }));
-
     // right pane with preview canvas
     m_canvas = new Bed_2D(this);
     m_canvas->Bind(wxEVT_PAINT, [this](wxPaintEvent &e) { m_canvas->repaint(m_shape); });
@@ -291,7 +316,10 @@ void BedShapePanel::build_panel(const ConfigOptionPoints &default_pt, const Conf
 // Create a panel for a rectangular / circular / custom bed shape.
 ConfigOptionsGroupShp BedShapePanel::init_shape_options_page(const wxString &title)
 {
-    wxPanel *panel = new wxPanel(m_shape_options_book);
+    wxPanel *panel = new wxPanel(m_shape_pages);
+#ifdef __APPLE__
+    update_dark_ui(panel); // macOS: theme the shape page background to match the dialog
+#endif
     ConfigOptionsGroupShp optgroup = std::make_shared<ConfigOptionsGroup>(panel, _L("Settings"));
 
     optgroup->label_width = 10;
@@ -301,8 +329,8 @@ ConfigOptionsGroupShp BedShapePanel::init_shape_options_page(const wxString &tit
     };
 
     m_optgroups.push_back(optgroup);
-    //    panel->SetSizerAndFit(optgroup->sizer);
-    m_shape_options_book->AddPage(panel, title);
+    m_shape_pages->AddPage(panel, title);
+    m_shape_combo->Append(title);
 
     return optgroup;
 }
@@ -317,6 +345,9 @@ wxPanel *BedShapePanel::init_texture_panel()
 {
     wxPanel *panel = new wxPanel(this);
     wxGetApp().UpdateDarkUI(panel, true);
+#ifdef __APPLE__
+    update_dark_ui(panel); // macOS: theme the panel background to match the dialog
+#endif
     ConfigOptionsGroupShp optgroup = std::make_shared<ConfigOptionsGroup>(panel, _L("Texture"));
 
     optgroup->label_width = 10;
@@ -374,6 +405,9 @@ wxPanel *BedShapePanel::init_model_panel()
 {
     wxPanel *panel = new wxPanel(this);
     wxGetApp().UpdateDarkUI(panel, true);
+#ifdef __APPLE__
+    update_dark_ui(panel); // macOS: theme the panel background to match the dialog
+#endif
     ConfigOptionsGroupShp optgroup = std::make_shared<ConfigOptionsGroup>(panel, _L("Model"));
 
     optgroup->label_width = 10;
@@ -436,7 +470,8 @@ void BedShapePanel::set_shape(const ConfigOptionPoints &points)
 {
     BedShape shape(points);
 
-    m_shape_options_book->SetSelection(int(shape.get_page_type()));
+    m_shape_combo->SetSelection(int(shape.get_page_type()));
+    m_shape_pages->SetSelection(int(shape.get_page_type()));
     shape.apply_optgroup_values(m_optgroups[int(shape.get_page_type())]);
 
     // Copy the polygon to the canvas, make a copy of the array, if custom shape is selected
@@ -456,7 +491,9 @@ void BedShapePanel::update_preview()
 // Update the bed shape from the dialog fields.
 void BedShapePanel::update_shape()
 {
-    auto page_idx = m_shape_options_book->GetSelection();
+    int page_idx = m_shape_combo->GetSelection();
+    if (page_idx < 0 || page_idx >= static_cast<int>(m_optgroups.size()))
+        return;
     auto opt_group = m_optgroups[page_idx];
 
     switch (static_cast<BedShape::PageType>(page_idx))

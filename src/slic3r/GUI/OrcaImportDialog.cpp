@@ -88,12 +88,16 @@ void OrcaImportResultsDialog::apply_theme_overrides()
         }
     }
 
-    // Error labels need red foreground
+    // Error labels use the themed error color so they track the theme (not a fixed red).
     for (auto *label : m_error_labels)
-        label->SetForegroundColour(wxColour(255, 80, 80));
+        label->SetForegroundColour(UIColors::Error());
 
-    // Section headers use dimmer secondary text for visual hierarchy
+    // Bold section headings use the theme accent so they read as on-theme section dividers.
     for (auto *label : m_section_labels)
+        label->SetForegroundColour(UIColors::AccentPrimary());
+
+    // Explanatory subtitles stay dimmer secondary text for visual hierarchy.
+    for (auto *label : m_subtitle_labels)
         label->SetForegroundColour(UIColors::SecondaryText());
 
     // OK button: let UpdateDlgDarkUI handle theming (matches standard dialog buttons)
@@ -215,7 +219,7 @@ void OrcaImportResultsDialog::add_section(wxSizer *parent_sizer, wxWindow *paren
     if (!subtitle.empty())
     {
         wxStaticText *sub = new wxStaticText(parent, wxID_ANY, subtitle);
-        m_section_labels.push_back(sub);
+        m_subtitle_labels.push_back(sub);
         parent_sizer->Add(sub, 0, wxLEFT | wxRIGHT, 12);
     }
 
@@ -258,8 +262,9 @@ void import_orca_bundle(wxWindow *parent)
                                        "preFlight setting. These will be skipped during import.")),
                    0, wxALL, 15);
 
-        auto *learn_more = new wxHyperlinkCtrl(&warn_dlg, wxID_ANY, _L("Learn more about Orca import"),
-                                               "https://preflight3d.com/features/orca-import");
+        auto *learn_more = new wxGenericHyperlinkCtrl(&warn_dlg, wxID_ANY, _L("Learn more about Orca import"),
+                                                      "https://preflight3d.com/features/orca-import");
+        wxGetApp().tint_hyperlink(learn_more);
         sizer->Add(learn_more, 0, wxLEFT | wxRIGHT | wxBOTTOM, 15);
 
         sizer->Add(new wxStaticText(&warn_dlg, wxID_ANY,

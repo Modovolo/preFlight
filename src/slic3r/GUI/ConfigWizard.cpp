@@ -12,6 +12,7 @@
 
 #include "ConfigWizard_private.hpp"
 #include "Theme.hpp"
+#include "Widgets/UIColors.hpp"
 
 #include <wx/hyperlink.h>
 
@@ -548,7 +549,7 @@ void PrinterPicker::on_checkbox(const Checkbox *cbox, bool checked)
 // Wizard page base
 
 ConfigWizardPage::ConfigWizardPage(ConfigWizard *parent, wxString title, wxString shortname, unsigned indent)
-    : wxPanel(parent->p->hscroll), parent(parent), shortname(std::move(shortname)), indent(indent)
+    : wxPanel(parent->p->hscroll->GetContentPanel()), parent(parent), shortname(std::move(shortname)), indent(indent)
 {
     wxGetApp().UpdateDarkUI(this);
 
@@ -616,11 +617,9 @@ PageWelcome::PageWelcome(ConfigWizard *parent)
     , welcome_text(append_text(format_wxstr(
           _L("Hello, welcome to %s! This %s helps you with the initial configuration; just a few settings and you will be ready to print."),
           SLIC3R_APP_NAME, _(ConfigWizard::name()))))
-    , cbox_reset(
-          append(new wxCheckBox(this, wxID_ANY, _L("Remove user profiles (a snapshot will be taken beforehand)"))))
-    , cbox_integrate(
-          append(new wxCheckBox(this, wxID_ANY,
-                                _L("Perform desktop integration (Sets this binary to be searchable by the system)."))))
+    , cbox_reset(append(new ::CheckBox(this, _L("Remove user profiles (a snapshot will be taken beforehand)"))))
+    , cbox_integrate(append(
+          new ::CheckBox(this, _L("Perform desktop integration (Sets this binary to be searchable by the system)."))))
 {
     welcome_text->Hide();
     cbox_reset->Hide();
@@ -654,12 +653,8 @@ PageUpdateManager::PageUpdateManager(ConfigWizard *parent_in)
     intro->Wrap(70 * em);
     append(intro, 0, wxBOTTOM, em);
 
-    vendor_scroll = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL);
-    vendor_scroll->SetScrollRate(0, 5);
+    vendor_scroll = new ScrollablePanel(this);
     vendor_scroll->SetMinSize(wxSize(-1, 30 * em));
-#ifdef _WIN32
-    wxGetApp().UpdateDarkUI(vendor_scroll);
-#endif
 
     append(vendor_scroll, 1, wxEXPAND);
 
@@ -738,7 +733,7 @@ PageUpdateManager::PageUpdateManager(ConfigWizard *parent_in)
 void PageUpdateManager::populate_vendor_list()
 {
     vendor_checkboxes.clear();
-    vendor_scroll->DestroyChildren();
+    vendor_scroll->GetContentPanel()->DestroyChildren();
 
     const int em = em_unit(this);
     auto *sizer = new wxBoxSizer(wxVERTICAL);
@@ -772,12 +767,9 @@ void PageUpdateManager::populate_vendor_list()
 
     for (const auto &entry : sorted_vendors)
     {
-        auto *cb = new wxCheckBox(vendor_scroll, wxID_ANY, from_u8(entry.name));
+        auto *cb = new ::CheckBox(vendor_scroll->GetContentPanel(), from_u8(entry.name));
         if (saved_vendors.count(entry.id))
             cb->SetValue(true);
-#ifdef _WIN32
-        wxGetApp().UpdateDarkUI(cb);
-#endif
         sizer->Add(cb, 0, wxBOTTOM, em / 4);
         vendor_checkboxes[entry.id] = cb;
     }
@@ -1257,9 +1249,10 @@ PageMaterials::PageMaterials(ConfigWizard *parent, Materials *materials, wxStrin
     auto *vendor_sizer = new wxBoxSizer(wxHORIZONTAL);
     auto *vendor_text = new wxStaticText(this, wxID_ANY, _L("Vendors can submit corrections or updates via our "));
     vendor_text->SetFont(wxGetApp().small_font());
-    auto *vendor_link = new wxHyperlinkCtrl(this, wxID_ANY, _L("profiles repository"),
-                                            "https://github.com/oozebot/preFlight-profiles");
+    auto *vendor_link = new wxGenericHyperlinkCtrl(this, wxID_ANY, _L("profiles repository"),
+                                                   "https://github.com/oozebot/preFlight-profiles");
     vendor_link->SetFont(wxGetApp().small_font());
+    wxGetApp().tint_hyperlink(vendor_link);
     vendor_sizer->Add(vendor_text, 0, wxALIGN_CENTER_VERTICAL);
     vendor_sizer->Add(vendor_link, 0, wxALIGN_CENTER_VERTICAL);
     append(disclaimer, 0, wxBOTTOM, em / 4);
@@ -1275,7 +1268,7 @@ PageMaterials::PageMaterials(ConfigWizard *parent, Materials *materials, wxStrin
     append(note, 0, wxBOTTOM, em / 2);
 
     // Style sort buttons ourselves (skip UpdateDarkUI - it binds hover/focus handlers that override colors)
-    wxColour active_bg(Theme::PrimaryDark::R, Theme::PrimaryDark::G, Theme::PrimaryDark::B);
+    wxColour active_bg = UIColors::AccentDark(); // themed accent (darker variant)
     wxColour active_fg(*wxBLACK);
     wxColour inactive_bg = wxGetApp().get_window_default_clr();
     wxColour inactive_fg = wxGetApp().get_label_clr_default();
@@ -1975,7 +1968,7 @@ const char *PageCustom::default_profile_name = "My Settings";
 PageCustom::PageCustom(ConfigWizard *parent)
     : ConfigWizardPage(parent, _L("Custom Printer Setup"), _L("Custom Printer"))
 {
-    cb_custom = new wxCheckBox(this, wxID_ANY, _L("Define a custom printer profile"));
+    cb_custom = new ::CheckBox(this, _L("Define a custom printer profile"));
     auto *label = new wxStaticText(this, wxID_ANY, _L("Custom profile name:"));
 
     wxBoxSizer *profile_name_sizer = new wxBoxSizer(wxVERTICAL);
@@ -2001,7 +1994,7 @@ PageUpdate::PageUpdate(ConfigWizard *parent)
     const AppConfig *app_config = wxGetApp().app_config;
     auto boldfont = wxGetApp().bold_font();
 
-    auto *box_slic3r = new wxCheckBox(this, wxID_ANY, _L("Check for application updates"));
+    auto *box_slic3r = new ::CheckBox(this, _L("Check for application updates"));
     box_slic3r->SetValue(app_config->get("notify_release") != "none");
     append(box_slic3r);
     append_text(wxString::Format(
@@ -2012,7 +2005,7 @@ PageUpdate::PageUpdate(ConfigWizard *parent)
 
     append_spacer(GetScaledVerticalSpacing());
 
-    auto *box_presets = new wxCheckBox(this, wxID_ANY, _L("Update built-in Presets automatically"));
+    auto *box_presets = new ::CheckBox(this, _L("Update built-in Presets automatically"));
     box_presets->SetValue(app_config->get_bool("preset_update"));
     append(box_presets);
     append_text(
@@ -2137,7 +2130,7 @@ PageDownloader::PageDownloader(ConfigWizard *parent)
 
     append_spacer(GetScaledVerticalSpacing());
 
-    auto *box_allow_downloads = new wxCheckBox(this, wxID_ANY, _L("Allow built-in downloader"));
+    auto *box_allow_downloads = new ::CheckBox(this, _L("Allow built-in downloader"));
     // TODO: Do we want it like this? The downloader is allowed for very first time the wizard is run.
     bool box_allow_value = (app_config->has("downloader_url_registered")
                                 ? app_config->get_bool("downloader_url_registered")
@@ -2323,7 +2316,7 @@ PageReloadFromDisk::PageReloadFromDisk(ConfigWizard *parent)
     : ConfigWizardPage(parent, _L("Reload from disk"), _L("Reload from disk")), full_pathnames(false)
 {
     auto *box_pathnames =
-        new wxCheckBox(this, wxID_ANY, _L("Export full pathnames of models and parts sources into 3mf and amf files"));
+        new ::CheckBox(this, _L("Export full pathnames of models and parts sources into 3mf and amf files"));
     box_pathnames->SetValue(wxGetApp().app_config->get_bool("export_sources_full_pathnames"));
     append(box_pathnames);
     append_text(
@@ -2337,9 +2330,9 @@ PageReloadFromDisk::PageReloadFromDisk(ConfigWizard *parent)
 PageFilesAssociation::PageFilesAssociation(ConfigWizard *parent)
     : ConfigWizardPage(parent, _L("Files association"), _L("Files association"))
 {
-    cb_3mf = new wxCheckBox(this, wxID_ANY, _L("Associate .3mf files to preFlight"));
-    cb_stl = new wxCheckBox(this, wxID_ANY, _L("Associate .stl files to preFlight"));
-    //    cb_gcode = new wxCheckBox(this, wxID_ANY, _L("Associate .gcode files to preFlight G-code Viewer"));
+    cb_3mf = new ::CheckBox(this, _L("Associate .3mf files to preFlight"));
+    cb_stl = new ::CheckBox(this, _L("Associate .stl files to preFlight"));
+    //    cb_gcode = new ::CheckBox(this, _L("Associate .gcode files to preFlight G-code Viewer"));
 
     append(cb_3mf);
     append(cb_stl);
@@ -2379,7 +2372,7 @@ PageMode::PageMode(ConfigWizard *parent) : ConfigWizardPage(parent, _L("View mod
     append(radio_expert);
 
     append_text("\n" + _L("The size of the object can be specified in inches"));
-    check_inch = new wxCheckBox(this, wxID_ANY, _L("Use inches"));
+    check_inch = new ::CheckBox(this, _L("Use inches"));
     check_inch->SetValue(wxGetApp().app_config->get_bool("use_inches"));
     append(check_inch);
 
@@ -2443,12 +2436,12 @@ PageVendors::PageVendors(ConfigWizard *parent, std::string repo_id /*= wxEmptySt
     for (const std::pair<std::wstring, const VendorProfile *> &v : vendors)
     {
         const VendorProfile *vendor = v.second;
-        auto *cbox = new wxCheckBox(this, wxID_ANY, vendor->name);
+        auto *cbox = new ::CheckBox(this, vendor->name);
         cbox->Bind(
             wxEVT_CHECKBOX,
             [=](wxCommandEvent &event)
             {
-                if (cbox->IsChecked())
+                if (cbox->GetValue())
                 {
                     // create PrinterPages for this vendor, if they aren't created jet
                     {
@@ -4111,7 +4104,7 @@ bool ConfigWizard::priv::apply_config(AppConfig *app_config, PresetBundle *prese
             {
                 auto check_cbox = [&](const PrinterPicker::Checkbox *cbox)
                 {
-                    if (!cbox->IsChecked())
+                    if (!cbox->GetValue())
                         return;
                     for (const auto &[bname, bundle] : bundles)
                         for (const auto &printer : bundle.preset_bundle->printers)
@@ -4514,7 +4507,7 @@ void ConfigWizard::priv::clear_printer_pages()
         unselect(page);
 
         // remove page
-        hscroll->RemoveChild(
+        hscroll->GetContentPanel()->RemoveChild(
             page); // Under OSX call of Reparent(nullptr) causes a crash, so as a workaround use RemoveChild() instead
         page->Destroy();
     };
@@ -4584,9 +4577,7 @@ ConfigWizard::ConfigWizard(wxWindow *parent)
     auto *hline = new StaticLine(this);
     p->btnsizer = new wxBoxSizer(wxHORIZONTAL);
 
-    // Initially we _do not_ SetScrollRate in order to figure out the overall width of the Wizard  without scrolling.
-    // Later, we compare that to the size of the current screen and set minimum width based on that (see below).
-    p->hscroll = new wxScrolledWindow(this);
+    p->hscroll = new ScrollablePanel(this);
     p->hscroll_sizer = new wxBoxSizer(wxHORIZONTAL);
     p->hscroll->SetSizer(p->hscroll_sizer);
 
@@ -4645,8 +4636,7 @@ ConfigWizard::ConfigWizard(wxWindow *parent)
     SetSizer(vsizer);
     SetSizerAndFit(vsizer);
 
-    // We can now enable scrolling on hscroll
-    p->hscroll->SetScrollRate(30, 30);
+    p->hscroll->UpdateScrollbar();
 
     on_window_geometry(this, [this]() { p->init_dialog_size(); });
 

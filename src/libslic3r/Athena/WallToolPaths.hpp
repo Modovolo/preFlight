@@ -72,6 +72,9 @@ public:
                   double min_bead_width_factor = 1.0, coord_t thin_wall_snap_precision = 10000,
                   coord_t max_perimeter_width = 0);
 
+    // Skip thin contour regeneration (gap fill doesn't use inner_contour)
+    void skip_thin_contour_regeneration() { m_thin_contour_regeneration_attempted = true; }
+
     /*!
      * Generates the Toolpaths
      * \return A reference to the newly create  ToolPaths

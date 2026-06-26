@@ -12,6 +12,7 @@
 #include "slic3r/GUI/format.hpp"
 #include "GUI_App.hpp"
 #include "MsgDialog.hpp"
+#include "Widgets/UIColors.hpp"
 
 #include "libslic3r/Color.hpp"
 
@@ -63,6 +64,11 @@ RammingDialog::RammingDialog(wxWindow *parent, const std::string &parameters)
 
     update_ui(static_cast<wxButton *>(this->FindWindowById(wxID_OK, this)));
     update_ui(static_cast<wxButton *>(this->FindWindowById(wxID_CANCEL, this)));
+
+#ifdef _WIN32
+    // Plain wxDialog + UpdateDarkUI doesn't darken the native title bar; UpdateDlgDarkUI applies it.
+    wxGetApp().UpdateDlgDarkUI(this);
+#endif
 
     this->Bind(wxEVT_CLOSE_WINDOW, [this](wxCloseEvent &e) { EndModal(wxCANCEL); });
 
@@ -289,6 +295,11 @@ WipingDialog::WipingDialog(wxWindow *parent, const std::vector<float> &matrix,
     update_ui(static_cast<wxButton *>(this->FindWindowById(wxID_OK, this)));
     update_ui(static_cast<wxButton *>(this->FindWindowById(wxID_CANCEL, this)));
 
+#ifdef _WIN32
+    // Plain wxDialog + UpdateDarkUI doesn't darken the native title bar; UpdateDlgDarkUI applies it.
+    wxGetApp().UpdateDlgDarkUI(this);
+#endif
+
     this->Bind(wxEVT_CLOSE_WINDOW, [this](wxCloseEvent &e) { EndModal(wxCANCEL); });
 
     this->Bind(wxEVT_BUTTON,[this](wxCommandEvent&) {                 // if OK button is clicked..
@@ -438,23 +449,10 @@ WipingPanel::WipingPanel(wxWindow *parent, const std::vector<float> &matrix,
                               dc.GetTextExtent(label, &text_width, &text_height);
 
                               int xpos = m_gridsizer_advanced->GetPosition().x;
-                              if (!m_page_advanced->IsEnabled())
-                              {
-                                  dc.SetTextForeground(wxSystemSettings::GetColour(
-#if defined(__linux__) && defined(__WXGTK2__)
-                                      wxSYS_COLOUR_BTNTEXT
-#else 
-                                                      wxSYS_COLOUR_GRAYTEXT
-#endif
-                                      ));
-                                  dc.DrawRotatedText(label, xpos - text_height, y_pos + text_width / 2.f, 90);
-#ifdef _WIN32
-                                  dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_3DLIGHT));
-                                  dc.DrawRotatedText(label, xpos - text_height - 1, y_pos + text_width / 2.f + 1, 90);
-#endif
-                              }
-                              else
-                                  dc.DrawRotatedText(label, xpos - text_height, y_pos + text_width / 2.f, 90);
+                              // Themed label: muted disabled color when the panel is inactive, otherwise foreground.
+                              dc.SetTextForeground(m_page_advanced->IsEnabled() ? UIColors::ContentForeground()
+                                                                                : UIColors::InputForegroundDisabled());
+                              dc.DrawRotatedText(label, xpos - text_height, y_pos + text_width / 2.f, 90);
                           });
 }
 

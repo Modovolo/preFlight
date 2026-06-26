@@ -20,6 +20,7 @@
 ///|/
 // #include "libslic3r/GCodeSender.hpp"
 #include "slic3r/GUI/BedShapeDialog.hpp"
+#include "slic3r/GUI/ThumbnailsDialog.hpp"
 #include "slic3r/Utils/Serial.hpp"
 #include "Tab.hpp"
 #include "PresetHints.hpp"
@@ -373,6 +374,8 @@ void Tab::create_preset_tab()
     // preFlightRendererNative (installed in GUI_App::on_init_inner), which replaces
     // the default blue filled selection rect with a 1px outline border for
     // all wxTreeCtrl instances.
+#elif defined(__linux__)
+    // Selection outline styling handled by preFlightRendererNative (same as macOS)
 #endif
 
     // Delay processing of the following handler until the message queue is flushed.
@@ -387,6 +390,7 @@ void Tab::create_preset_tab()
                          // Fix for option visibility issue
                          // So, call SetFocus explicitly for this control before changing of the selection
                          m_treectrl->SetFocus();
+
 #endif
                          if (!m_disable_tree_sel_changed_event && !m_pages.empty())
                          {
@@ -596,8 +600,7 @@ void Tab::OnActivate()
         // but ALL items of top sizer are visible.
         // So, update visibility of each item according to the ui settings
         update_btns_enabling();
-        m_btn_hide_incompatible_presets->Show(m_show_btn_incompatible_presets &&
-                                              m_type != Slic3r::Preset::TYPE_PRINTER);
+        m_btn_hide_incompatible_presets->Show(m_show_btn_incompatible_presets && m_type == Slic3r::Preset::TYPE_PRINT);
         if (TabFilament *tab = dynamic_cast<TabFilament *>(this))
             tab->update_extruder_combobox();
 
@@ -2124,7 +2127,7 @@ void TabPrint::build()
                 _L("Calculates print speeds from each filament's max volumetric flow, "
                    "capped at Max print speed.\n"
                    "Bridge and small perimeter speeds remain manual. Set to 0 to include in auto speed.\n"
-                   "Over-bridge set to 0 uses solid infill speed. Gap fill set to 0 disables it."));
+                   "Over-bridge set to 0 uses solid infill speed."));
             return sizer;
         };
         optgroup->append_line(line);
@@ -2141,7 +2144,6 @@ void TabPrint::build()
     optgroup->append_single_option_line("support_material_interface_speed");
     optgroup->append_single_option_line("bridge_speed");
     optgroup->append_single_option_line("over_bridge_speed");
-    optgroup->append_single_option_line("gap_fill_speed");
 
     optgroup = page->new_optgroup_for_sidebar(L("Dynamic overhang speed"));
     optgroup->append_single_option_line("enable_dynamic_overhang_speeds");
@@ -3235,7 +3237,6 @@ void TabFilament::build()
     optgroup->append_single_option_line("bridge_fan_speed", category_path + "manual-fan-controls");
     optgroup->append_single_option_line("manual_fan_speed_top_solid_infill", category_path + "manual-fan-controls");
     optgroup->append_single_option_line("manual_fan_speed_ironing", category_path + "manual-fan-controls");
-    optgroup->append_single_option_line("manual_fan_speed_gap_fill", category_path + "manual-fan-controls");
     optgroup->append_single_option_line("manual_fan_speed_skirt", category_path + "manual-fan-controls");
     optgroup->append_single_option_line("manual_fan_speed_support_material", category_path + "manual-fan-controls");
     optgroup->append_single_option_line("manual_fan_speed_support_interface", category_path + "manual-fan-controls");
@@ -3446,11 +3447,11 @@ void TabFilament::toggle_options()
 
         for (auto el : {"min_fan_speed", "full_fan_speed_layer"})
             toggle_option(el, fan_always_on && !manual_fan_enabled);
-        for (auto el : {"manual_fan_speed_perimeter", "manual_fan_speed_external_perimeter",
-                        "manual_fan_speed_interlocking_perimeter", "manual_fan_speed_internal_infill",
-                        "manual_fan_speed_solid_infill", "manual_fan_speed_top_solid_infill",
-                        "manual_fan_speed_ironing", "manual_fan_speed_gap_fill", "manual_fan_speed_skirt",
-                        "manual_fan_speed_support_material", "manual_fan_speed_support_interface"})
+        for (auto el :
+             {"manual_fan_speed_perimeter", "manual_fan_speed_external_perimeter",
+              "manual_fan_speed_interlocking_perimeter", "manual_fan_speed_internal_infill",
+              "manual_fan_speed_solid_infill", "manual_fan_speed_top_solid_infill", "manual_fan_speed_ironing",
+              "manual_fan_speed_skirt", "manual_fan_speed_support_material", "manual_fan_speed_support_interface"})
             toggle_option(el, manual_fan_enabled);
 
         // Dynamic fan speed sub-options disabled when manual fan is enabled (mutually exclusive)
@@ -3829,9 +3830,45 @@ void TabPrinter::build_fff()
     optgroup = page->new_optgroup_for_sidebar(L("Firmware"));
     optgroup->append_single_option_line("gcode_flavor");
 
-    option = optgroup->get_option("thumbnails");
-    option.opt.width = 35;
-    optgroup->append_single_option_line(option);
+    // Thumbnails: keep the text value as an advanced escape hatch, but front it with a structured
+    // editor (ThumbnailsDialog) so users do not have to hand-type the "WxH/FORMAT, ..." grammar.
+    create_line_with_widget(optgroup.get(), "thumbnails", "",
+                            [this](wxWindow *parent)
+                            {
+                                auto *edit_btn = new ScalableButton(parent, wxID_ANY, "wrench",
+                                                                    " " + _(L("Edit thumbnails")), wxDefaultSize,
+                                                                    wxDefaultPosition, wxBU_LEFT | wxBU_EXACTFIT);
+                                edit_btn->SetFont(wxGetApp().normal_font());
+                                edit_btn->SetSize(edit_btn->GetBestSize());
+                                auto *sizer = new wxBoxSizer(wxHORIZONTAL);
+                                sizer->Add(edit_btn, 0, wxALIGN_CENTER_VERTICAL);
+
+                                // Refresh the tooltip from live config on hover so it never goes stale.
+                                edit_btn->Bind(wxEVT_ENTER_WINDOW,
+                                               [this, edit_btn](wxMouseEvent &e)
+                                               {
+                                                   edit_btn->SetToolTip(
+                                                       thumbnails_summary(m_config && m_config->has("thumbnails")
+                                                                              ? m_config->opt_string("thumbnails")
+                                                                              : std::string()));
+                                                   e.Skip();
+                                               });
+
+                                edit_btn->Bind(wxEVT_BUTTON,
+                                               [this](wxCommandEvent &)
+                                               {
+                                                   const std::string current = m_config->has("thumbnails")
+                                                                                   ? m_config->opt_string("thumbnails")
+                                                                                   : std::string();
+                                                   ThumbnailsDialog dlg(wxGetApp().mainframe, current);
+                                                   if (dlg.ShowModal() == wxID_OK)
+                                                   {
+                                                       load_key_value("thumbnails", dlg.get_value());
+                                                       update_changed_ui();
+                                                   }
+                                               });
+                                return sizer;
+                            });
 
     optgroup->append_single_option_line("silent_mode");
     optgroup->append_single_option_line("remaining_times");
@@ -3846,9 +3883,13 @@ void TabPrinter::build_fff()
                     return;
                 if (opt_key == "thumbnails" && m_config->has("thumbnails_format"))
                 {
-                    // to backward compatibility we need to update "thumbnails_format" from new "thumbnails"
-                    if (const std::string val = boost::any_cast<std::string>(value); !value.empty())
+                    // Keep "thumbnails_format" in sync with the new "thumbnails" value. The revert/undo path
+                    // can hand us an empty or non-string boost::any, so use the non-throwing pointer form
+                    // (the previous value-form cast threw bad_any_cast and crashed the app).
+                    const std::string *val_ptr = boost::any_cast<std::string>(&value);
+                    if (val_ptr && !val_ptr->empty())
                     {
+                        const std::string &val = *val_ptr;
                         auto [thumbnails_list, errors] = GCodeThumbnails::make_and_check_thumbnail_list(val);
 
                         if (errors != enum_bitmask<ThumbnailError>())
@@ -6386,8 +6427,8 @@ void Tab::update_compatibility_ui()
 
 void Tab::update_ui_from_settings()
 {
-    // Show the 'show / hide presets' button only for the print and filament tabs
-    if (m_type == Slic3r::Preset::TYPE_PRINTER)
+    // preFlight: filaments are never tied to printers, so the show/hide-incompatible button is print-only
+    if (m_type != Slic3r::Preset::TYPE_PRINT)
         return;
 
     // and only if enabled in application preferences.
@@ -7239,8 +7280,8 @@ wxSizer *TabPrint::create_substitutions_widget(wxWindow *parent)
 // Return a callback to create a TabPrinter widget to edit bed shape
 wxSizer *TabPrinter::create_bed_shape_widget(wxWindow *parent)
 {
-    ScalableButton *btn = new ScalableButton(parent, wxID_ANY, "printer", " " + _(L("Set")) + " " + dots, wxDefaultSize,
-                                             wxDefaultPosition, wxBU_LEFT | wxBU_EXACTFIT);
+    ScalableButton *btn = new ScalableButton(parent, wxID_ANY, "settings_white", " " + _L("Set bed shape"),
+                                             wxDefaultSize, wxDefaultPosition, wxBU_LEFT | wxBU_EXACTFIT);
     btn->SetFont(wxGetApp().normal_font());
     btn->SetSize(btn->GetBestSize());
 
@@ -7647,9 +7688,10 @@ ConfigOptionsGroupShp Page::new_optgroup(const wxString &title, int noncommon_la
 
 ConfigOptionsGroupShp Page::new_optgroup_for_sidebar(const wxString &title, int noncommon_label_width /*= -1*/)
 {
-    auto optgroup = new_optgroup(title, noncommon_label_width);
-    optgroup->enable_sidebar_checkbox();
-    return optgroup;
+    // Sidebar-visibility checkboxes were removed from the Settings tabs; visibility is now owned
+    // entirely by the sidebar's Edit Visibility mode. This behaves like new_optgroup; the wrapper is
+    // kept so the many call sites compile unchanged (collapsed into new_optgroup in a follow-up).
+    return new_optgroup(title, noncommon_label_width);
 }
 
 const ConfigOptionsGroupShp Page::get_optgroup(const wxString &title) const

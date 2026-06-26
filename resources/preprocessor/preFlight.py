@@ -315,8 +315,6 @@ class Settings:
     fuzzy_skin_point_dist: str  # float
     fuzzy_skin_scale: str  # float
     fuzzy_skin_thickness: str  # float
-    gap_fill_enabled: str  # bool (0/1)
-    gap_fill_speed: str  # float
     gcode_comments: str  # bool (0/1)
     gcode_resolution: str  # float
     gcode_substitutions: str  # semicolon-separated
@@ -381,7 +379,6 @@ class Settings:
     machine_rrf_m566: str
     machine_time_compensation: str  # percentage
     manual_fan_speed_external_perimeter: str  # semicolon-separated ints
-    manual_fan_speed_gap_fill: str  # semicolon-separated ints
     manual_fan_speed_interlocking_perimeter: str  # semicolon-separated ints
     manual_fan_speed_internal_infill: str  # semicolon-separated ints
     manual_fan_speed_ironing: str  # semicolon-separated ints

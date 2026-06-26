@@ -1257,13 +1257,10 @@ static inline std::vector<std::vector<ExPolygons>> segmentation_top_and_bottom_l
                 out.extrusion_width = std::max<float>(out.extrusion_width, perimeter_flow.width());
                 out.top_solid_layers = std::max<int>(out.top_solid_layers, config.top_solid_layers);
                 out.bottom_solid_layers = std::max<int>(out.bottom_solid_layers, config.bottom_solid_layers);
-                out.small_region_threshold = config.gap_fill_enabled.value && config.gap_fill_speed.value > 0
-                                                 ?
-                                                 // Gap fill enabled. Enable a single line of 1/2 extrusion width.
-                                                 0.5f * perimeter_flow.width()
-                                                 :
-                                                 // Gap fill disabled. Enable two lines slightly overlapping.
-                                                 perimeter_flow.width() + 0.7f * perimeter_flow.spacing();
+                // Minimum printable color-region size for MM segmentation: two perimeter lines
+                // slightly overlapping. Athena's variable-width walls handle thin geometry; this
+                // threshold only governs whether a thin color sliver is worth a tool change.
+                out.small_region_threshold = perimeter_flow.width() + 0.7f * perimeter_flow.spacing();
                 out.small_region_threshold = scaled<float>(out.small_region_threshold * 0.5f);
                 ++out.num_regions;
             }
@@ -1543,7 +1540,8 @@ ColorPoints color_polygon_to_color_points(const ColorPolygon &color_polygon)
     for (const Point &pt : color_polygon.points)
     {
         const size_t pt_idx = &pt - color_polygon.points.data();
-        const ColorPolygon::Color color_prev = (pt_idx == 0) ? color_polygon.colors.back() : color_polygon.colors[pt_idx - 1];
+        const ColorPolygon::Color color_prev = (pt_idx == 0) ? color_polygon.colors.back()
+                                                             : color_polygon.colors[pt_idx - 1];
         const ColorPolygon::Color color_next = color_polygon.colors[pt_idx];
 
         color_points_out.emplace_back(pt, color_prev, color_next);
@@ -1641,7 +1639,8 @@ void static filter_color_of_small_segments(ColorPoints &color_polygon_points, co
 {
     struct ColorSegment
     {
-        explicit ColorSegment(size_t color_pt_begin_idx, size_t color_pt_end_idx, ColorPolygon::Color color, double length)
+        explicit ColorSegment(size_t color_pt_begin_idx, size_t color_pt_end_idx, ColorPolygon::Color color,
+                              double length)
             : color_pt_begin_idx(color_pt_begin_idx), color_pt_end_idx(color_pt_end_idx), color(color), length(length)
         {
         }
@@ -1873,14 +1872,15 @@ static ColorPolygon::Color get_color_of_first_polygon_line(const ColorProjection
 }
 
 // Helper function to find the dominant color in a map.
-static std::optional<ColorPolygon::Color> get_dominant_color_from_map(const std::unordered_map<ColorPolygon::Color, double> &area_per_color)
+static std::optional<ColorPolygon::Color> get_dominant_color_from_map(
+    const std::unordered_map<ColorPolygon::Color, double> &area_per_color)
 {
     if (area_per_color.empty())
         return std::nullopt;
 
     return std::max_element(area_per_color.begin(), area_per_color.end(),
-                            [](const std::pair<ColorPolygon::Color, double> &p1, const std::pair<ColorPolygon::Color, double> &p2)
-                            { return p1.second < p2.second; })
+                            [](const std::pair<ColorPolygon::Color, double> &p1,
+                               const std::pair<ColorPolygon::Color, double> &p2) { return p1.second < p2.second; })
         ->first;
 }
 
@@ -1973,7 +1973,8 @@ static void filter_projected_color_points_on_polygon(ColorProjectionLines &color
         {
             snap_candidates.front()->t = 0.;
         }
-        else if (const std::optional<ColorPolygon::Color> dominant_color_from_begin = find_dominant_color_from_begin(color_line);
+        else if (const std::optional<ColorPolygon::Color> dominant_color_from_begin = find_dominant_color_from_begin(
+                     color_line);
                  snap_candidates.size() > 1 && dominant_color_from_begin.has_value())
         {
             ColorChange &first_candidate = *snap_candidates.front();
@@ -2525,8 +2526,9 @@ static std::vector<ColorPolygons> slice_model_volume_with_color(
         for (ColorPolygon &color_polygon : color_polygons)
         {
             std::replace_if(
-                color_polygon.colors.begin(), color_polygon.colors.end(), [&num_facets_states](const ColorPolygon::Color color)
-                { return color >= num_facets_states; }, static_cast<ColorPolygon::Color>(TriangleStateType::NONE));
+                color_polygon.colors.begin(), color_polygon.colors.end(),
+                [&num_facets_states](const ColorPolygon::Color color) { return color >= num_facets_states; },
+                static_cast<ColorPolygon::Color>(TriangleStateType::NONE));
         }
     }
 

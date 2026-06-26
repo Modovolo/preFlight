@@ -33,7 +33,9 @@ class TextInput : public wxNavigationEnabled<StaticBox>
     static const int TextInputHeight = 50;
 
     wxRect dd_icon_rect;
+    wxRect icon_rect;
     std::function<void()> OnClickDropDownIcon{nullptr};
+    std::function<void()> OnClickIconFn{nullptr};
 
 public:
     TextInput();
@@ -87,7 +89,24 @@ public:
         OnClickDropDownIcon = click_drop_down_icon_fn;
     }
 
+    void SetOnClickIcon(std::function<void()> click_icon_fn) { OnClickIconFn = click_icon_fn; }
+
+    wxRect GetIconRect() const { return icon_rect; }
+
 protected:
+    bool HasIconClickHandler() const { return OnClickIconFn != nullptr; }
+
+    // Returns true if the click was on the icon and the handler was called
+    bool HandleIconClick(const wxPoint &pos)
+    {
+        if (OnClickIconFn && !icon_rect.IsEmpty() && icon_rect.Contains(pos))
+        {
+            OnClickIconFn();
+            return true;
+        }
+        return false;
+    }
+
     virtual void OnEdit() {}
 
 #ifdef _WIN32

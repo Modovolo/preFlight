@@ -1,3 +1,4 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: wxWidgets 3.1\n"
@@ -10,9 +11,451 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || n%10 == 1 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 12 && n%100 <= 14)) ? 2 : 3);\n"
 "X-Generator: Poedit 1.6.5\n"
+
+msgid "%u of %u"
+msgstr "%u z %u"
+
+msgid "Deleting password for \"%s/%s\" failed: %s."
+msgstr "Usuwanie hasła dla \"%s/%s\" nie powiodło się: %s."
+
+msgid "Last repeated message (\"%s\", %u time) wasn't output"
+msgid_plural "Last repeated message (\"%s\", %u times) wasn't output"
+msgstr[0] "Ostatnia powtórzona wiadomość (\"%s\", %u raz) nie została wypisana"
+msgstr[1] "Ostatnia powtórzona wiadomość (\"%s\", %u razy) nie została wypisana"
+msgstr[2] "Ostatnia powtórzona wiadomość (\"%s\", %u razy) nie została wypisana"
+msgstr[3] "Ostatnia powtórzona wiadomość (\"%s\", %u razy) nie została wypisana"
+
+msgid "Reading password for \"%s/%s\" failed: %s."
+msgstr "Odczyt hasła dla \"%s/%s\" nie powiódł się: %s."
+
+msgid "Saving password for \"%s/%s\" failed: %s."
+msgstr "Zapis hasła dla \"%s/%s\" nie powiódł się: %s."
+
+msgid "The previous message repeated %u time."
+msgid_plural "The previous message repeated %u times."
+msgstr[0] "Poprzednia wiadomość powtórzona %u raz."
+msgstr[1] "Poprzednia wiadomość powtórzona %u razy."
+msgstr[2] "Poprzednia wiadomość powtórzona %u razy."
+msgstr[3] "Poprzednia wiadomość powtórzona %u razy."
+
+msgid " "
+msgstr " "
+
+msgid " (while overwriting an existing item)"
+msgstr " (podczas nadpisywania istniejącego elementu)"
+
+msgid "%i of %u"
+msgstr "%i z %u"
+
+msgid "%s (%d items)"
+msgstr "%s (%d elementów)"
+
+msgid "&Blur distance:"
+msgstr "Odległość &rozmycia:"
+
+msgid "&Horizontal offset:"
+msgstr "Przesunięcie &poziome:"
+
+msgid "&Synchronize values"
+msgstr "&Synchronizuj wartości"
+
+msgid "ActiveCaption"
+msgstr "ActiveCaption"
+
+msgid "An optional corner radius for adding rounded corners."
+msgstr "Opcjonalny promień narożnika do dodania zaokrąglonych narożników."
+
+msgid "AppWorkspace"
+msgstr "AppWorkspace"
+
+msgid "Aqua"
+msgstr "Morski"
+
+msgid "Black"
+msgstr "Czarny"
+
+msgid "Blank"
+msgstr "Pusty"
+
+msgid "Blue"
+msgstr "Niebieski"
+
+msgid "Blue:"
+msgstr "Niebieski:"
+
+msgid "ButtonFace"
+msgstr "ButtonFace"
+
+msgid "ButtonHighlight"
+msgstr "ButtonHighlight"
+
+msgid "ButtonShadow"
+msgstr "ButtonShadow"
+
+msgid "ButtonText"
+msgstr "ButtonText"
+
+msgid "CaptionText"
+msgstr "CaptionText"
+
+msgid "Check to edit all borders simultaneously."
+msgstr "Zaznacz, aby edytować wszystkie krawędzie jednocześnie."
+
+msgid "Check to suppress hyphenation."
+msgstr "Zaznacz, aby wyłączyć dzielenie wyrazów."
+
+msgid "Collapse"
+msgstr "Zwiń"
+
+msgid "Column %u"
+msgstr "Kolumna %u"
+
+msgid "Command"
+msgstr "Polecenie"
+
+msgid "ControlDark"
+msgstr "ControlDark"
+
+msgid "ControlLight"
+msgstr "ControlLight"
+
+msgid "Corner"
+msgstr "Narożnik"
+
+msgid "Corner &radius:"
+msgstr "&Promień narożnika:"
+
+msgid "Cross"
+msgstr "Krzyżyk"
+
+msgid "Decimal"
+msgstr "Dziesiętny"
+
+msgid "Divide"
+msgstr "Dzielenie"
+
+msgid "End"
+msgstr "End"
+
+msgid "Esc"
+msgstr "Esc"
+
+msgid "Expand"
+msgstr "Rozwiń"
+
+msgid "Failed to load sound from \"%s\" (error %d)."
+msgstr "Nie udało się wczytać dźwięku z \"%s\" (błąd %d)."
+
+msgid "Fuchsia"
+msgstr "Fuksja"
+
+msgid "Gray"
+msgstr "Szary"
+
+msgid "GrayText"
+msgstr "GrayText"
+
+msgid "Hand"
+msgstr "Dłoń"
+
+msgid "I-Beam"
+msgstr "Kursor tekstowy"
+
+msgid "InactiveCaption"
+msgstr "InactiveCaption"
+
+msgid "InactiveCaptionText"
+msgstr "InactiveCaptionText"
+
+msgid "KP_Begin"
+msgstr "KP_Begin"
+
+msgid "KP_Decimal"
+msgstr "KP_Decimal"
+
+msgid "KP_Divide"
+msgstr "KP_Divide"
+
+msgid "KP_Equal"
+msgstr "KP_Equal"
+
+msgid "KP_Multiply"
+msgstr "KP_Multiply"
+
+msgid "KP_PageDown"
+msgstr "KP_PageDown"
+
+msgid "KP_PageUp"
+msgstr "KP_PageUp"
+
+msgid "KP_Prior"
+msgstr "KP_Prior"
+
+msgid "KP_Separator"
+msgstr "KP_Separator"
+
+msgid "KP_Space"
+msgstr "KP_Space"
+
+msgid "KP_Subtract"
+msgstr "KP_Subtract"
+
+msgid "Left Button"
+msgstr "Lewy przycisk"
+
+msgid "Lime"
+msgstr "Limonkowy"
+
+msgid "Magnifier"
+msgstr "Lupa"
+
+msgid "Maroon"
+msgstr "Bordowy"
+
+msgid "Middle Button"
+msgstr "Środkowy przycisk"
+
+msgid "Navy"
+msgstr "Granatowy"
+
+msgid "No Entry"
+msgstr "Zakaz"
+
+msgid "Num *"
+msgstr "Num *"
+
+msgid "Num +"
+msgstr "Num +"
+
+msgid "Num ,"
+msgstr "Num ,"
+
+msgid "Num -"
+msgstr "Num -"
+
+msgid "Num ."
+msgstr "Num ."
+
+msgid "Num /"
+msgstr "Num /"
+
+msgid "Num ="
+msgstr "Num ="
+
+msgid "Num Begin"
+msgstr "Num Begin"
+
+msgid "Num End"
+msgstr "Num End"
+
+msgid "Num Enter"
+msgstr "Num Enter"
+
+msgid "Num Lock"
+msgstr "Num Lock"
+
+msgid "Num Page Down"
+msgstr "Num Page Down"
+
+msgid "Num Page Up"
+msgstr "Num Page Up"
+
+msgid "Num Space"
+msgstr "Num Space"
+
+msgid "Num Tab"
+msgstr "Num Tab"
+
+msgid "Num Up"
+msgstr "Num Up"
+
+msgid "Num left"
+msgstr "Num left"
+
+msgid "Num_lock"
+msgstr "Num_lock"
+
+msgid "Olive"
+msgstr "Oliwkowy"
+
+msgid "Opaci&ty:"
+msgstr "&Nieprzezroczystość:"
+
+msgid "Opacity:"
+msgstr "Nieprzezroczystość:"
+
+msgid "OpenGL 3.0 or later is not supported by the OpenGL driver."
+msgstr "OpenGL 3.0 lub nowszy nie jest obsługiwany przez sterownik OpenGL."
+
+msgid "Orange"
+msgstr "Pomarańczowy"
+
+msgid "Paint Brush"
+msgstr "Pędzel"
+
+msgid "Pause"
+msgstr "Pauza"
+
+msgid "Pencil"
+msgstr "Ołówek"
+
+msgid "PgDn"
+msgstr "PgDn"
+
+msgid "PgUp"
+msgstr "PgUp"
+
+msgid "Purple"
+msgstr "Purpurowy"
+
+msgid "Red:"
+msgstr "Czerwony:"
+
+msgid "Registry value \"%s\" is not binary (but of type %s)"
+msgstr "Wartość rejestru \"%s\" nie jest binarna (lecz typu %s)"
+
+msgid "Registry value \"%s\" is not numeric (but of type %s)"
+msgstr "Wartość rejestru \"%s\" nie jest liczbowa (lecz typu %s)"
+
+msgid "Registry value \"%s\" is not text (but of type %s)"
+msgstr "Wartość rejestru \"%s\" nie jest tekstem (lecz typu %s)"
+
+msgid "Return"
+msgstr "Return"
+
+msgid "Rig&ht-to-left"
+msgstr "Od &prawej do lewej"
+
+msgid "Right Button"
+msgstr "Prawy przycisk"
+
+msgid "Row %i"
+msgstr "Wiersz %i"
+
+msgid "Scroll Lock"
+msgstr "Scroll Lock"
+
+msgid "Scroll_lock"
+msgstr "Scroll_lock"
+
+msgid "Scrollbar"
+msgstr "Pasek przewijania"
+
+msgid "Separator"
+msgstr "Separator"
+
+msgid "Services"
+msgstr "Usługi"
+
+msgid "Sh&adow spread:"
+msgstr "&Rozszerzenie cienia:"
+
+msgid "Shadow"
+msgstr "Cień"
+
+msgid "Silver"
+msgstr "Srebrny"
+
+msgid "Sizing"
+msgstr "Zmiana rozmiaru"
+
+msgid "Sizing N-S"
+msgstr "Zmiana rozmiaru N-S"
+
+msgid "Sizing NE-SW"
+msgstr "Zmiana rozmiaru NE-SW"
+
+msgid "Sizing NW-SE"
+msgstr "Zmiana rozmiaru NW-SE"
+
+msgid "Sizing W-E"
+msgstr "Zmiana rozmiaru W-E"
+
+msgid "Snapshot"
+msgstr "Zrzut ekranu"
+
+msgid "Spraycan"
+msgstr "Spray"
+
+msgid "Subtract"
+msgstr "Odejmowanie"
+
+msgid "Suppress hyphe&nation"
+msgstr "Wyłącz &dzielenie wyrazów"
+
+msgid "Teal"
+msgstr "Morski ciemny"
+
+msgid "The shadow blur distance."
+msgstr "Odległość rozmycia cienia."
+
+msgid "The shadow opacity."
+msgstr "Nieprzezroczystość cienia."
+
+msgid "The shadow spread."
+msgstr "Rozszerzenie cienia."
+
+msgid "The value of the corner radius."
+msgstr "Wartość promienia narożnika."
+
+msgid "Tooltip"
+msgstr "Podpowiedź"
+
+msgid "TooltipText"
+msgstr "TooltipText"
+
+msgid "Unable to remove inotify watch %i"
+msgstr "Nie można usunąć obserwatora inotify %i"
+
+msgid "Use &shadow"
+msgstr "Użyj &cienia"
+
+msgid "Wait"
+msgstr "Oczekiwanie"
+
+msgid "Wait Arrow"
+msgstr "Strzałka oczekiwania"
+
+msgid "Watch"
+msgstr "Zegarek"
+
+msgid "White"
+msgstr "Biały"
+
+msgid "Yellow"
+msgstr "Żółty"
+
+msgid "checked"
+msgstr "zaznaczone"
+
+msgid "file '%s', line %zu: '%s' ignored after group header."
+msgstr "plik '%s', wiersz %zu: '%s' zignorowano po nagłówku grupy."
+
+msgid "file '%s', line %zu: '=' expected."
+msgstr "plik '%s', wiersz %zu: oczekiwano '='."
+
+msgid "file '%s', line %zu: key '%s' was first found at line %d."
+msgstr ""
+"plik '%s', wiersz %zu: klucz '%s' został po raz pierwszy znaleziony w "
+"wierszu %d."
+
+msgid "file '%s', line %zu: value for immutable key '%s' ignored."
+msgstr ""
+"plik '%s', wiersz %zu: wartość dla niezmiennego klucza '%s' zignorowano."
+
+msgid "file '%s': unexpected character %c at line %zu."
+msgstr "plik '%s': nieoczekiwany znak %c w wierszu %zu."
+
+msgid "true"
+msgstr "true"
+
+msgid "unchecked"
+msgstr "niezaznaczone"
+
+msgid "unknown (%lu)"
+msgstr "nieznany (%lu)"
 
 #: ../src/common/debugrpt.cpp:586
 msgid ""
@@ -21,11 +464,6 @@ msgid ""
 msgstr ""
 "\n"
 "Proszę przesłać ten raport do autora programu, dziękuję!\n"
-
-#: ../src/richtext/richtextstyledlg.cpp:210
-#: ../src/richtext/richtextstyledlg.cpp:222
-msgid " "
-msgstr " "
 
 #: ../src/generic/dbgrptg.cpp:326
 msgid "              Thank you and we're sorry for the inconvenience!\n"
@@ -45,10 +483,6 @@ msgstr " (błąd %ld: %s)"
 #, c-format
 msgid " (in module \"%s\")"
 msgstr " (w module \"%s\")"
-
-#: ../src/osx/core/secretstore.cpp:138
-msgid " (while overwriting an existing item)"
-msgstr ""
 
 #: ../src/common/docview.cpp:1642
 msgid " - "
@@ -105,7 +539,6 @@ msgstr "Koperta #9, 3 7/8 x 8 7/8 cali"
 #: ../src/richtext/richtextsizepage.cpp:591
 #: ../src/richtext/richtextsizepage.cpp:626
 #: ../src/richtext/richtextsizepage.cpp:661
-#, fuzzy
 msgid "%"
 msgstr "%s"
 
@@ -114,11 +547,6 @@ msgstr "%s"
 msgid "%d of %lu"
 msgstr "%d z %lu"
 
-#: ../src/html/helpwnd.cpp:1678
-#, fuzzy, c-format
-msgid "%i of %u"
-msgstr "%i z %i"
-
 #: ../src/generic/filectrlg.cpp:279
 #, c-format
 msgid "%ld byte"
@@ -126,16 +554,12 @@ msgid_plural "%ld bytes"
 msgstr[0] "%ld bajt"
 msgstr[1] "%ld bajty"
 msgstr[2] "%ld bajtów"
+msgstr[3] "%ld bajtów"
 
 #: ../src/html/helpwnd.cpp:1033
 #, c-format
 msgid "%lu of %lu"
 msgstr "%lu z %lu"
-
-#: ../src/generic/datavgen.cpp:6028
-#, fuzzy, c-format
-msgid "%s (%d items)"
-msgstr "%s (lub %s)"
 
 #: ../src/common/cmdline.cpp:1221
 #, c-format
@@ -171,11 +595,6 @@ msgstr "%s nie pasuje nagłówek tar do wpisu '%s'"
 #, c-format
 msgid "%s files (%s)|%s"
 msgstr "%s pliki (%s)|%s"
-
-#: ../src/html/helpwnd.cpp:1716
-#, fuzzy, c-format
-msgid "%u of %u"
-msgstr "%lu z %lu"
 
 #: ../src/common/stockitem.cpp:139
 msgid "&About"
@@ -225,10 +644,6 @@ msgstr "&Przed paragrafem:"
 #: ../src/richtext/richtextfontpage.cpp:262
 msgid "&Bg colour:"
 msgstr "Kolor &tła:"
-
-#: ../src/richtext/richtextbackgroundpage.cpp:298
-msgid "&Blur distance:"
-msgstr ""
 
 #: ../src/common/stockitem.cpp:143
 msgid "&Bold"
@@ -421,10 +836,6 @@ msgstr "&Ukryj szczegóły"
 #: ../src/common/stockitem.cpp:164
 msgid "&Home"
 msgstr "&Początek"
-
-#: ../src/richtext/richtextbackgroundpage.cpp:212
-msgid "&Horizontal offset:"
-msgstr ""
 
 #: ../src/richtext/richtextindentspage.cpp:184
 #: ../src/richtext/richtextliststylepage.cpp:372
@@ -702,11 +1113,6 @@ msgstr "&Podzbiór:"
 msgid "&Symbol:"
 msgstr "&Symbol:"
 
-#: ../src/richtext/richtextborderspage.cpp:381
-#: ../src/richtext/richtextborderspage.cpp:549
-msgid "&Synchronize values"
-msgstr ""
-
 #: ../include/wx/richtext/richtextbuffer.h:6069
 msgid "&Table"
 msgstr "&Tabela"
@@ -755,7 +1161,6 @@ msgid "&Vertical alignment:"
 msgstr "&Wyrównanie pionowe:"
 
 #: ../src/richtext/richtextbackgroundpage.cpp:235
-#, fuzzy
 msgid "&Vertical offset:"
 msgstr "&Wyrównanie pionowe:"
 
@@ -784,12 +1189,12 @@ msgid "&Yes"
 msgstr "&Tak"
 
 #: ../src/common/valtext.cpp:256
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' contains illegal characters"
 msgstr "'%s' powinien zawierać tylko wartości znakowe."
 
 #: ../src/common/valtext.cpp:254
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' doesn't consist only of valid characters"
 msgstr "'%s' powinien zawierać tylko wartości znakowe."
 
@@ -809,12 +1214,12 @@ msgid "'%s' is not a valid message catalog."
 msgstr "'%s' nie jest prawidłowym katalogiem komunikatów."
 
 #: ../src/common/valtext.cpp:165
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is not one of the valid strings"
 msgstr "'%s' nie jest prawidłowym katalogiem komunikatów."
 
 #: ../src/common/valtext.cpp:167
-#, fuzzy, c-format
+#, c-format
 msgid "'%s' is one of the invalid strings"
 msgstr "'%s' jest nieprawidłowy"
 
@@ -1194,7 +1599,6 @@ msgid "About %s"
 msgstr "O %s"
 
 #: ../src/osx/menu_osx.cpp:560
-#, fuzzy
 msgid "About..."
 msgstr "Inform&acje"
 
@@ -1204,14 +1608,8 @@ msgstr "Absolutne"
 
 #. TRANSLATORS: Keyword of system colour
 #: ../src/propgrid/advprops.cpp:873
-#, fuzzy
 msgid "ActiveBorder"
 msgstr "Obramowanie"
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:874
-msgid "ActiveCaption"
-msgstr ""
 
 #: ../src/common/stockitem.cpp:207
 msgid "Actual Size"
@@ -1223,12 +1621,10 @@ msgid "Add"
 msgstr "Dodaj"
 
 #: ../src/richtext/richtextbuffer.cpp:11455
-#, fuzzy
 msgid "Add Column"
 msgstr "Dodaj kolumnę"
 
 #: ../src/richtext/richtextbuffer.cpp:11392
-#, fuzzy
 msgid "Add Row"
 msgstr "Dodaj wiersz"
 
@@ -1312,11 +1708,6 @@ msgstr "Już łączy z ISP."
 msgid "Alt+"
 msgstr "Alt+"
 
-#: ../src/richtext/richtextborderspage.cpp:577
-#: ../src/richtext/richtextborderspage.cpp:579
-msgid "An optional corner radius for adding rounded corners."
-msgstr ""
-
 #: ../src/common/debugrpt.cpp:576
 msgid "And includes the following files:\n"
 msgstr "I zawiera następujące pliki:\n"
@@ -1325,11 +1716,6 @@ msgstr "I zawiera następujące pliki:\n"
 #, c-format
 msgid "Animation file is not of type %ld."
 msgstr "Plik animacyjny nie jest typu %ld."
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:872
-msgid "AppWorkspace"
-msgstr ""
 
 #: ../src/generic/logg.cpp:1014
 #, c-format
@@ -1343,10 +1729,6 @@ msgstr "Aplikacja"
 #: ../src/common/stockitem.cpp:141
 msgid "Apply"
 msgstr "Zastosuj"
-
-#: ../src/propgrid/advprops.cpp:1609
-msgid "Aqua"
-msgstr ""
 
 #: ../src/richtext/richtextliststylepage.cpp:482
 #: ../src/richtext/richtextbulletspage.cpp:274
@@ -1366,7 +1748,6 @@ msgstr "Nie znaleziono argumentu %u."
 
 #. TRANSLATORS: System cursor name
 #: ../src/propgrid/advprops.cpp:1753
-#, fuzzy
 msgid "Arrow"
 msgstr "jutro"
 
@@ -1485,7 +1866,6 @@ msgstr "Kolor tła"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:52
-#, fuzzy
 msgid "Backspace"
 msgstr "Wstecz"
 
@@ -1505,23 +1885,6 @@ msgstr "Przed paragrafem:"
 #: ../src/richtext/richtextbulletspage.cpp:281
 msgid "Bitmap"
 msgstr "Bitmap"
-
-#: ../src/propgrid/advprops.cpp:1594
-msgid "Black"
-msgstr ""
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1755
-msgid "Blank"
-msgstr ""
-
-#: ../src/propgrid/advprops.cpp:1603
-msgid "Blue"
-msgstr ""
-
-#: ../src/generic/colrdlgg.cpp:345
-msgid "Blue:"
-msgstr ""
 
 #: ../src/generic/fontdlgg.cpp:333 ../src/richtext/richtextfontpage.cpp:355
 #: ../src/osx/carbon/fontdlg.cpp:354 ../src/common/stockitem.cpp:143
@@ -1554,7 +1917,6 @@ msgid "Box styles"
 msgstr "Style bloku"
 
 #: ../src/propgrid/advprops.cpp:1602
-#, fuzzy
 msgid "Brown"
 msgstr "Przeglądaj"
 
@@ -1577,29 +1939,8 @@ msgstr "Wypunktowania"
 
 #. TRANSLATORS: System cursor name
 #: ../src/propgrid/advprops.cpp:1756
-#, fuzzy
 msgid "Bullseye"
 msgstr "Styl wypunktowania"
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:875
-msgid "ButtonFace"
-msgstr ""
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:876
-msgid "ButtonHighlight"
-msgstr ""
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:877
-msgid "ButtonShadow"
-msgstr ""
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:878
-msgid "ButtonText"
-msgstr ""
 
 #: ../src/common/paper.cpp:98
 msgid "C sheet, 17 x 22 in"
@@ -1782,7 +2123,8 @@ msgstr "Nie można nadać wartości '%s'"
 #: ../src/unix/utilsunx.cpp:351
 msgid "Can't write to child process's stdin"
 msgstr ""
-"Błąd zapisu do standardowego strumienia wejściowego (stdin) procesu potomnego"
+"Błąd zapisu do standardowego strumienia wejściowego (stdin) procesu "
+"potomnego"
 
 #: ../src/common/zstream.cpp:427
 #, c-format
@@ -1928,14 +2270,8 @@ msgstr "Nie można czekać na zakończenie wątku"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:75
-#, fuzzy
 msgid "Capital"
 msgstr "&Duże litery"
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:879
-msgid "CaptionText"
-msgstr ""
 
 #: ../src/html/helpwnd.cpp:533
 msgid "Case sensitive"
@@ -2008,16 +2344,16 @@ msgstr "Zmień styl"
 #, c-format
 msgid "Changes won't be saved to avoid overwriting the existing file \"%s\""
 msgstr ""
-"Zmiany nie zostaną zapisane, aby uniknąć nadpisania istniejącego pliku \"%s\""
+"Zmiany nie zostaną zapisane, aby uniknąć nadpisania istniejącego pliku "
+"\"%s\""
 
 #: ../src/gtk/filepicker.cpp:190 ../src/gtk/filedlg.cpp:87
-#, fuzzy, c-format
+#, c-format
 msgid "Changing current directory to \"%s\" failed"
 msgstr "Nie udało się utworzenie katalogu \"%s\""
 
 #. TRANSLATORS: System cursor name
 #: ../src/propgrid/advprops.cpp:1757
-#, fuzzy
 msgid "Character"
 msgstr "&Kod znaku:"
 
@@ -2039,13 +2375,6 @@ msgstr "Zaznacz aby dodać kropkę po wypunktowaniu."
 msgid "Check to add a right parenthesis."
 msgstr "Zaznacz aby dodać prawy nawias."
 
-#: ../src/richtext/richtextborderspage.cpp:383
-#: ../src/richtext/richtextborderspage.cpp:385
-#: ../src/richtext/richtextborderspage.cpp:551
-#: ../src/richtext/richtextborderspage.cpp:553
-msgid "Check to edit all borders simultaneously."
-msgstr ""
-
 #: ../src/richtext/richtextliststylepage.cpp:231
 #: ../src/richtext/richtextliststylepage.cpp:233
 #: ../src/richtext/richtextbulletspage.cpp:168
@@ -2055,7 +2384,6 @@ msgstr "Zaznacz aby dołączyć wypunktowanie w nawiasach."
 
 #: ../src/richtext/richtextfontpage.cpp:315
 #: ../src/richtext/richtextfontpage.cpp:317
-#, fuzzy
 msgid "Check to indicate right-to-left text layout."
 msgstr "Kliknij, aby zmienić kolor tekstu."
 
@@ -2100,11 +2428,6 @@ msgstr "Zaznacz aby wyświetlić tekst w indeksie dolnym."
 #: ../src/richtext/richtextfontpage.cpp:300
 msgid "Check to show the text in superscript."
 msgstr "Zaznacz aby wyświetlić tekst w indeksie górnym."
-
-#: ../src/richtext/richtextfontpage.cpp:322
-#: ../src/richtext/richtextfontpage.cpp:324
-msgid "Check to suppress hyphenation."
-msgstr ""
 
 #: ../src/msw/dialup.cpp:763
 msgid "Choose ISP to dial"
@@ -2272,11 +2595,6 @@ msgstr "Zamknij bieżący dokument"
 msgid "Close this window"
 msgstr "Zamknij to okno"
 
-#. TRANSLATORS: Action for manipulating a tree control
-#: ../src/generic/datavgen.cpp:6006
-msgid "Collapse"
-msgstr ""
-
 #: ../src/common/stockitem.cpp:193
 msgid "Color"
 msgstr "Kolor"
@@ -2293,16 +2611,6 @@ msgstr "Okno wyboru koloru nie powiodło się z błędem %0lx."
 #: ../src/osx/carbon/fontdlg.cpp:380
 msgid "Colour:"
 msgstr "Kolor:"
-
-#: ../src/generic/datavgen.cpp:6077
-#, fuzzy, c-format
-msgid "Column %u"
-msgstr "Dodaj kolumnę"
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:114
-msgid "Command"
-msgstr ""
 
 #: ../src/common/init.cpp:196
 #, c-format
@@ -2350,16 +2658,6 @@ msgstr "Łączenie..."
 msgid "Contents"
 msgstr "Zawartość"
 
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:880
-msgid "ControlDark"
-msgstr ""
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:881
-msgid "ControlLight"
-msgstr ""
-
 #: ../src/common/strconv.cpp:2262
 #, c-format
 msgid "Conversion to charset '%s' doesn't work."
@@ -2386,15 +2684,6 @@ msgstr "Kopiuj"
 msgid "Copy selection"
 msgstr "Kopiuj wybór"
 
-#: ../src/richtext/richtextborderspage.cpp:566
-#: ../src/richtext/richtextborderspage.cpp:601
-msgid "Corner"
-msgstr ""
-
-#: ../src/richtext/richtextborderspage.cpp:575
-msgid "Corner &radius:"
-msgstr ""
-
 #: ../src/html/chm.cpp:718
 #, c-format
 msgid "Could not create temporary file '%s'"
@@ -2410,7 +2699,6 @@ msgid "Could not find tab for id"
 msgstr "Nie można znaleźć (tab) dla (id)"
 
 #: ../src/gtk/notifmsg.cpp:108
-#, fuzzy
 msgid "Could not initalize libnotify."
 msgstr "Nie można ustawić wyrównania."
 
@@ -2445,7 +2733,6 @@ msgstr "Nie można dodać obrazu do listy obrazów."
 
 #: ../src/osx/glcanvas_osx.cpp:414 ../src/unix/glx11.cpp:558
 #: ../src/msw/glcanvas.cpp:616
-#, fuzzy
 msgid "Couldn't create OpenGL context"
 msgstr "Nie można utworzyć stopera"
 
@@ -2531,14 +2818,9 @@ msgid "Create new directory"
 msgstr "Utwórz nowy katalog"
 
 #: ../src/xrc/xmlres.cpp:2460
-#, fuzzy, c-format
+#, c-format
 msgid "Creating %s \"%s\" failed."
 msgstr "Pobranie '%s' do '%s' nie powiodło się."
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1758
-msgid "Cross"
-msgstr ""
 
 #: ../src/common/accelcmn.cpp:333
 msgid "Ctrl+"
@@ -2556,7 +2838,6 @@ msgstr "Bieżący katalog:"
 #. TRANSLATORS: Custom colour choice entry
 #: ../src/propgrid/advprops.cpp:896 ../src/propgrid/advprops.cpp:1574
 #: ../src/propgrid/advprops.cpp:1612
-#, fuzzy
 msgid "Custom"
 msgstr "Rozmiar użytkownika"
 
@@ -2630,18 +2911,12 @@ msgstr "Wygenerowanie raport błędów nie powiodło się."
 msgid "Debug report generation has failed."
 msgstr "Generowanie raportu błędów nie powiodło się."
 
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:84
-msgid "Decimal"
-msgstr ""
-
 #: ../src/generic/fontdlgg.cpp:323
 msgid "Decorative"
 msgstr "Decorative"
 
 #. TRANSLATORS: System cursor name
 #: ../src/propgrid/advprops.cpp:1752
-#, fuzzy
 msgid "Default"
 msgstr "domyślny"
 
@@ -2659,7 +2934,6 @@ msgstr "Domyślna drukarka"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:51
-#, fuzzy
 msgid "Del"
 msgstr "Usuń"
 
@@ -2674,12 +2948,10 @@ msgid "Delete A&ll"
 msgstr "&Usuń wszystko"
 
 #: ../src/richtext/richtextbuffer.cpp:11341
-#, fuzzy
 msgid "Delete Column"
 msgstr "Usuń kolumnęUsuń wybór"
 
 #: ../src/richtext/richtextbuffer.cpp:11291
-#, fuzzy
 msgid "Delete Row"
 msgstr "Usuń wiersz"
 
@@ -2709,11 +2981,6 @@ msgstr "Usuń styl %s?"
 msgid "Deleted stale lock file '%s'."
 msgstr "Nieaktualny plik blokujący '%s' został usunięty."
 
-#: ../src/common/secretstore.cpp:220
-#, fuzzy, c-format
-msgid "Deleting password for \"%s/%s\" failed: %s."
-msgstr "Pobranie '%s' do '%s' nie powiodło się."
-
 #: ../src/common/module.cpp:124
 #, c-format
 msgid "Dependency \"%s\" of module \"%s\" doesn't exist."
@@ -2738,8 +3005,8 @@ msgstr "Programiści"
 
 #: ../src/msw/dialup.cpp:374
 msgid ""
-"Dial up functions are unavailable because the remote access service (RAS) is "
-"not installed on this machine. Please install it."
+"Dial up functions are unavailable because the remote access service (RAS) is"
+" not installed on this machine. Please install it."
 msgstr ""
 "Funkcje Dial up nie są dostępne, ponieważ serwis zdalnego dostępu (RAS) nie "
 "jest zainstalowany na tej maszynie. Zainstaluj go."
@@ -2794,11 +3061,6 @@ msgstr "Wyświetl okno dialogowe opcji"
 #: ../src/html/helpwnd.cpp:322
 msgid "Displays help as you browse the books on the left."
 msgstr "Wyświetla pomoc podczas przeglądania książek po lewej."
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:85
-msgid "Divide"
-msgstr ""
 
 #: ../src/common/docview.cpp:533
 #, c-format
@@ -2915,42 +3177,31 @@ msgstr "Włącza kolor tła"
 
 #: ../src/richtext/richtextbackgroundpage.cpp:196
 #: ../src/richtext/richtextbackgroundpage.cpp:198
-#, fuzzy
 msgid "Enables a shadow."
 msgstr "Włącza kolor tła"
 
 #: ../src/richtext/richtextbackgroundpage.cpp:300
 #: ../src/richtext/richtextbackgroundpage.cpp:302
-#, fuzzy
 msgid "Enables the blur distance."
 msgstr "Włącz wartość szerokości."
 
 #: ../src/richtext/richtextbackgroundpage.cpp:260
 #: ../src/richtext/richtextbackgroundpage.cpp:262
-#, fuzzy
 msgid "Enables the shadow colour."
 msgstr "Włącza kolor tła"
 
 #: ../src/richtext/richtextbackgroundpage.cpp:327
 #: ../src/richtext/richtextbackgroundpage.cpp:329
-#, fuzzy
 msgid "Enables the shadow opacity."
 msgstr "Włącz wartość szerokości."
 
 #: ../src/richtext/richtextbackgroundpage.cpp:273
 #: ../src/richtext/richtextbackgroundpage.cpp:275
-#, fuzzy
 msgid "Enables the shadow spread."
 msgstr "Włącz wartość szerokości."
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:66
-msgid "End"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:55
-#, fuzzy
 msgid "Enter"
 msgstr "Drukarka"
 
@@ -3014,7 +3265,7 @@ msgid "Error closing kqueue instance"
 msgstr "Błąd podczas zamykania instancji kqueue"
 
 #: ../src/common/filefn.cpp:1049
-#, fuzzy, c-format
+#, c-format
 msgid "Error copying the file '%s' to '%s'."
 msgstr "Nie udało się skopiować pliku '%s' do '%s'."
 
@@ -3048,13 +3299,7 @@ msgid "Error: "
 msgstr "Błąd: "
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:69
-msgid "Esc"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:70
-#, fuzzy
 msgid "Escape"
 msgstr "Pejzaż"
 
@@ -3083,11 +3328,6 @@ msgstr "Wykonanie polecenia '%s' nie powiodło się"
 #: ../src/common/paper.cpp:105
 msgid "Executive, 7 1/4 x 10 1/2 in"
 msgstr "Executive, 7 1/4 x 10 1/2 cali"
-
-#. TRANSLATORS: Action for manipulating a tree control
-#: ../src/generic/datavgen.cpp:6009
-msgid "Expand"
-msgstr ""
 
 #: ../src/msw/registry.cpp:1240
 #, c-format
@@ -3303,8 +3543,8 @@ msgstr "Nie udało się wykonać '%s'\n"
 #: ../src/common/debugrpt.cpp:720
 msgid "Failed to execute curl, please install it in PATH."
 msgstr ""
-"Nie udało się uruchomienie curl, proszę zainstalować go w dostępnym katalogu "
-"(PATH)."
+"Nie udało się uruchomienie curl, proszę zainstalować go w dostępnym katalogu"
+" (PATH)."
 
 #: ../src/msw/ole/automtn.cpp:505
 #, c-format
@@ -3373,8 +3613,8 @@ msgstr "Nie udało się zainstalować obsługi sygnału"
 # wyciek?
 #: ../src/unix/threadpsx.cpp:1167
 msgid ""
-"Failed to join a thread, potential memory leak detected - please restart the "
-"program"
+"Failed to join a thread, potential memory leak detected - please restart the"
+" program"
 msgstr ""
 "Nie udało połączyć się z wątkiem, potencjalny wyciek pamięci - uruchom "
 "program ponownie"
@@ -3395,7 +3635,7 @@ msgid "Failed to load icon \"%s\" from resources."
 msgstr "Nie udało się wczytanie ikony \"%s\" z zasobów."
 
 #: ../src/common/iconbndl.cpp:225
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to load icons from resource '%s'."
 msgstr "Nie udało się wczytanie ikony \"%s\" z zasobów."
 
@@ -3432,11 +3672,6 @@ msgstr "Nie udało się wczytanie zasobu \"%s\"."
 #, c-format
 msgid "Failed to load shared library '%s'"
 msgstr "Nie udało się wczytać biblioteki '%s'."
-
-#: ../src/osx/core/sound.cpp:145
-#, fuzzy, c-format
-msgid "Failed to load sound from \"%s\" (error %d)."
-msgstr "Nie udało się wczytanie zasobu \"%s\"."
 
 #: ../src/msw/utils.cpp:960
 #, c-format
@@ -3870,10 +4105,6 @@ msgstr "Znaleziono %i odpowiednik(i/ów)"
 msgid "From:"
 msgstr "Od:"
 
-#: ../src/propgrid/advprops.cpp:1604
-msgid "Fuchsia"
-msgstr ""
-
 #: ../src/common/imaggif.cpp:138
 msgid "GIF: data stream seems to be truncated."
 msgstr "GIF: strumień daych wygląda na obcięty."
@@ -3951,26 +4182,15 @@ msgstr "Idź do katalogu nadrzędnego"
 msgid "Graphics art by "
 msgstr "Grafika autorstwa"
 
-#: ../src/propgrid/advprops.cpp:1599
-msgid "Gray"
-msgstr ""
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:883
-msgid "GrayText"
-msgstr ""
-
 #: ../src/common/fmapbase.cpp:154
 msgid "Greek (ISO-8859-7)"
 msgstr "Grecki (ISO-8859-7)"
 
 #: ../src/propgrid/advprops.cpp:1600
-#, fuzzy
 msgid "Green"
 msgstr "MacGrecki"
 
 #: ../src/generic/colrdlgg.cpp:342
-#, fuzzy
 msgid "Green:"
 msgstr "MacGrecki"
 
@@ -3995,11 +4215,6 @@ msgstr "HTML: kotwica %s ie istnieje."
 #: ../src/html/helpwnd.cpp:1547
 msgid "HTML files (*.html;*.htm)|*.html;*.htm|"
 msgstr "Pliki HTML (*.html;*.htm)|*.html;*.htm|"
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1759
-msgid "Hand"
-msgstr ""
 
 #: ../src/common/stockitem.cpp:162
 msgid "Harddisk"
@@ -4069,13 +4284,11 @@ msgstr "Ukryj to powiadomienie."
 
 #. TRANSLATORS: Keyword of system colour
 #: ../src/propgrid/advprops.cpp:884
-#, fuzzy
 msgid "Highlight"
 msgstr "lekki"
 
 #. TRANSLATORS: Keyword of system colour
 #: ../src/propgrid/advprops.cpp:885
-#, fuzzy
 msgid "HighlightText"
 msgstr "Prawe dostosowanie tekstu."
 
@@ -4092,11 +4305,6 @@ msgstr "Katalog początkowy"
 #: ../src/richtext/richtextsizepage.cpp:255
 msgid "How the object will float relative to the text."
 msgstr "Jak obiekt będzie pływać względem tekstu."
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1760
-msgid "I-Beam"
-msgstr ""
 
 #: ../src/common/imagbmp.cpp:1196
 msgid "ICO: Error in reading mask DIB."
@@ -4149,8 +4357,8 @@ msgid ""
 "If possible, try changing the layout parameters to make the printout more "
 "narrow."
 msgstr ""
-"Jeżeli to możliwe, spróbuj zmodyfikować parametry układu, aby uczynić wydruk "
-"węższy."
+"Jeżeli to możliwe, spróbuj zmodyfikować parametry układu, aby uczynić wydruk"
+" węższy."
 
 #: ../src/generic/dbgrptg.cpp:358
 msgid ""
@@ -4162,8 +4370,7 @@ msgstr ""
 
 #: ../src/generic/dbgrptg.cpp:324
 msgid ""
-"If you wish to suppress this debug report completely, please choose the "
-"\"Cancel\" button,\n"
+"If you wish to suppress this debug report completely, please choose the \"Cancel\" button,\n"
 "but be warned that it may hinder improving the program, so if\n"
 "at all possible please do continue with the report generation.\n"
 msgstr ""
@@ -4212,8 +4419,8 @@ msgstr "Nie jest to obraz typu %s."
 
 #: ../src/msw/textctrl.cpp:488
 msgid ""
-"Impossible to create a rich edit control, using simple text control instead. "
-"Please reinstall riched32.dll"
+"Impossible to create a rich edit control, using simple text control instead."
+" Please reinstall riched32.dll"
 msgstr ""
 "Nie jest możliwe utworzenie kontrolki rich edit, użyj zamiast tego prostego "
 "'text control'. Przeinstaluj riched32.dll"
@@ -4239,19 +4446,8 @@ msgstr "Nie jest możliwe nadanie praw dostępu plikowi '%s'"
 
 #. TRANSLATORS: Keyword of system colour
 #: ../src/propgrid/advprops.cpp:886
-#, fuzzy
 msgid "InactiveBorder"
 msgstr "Obramowanie"
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:887
-msgid "InactiveCaption"
-msgstr ""
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:888
-msgid "InactiveCaptionText"
-msgstr ""
 
 #: ../src/common/gifdecod.cpp:792
 #, c-format
@@ -4288,7 +4484,6 @@ msgstr "Inicjalizacja nie powiodła się powodując wyjście."
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:54
-#, fuzzy
 msgid "Ins"
 msgstr "Wstawka"
 
@@ -4484,128 +4679,61 @@ msgstr "KP_"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:106
-#, fuzzy
 msgid "KP_Add"
 msgstr "KP_ADD"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:101
-msgid "KP_Begin"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:109
-msgid "KP_Decimal"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:103
-#, fuzzy
 msgid "KP_Delete"
 msgstr "Usuń"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:110
-msgid "KP_Divide"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:95
-#, fuzzy
 msgid "KP_Down"
 msgstr "W dół"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:100
-#, fuzzy
 msgid "KP_End"
 msgstr "KP_END"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:90
-#, fuzzy
 msgid "KP_Enter"
 msgstr "Drukarka"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:104
-msgid "KP_Equal"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:91
-#, fuzzy
 msgid "KP_Home"
 msgstr "Katalog początkowy"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:102
-#, fuzzy
 msgid "KP_Insert"
 msgstr "Wstawić"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:92
-#, fuzzy
 msgid "KP_Left"
 msgstr "Lewo"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:105
-msgid "KP_Multiply"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:99
-#, fuzzy
 msgid "KP_Next"
 msgstr "Dalej"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:97
-msgid "KP_PageDown"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:96
-msgid "KP_PageUp"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:98
-msgid "KP_Prior"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:94
-#, fuzzy
 msgid "KP_Right"
 msgstr "Prawy"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:107
-msgid "KP_Separator"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:88
-msgid "KP_Space"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:108
-msgid "KP_Subtract"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:89
-#, fuzzy
 msgid "KP_Tab"
 msgstr "KP_TAB"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:93
-#, fuzzy
 msgid "KP_Up"
 msgstr "KP_UP"
 
@@ -4624,14 +4752,6 @@ msgstr "Ostatni"
 #: ../src/common/prntbase.cpp:1572
 msgid "Last page"
 msgstr "Ostatnia strona"
-
-#: ../src/common/log.cpp:305
-#, fuzzy, c-format
-msgid "Last repeated message (\"%s\", %u time) wasn't output"
-msgid_plural "Last repeated message (\"%s\", %u times) wasn't output"
-msgstr[0] "Last repeated message (\"%s\", %lu time) wasn't output"
-msgstr[1] "Last repeated message (\"%s\", %lu times) wasn't output"
-msgstr[2] "Last repeated message (\"%s\", %lu times) wasn't output"
 
 #: ../src/common/paper.cpp:103
 msgid "Ledger, 17 x 11 in"
@@ -4654,11 +4774,6 @@ msgstr "Lewo"
 #: ../src/richtext/richtextliststylepage.cpp:390
 msgid "Left (&first line):"
 msgstr "Lewo (&pierwsza linijka):"
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1761
-msgid "Left Button"
-msgstr ""
 
 #: ../src/generic/prntdlgg.cpp:880
 msgid "Left margin (mm):"
@@ -4715,15 +4830,10 @@ msgstr "Licencja"
 msgid "Light"
 msgstr "Cieńszy"
 
-#: ../src/propgrid/advprops.cpp:1608
-msgid "Lime"
-msgstr ""
-
 #: ../src/generic/helpext.cpp:294
 #, c-format
 msgid "Line %lu of map file \"%s\" has invalid syntax, skipped."
-msgstr ""
-"Linijka %lu pliku mapy \"%s\" posiada nieprawidłową składnię, pominięta."
+msgstr "Linijka %lu pliku mapy \"%s\" posiada nieprawidłową składnię, pominięta."
 
 #: ../src/richtext/richtextliststylepage.cpp:444
 msgid "Line spacing:"
@@ -4794,8 +4904,8 @@ msgid ""
 "MS HTML Help functions are unavailable because the MS HTML Help library is "
 "not installed on this machine. Please install it."
 msgstr ""
-"Funkcje pomocy dla MS HTML Help nie są dostępne, ponieważ biblioteka MS HTML "
-"Help nie jest zainstalowana na tej maszynie. Zainstaluj ją."
+"Funkcje pomocy dla MS HTML Help nie są dostępne, ponieważ biblioteka MS HTML"
+" Help nie jest zainstalowana na tej maszynie. Zainstaluj ją."
 
 #: ../src/univ/themes/win32.cpp:3754
 msgid "Ma&ximize"
@@ -4961,11 +5071,6 @@ msgstr "MacTurecki"
 msgid "MacVietnamese"
 msgstr "MacWietnamski"
 
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1762
-msgid "Magnifier"
-msgstr ""
-
 #: ../src/propgrid/advprops.cpp:2143
 msgid "Make a selection:"
 msgstr "Dokonaj wyboru:"
@@ -4974,10 +5079,6 @@ msgstr "Dokonaj wyboru:"
 #: ../src/richtext/richtextmarginspage.cpp:171
 msgid "Margins"
 msgstr "Marginesy"
-
-#: ../src/propgrid/advprops.cpp:1595
-msgid "Maroon"
-msgstr ""
 
 #: ../src/generic/fdrepdlg.cpp:147
 msgid "Match case"
@@ -5022,11 +5123,6 @@ msgstr "Nie odnaleziono metody lub właściwości."
 #: ../src/univ/themes/win32.cpp:3752
 msgid "Mi&nimize"
 msgstr "Mi&nimalizuj"
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1763
-msgid "Middle Button"
-msgstr ""
 
 #: ../src/richtext/richtextsizepage.cpp:409
 msgid "Min height:"
@@ -5088,10 +5184,6 @@ msgstr "Właściwości wielu komórek"
 msgid "Name"
 msgstr "Nazwa"
 
-#: ../src/propgrid/advprops.cpp:1596
-msgid "Navy"
-msgstr ""
-
 #: ../src/common/stockitem.cpp:175
 msgid "Network"
 msgstr "Sieć"
@@ -5148,11 +5240,6 @@ msgstr "Następna strona"
 msgid "No"
 msgstr "Nie"
 
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1764
-msgid "No Entry"
-msgstr ""
-
 #: ../src/generic/animateg.cpp:150
 #, c-format
 msgid "No animation handler for type %ld defined."
@@ -5176,8 +5263,7 @@ msgstr "Nie znaleziono pozycji."
 msgid ""
 "No font for displaying text in encoding '%s' found,\n"
 "but an alternative encoding '%s' is available.\n"
-"Do you want to use this encoding (otherwise you will have to choose another "
-"one)?"
+"Do you want to use this encoding (otherwise you will have to choose another one)?"
 msgstr ""
 "Brak czcionki do wyświelenia tekstu w kodowaniu '%s',\n"
 "jednak dostępne jest alternatywne kodowanie '%s'.\n"
@@ -5278,124 +5364,29 @@ msgid "Notice"
 msgstr "Uwaga"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:105
-msgid "Num *"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:106
-msgid "Num +"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:107
-msgid "Num ,"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:108
-msgid "Num -"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:109
-msgid "Num ."
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:110
-msgid "Num /"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:104
-msgid "Num ="
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:101
-msgid "Num Begin"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:103
-#, fuzzy
 msgid "Num Delete"
 msgstr "Usuń"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:95
-#, fuzzy
 msgid "Num Down"
 msgstr "W dół"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:100
-msgid "Num End"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:90
-msgid "Num Enter"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:91
-#, fuzzy
 msgid "Num Home"
 msgstr "Katalog początkowy"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:102
-#, fuzzy
 msgid "Num Insert"
 msgstr "Wstawić"
 
 #. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:86
-msgid "Num Lock"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:97
-msgid "Num Page Down"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:96
-msgid "Num Page Up"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:94
-#, fuzzy
 msgid "Num Right"
 msgstr "Prawy"
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:88
-msgid "Num Space"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:89
-msgid "Num Tab"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:93
-msgid "Num Up"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:92
-msgid "Num left"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:86
-msgid "Num_lock"
-msgstr ""
 
 #: ../src/richtext/richtextliststylepage.cpp:487
 #: ../src/richtext/richtextbulletspage.cpp:279
@@ -5425,18 +5416,6 @@ msgstr "Implementacja obiektu nie obsługuje nazywanych argumentów."
 msgid "Objects must have an id attribute"
 msgstr "Obiekty muszą posiadać właściwość typu 'id'"
 
-#: ../src/propgrid/advprops.cpp:1601
-msgid "Olive"
-msgstr ""
-
-#: ../src/richtext/richtextbackgroundpage.cpp:325
-msgid "Opaci&ty:"
-msgstr ""
-
-#: ../src/generic/colrdlgg.cpp:354
-msgid "Opacity:"
-msgstr ""
-
 #: ../src/common/docview.cpp:1773 ../src/common/docview.cpp:1815
 msgid "Open File"
 msgstr "Otwieranie Pliku"
@@ -5453,10 +5432,6 @@ msgstr "Otwieranie pliku \"%s\""
 #: ../src/common/stockitem.cpp:179
 msgid "Open..."
 msgstr "Otwórz..."
-
-#: ../src/unix/glx11.cpp:506 ../src/msw/glcanvas.cpp:592
-msgid "OpenGL 3.0 or later is not supported by the OpenGL driver."
-msgstr ""
 
 #: ../src/generic/dirctrlg.cpp:599 ../src/generic/dirdlgg.cpp:323
 #: ../src/generic/filectrlg.cpp:642 ../src/generic/filectrlg.cpp:786
@@ -5481,10 +5456,6 @@ msgstr "Opcja '%s': nie można przekształcić '%s' na datę."
 #: ../src/generic/prntdlgg.cpp:618
 msgid "Options"
 msgstr "Opcje"
-
-#: ../src/propgrid/advprops.cpp:1606
-msgid "Orange"
-msgstr ""
 
 #: ../src/generic/prntdlgg.cpp:615 ../src/generic/prntdlgg.cpp:869
 msgid "Orientation"
@@ -5664,7 +5635,6 @@ msgstr "Strona %d z %d"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:58
-#, fuzzy
 msgid "Page Down"
 msgstr "Strona %d"
 
@@ -5674,7 +5644,6 @@ msgstr "Ustawienia strony"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:57
-#, fuzzy
 msgid "Page Up"
 msgstr "Strona %d"
 
@@ -5684,24 +5653,17 @@ msgstr "Ustawienia strony"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:58
-#, fuzzy
 msgid "PageDown"
 msgstr "W dół"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:57
-#, fuzzy
 msgid "PageUp"
 msgstr "Strony"
 
 #: ../src/generic/prntdlgg.cpp:216
 msgid "Pages"
 msgstr "Strony"
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1765
-msgid "Paint Brush"
-msgstr ""
 
 #: ../src/generic/prntdlgg.cpp:602 ../src/generic/prntdlgg.cpp:801
 #: ../src/generic/prntdlgg.cpp:842 ../src/generic/prntdlgg.cpp:855
@@ -5730,16 +5692,6 @@ msgstr "Wklej"
 msgid "Paste selection"
 msgstr "Wklej wybór"
 
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:74
-msgid "Pause"
-msgstr ""
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1766
-msgid "Pencil"
-msgstr ""
-
 #: ../src/richtext/richtextliststylepage.cpp:222
 #: ../src/richtext/richtextbulletspage.cpp:159
 msgid "Peri&od"
@@ -5749,16 +5701,6 @@ msgstr "&Okres"
 #: ../src/generic/filectrlg.cpp:430
 msgid "Permissions"
 msgstr "Uprawnienia"
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:60
-msgid "PgDn"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:59
-msgid "PgUp"
-msgstr ""
 
 #: ../src/richtext/richtextbuffer.cpp:12868
 msgid "Picture Properties"
@@ -5794,13 +5736,11 @@ msgstr "Proszę czekać, trwa drukowanie..."
 
 #. TRANSLATORS: System cursor name
 #: ../src/propgrid/advprops.cpp:1767
-#, fuzzy
 msgid "Point Left"
 msgstr "&Rozmiar punktu:"
 
 #. TRANSLATORS: System cursor name
 #: ../src/propgrid/advprops.cpp:1768
-#, fuzzy
 msgid "Point Right"
 msgstr "Wyrównanie do prawej"
 
@@ -5937,7 +5877,7 @@ msgid "Printing Error"
 msgstr "Błąd wydruku"
 
 #: ../src/common/prntbase.cpp:565
-#, fuzzy, c-format
+#, c-format
 msgid "Printing page %d"
 msgstr "Drukowanie strony %d..."
 
@@ -5962,8 +5902,7 @@ msgstr "Wydruk"
 
 #: ../src/common/debugrpt.cpp:560
 #, c-format
-msgid ""
-"Processing debug report has failed, leaving the files in \"%s\" directory."
+msgid "Processing debug report has failed, leaving the files in \"%s\" directory."
 msgstr ""
 "Przetwarzanie raportu błędów nie powiodło się, pozostawiając pliku w "
 "katalogu \"%s\"."
@@ -5985,10 +5924,6 @@ msgstr "Właściwość"
 msgid "Property Error"
 msgstr "Błąd właściwości"
 
-#: ../src/propgrid/advprops.cpp:1597
-msgid "Purple"
-msgstr ""
-
 #: ../src/common/paper.cpp:112
 msgid "Quarto, 215 x 275 mm"
 msgstr "Quarto, 215 x 275 mm"
@@ -5999,7 +5934,6 @@ msgstr "Pytanie"
 
 #. TRANSLATORS: System cursor name
 #: ../src/propgrid/advprops.cpp:1769
-#, fuzzy
 msgid "Question Arrow"
 msgstr "Pytanie"
 
@@ -6025,23 +5959,13 @@ msgstr "RawCtrl+"
 msgid "Read error on file '%s'"
 msgstr "Błąd odczytu pliku '%s'"
 
-#: ../src/common/secretstore.cpp:199
-#, fuzzy, c-format
-msgid "Reading password for \"%s/%s\" failed: %s."
-msgstr "Pobranie '%s' do '%s' nie powiodło się."
-
 #: ../src/common/prntbase.cpp:272
 msgid "Ready"
 msgstr "Gotowy"
 
 #: ../src/propgrid/advprops.cpp:1605
-#, fuzzy
 msgid "Red"
 msgstr "Ponów"
-
-#: ../src/generic/colrdlgg.cpp:339
-msgid "Red:"
-msgstr ""
 
 #: ../src/common/stockitem.cpp:185 ../src/stc/stc_i18n.cpp:16
 msgid "Redo"
@@ -6075,21 +5999,6 @@ msgstr ""
 "Klucz rejestru '%s' jest potrzebny do normalnego funkcjonowania systemu,\n"
 "usunięcie go zdestabilizowałoby system:\n"
 "operacja została przerwana."
-
-#: ../src/msw/registry.cpp:954
-#, c-format
-msgid "Registry value \"%s\" is not binary (but of type %s)"
-msgstr ""
-
-#: ../src/msw/registry.cpp:917
-#, c-format
-msgid "Registry value \"%s\" is not numeric (but of type %s)"
-msgstr ""
-
-#: ../src/msw/registry.cpp:1003
-#, c-format
-msgid "Registry value \"%s\" is not text (but of type %s)"
-msgstr ""
 
 #: ../src/msw/registry.cpp:521
 #, c-format
@@ -6128,8 +6037,7 @@ msgstr "Usuń bieżącą stronę z listy zakładek"
 #: ../src/common/rendcmn.cpp:194
 #, c-format
 msgid "Renderer \"%s\" has incompatible version %d.%d and couldn't be loaded."
-msgstr ""
-"Wizualizator \"%s\" ma niezgodną wersję %d.%d i nie może być załadowany."
+msgstr "Wizualizator \"%s\" ma niezgodną wersję %d.%d i nie może być załadowany."
 
 #: ../src/richtext/richtextbuffer.cpp:4527
 msgid "Renumber List"
@@ -6164,11 +6072,6 @@ msgstr "Wymagane pole informacji jest puste."
 msgid "Resource '%s' is not a valid message catalog."
 msgstr "Zasób '%s' nie jest prawidłowym katalogiem komunikatów."
 
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:56
-msgid "Return"
-msgstr ""
-
 #: ../src/common/stockitem.cpp:189
 msgid "Revert to Saved"
 msgstr "Przywróć zapisany"
@@ -6176,10 +6079,6 @@ msgstr "Przywróć zapisany"
 #: ../src/richtext/richtextborderspage.cpp:616
 msgid "Ridge"
 msgstr "Krawędź"
-
-#: ../src/richtext/richtextfontpage.cpp:313
-msgid "Rig&ht-to-left"
-msgstr ""
 
 #. TRANSLATORS: Keystroke for manipulating a tree control
 #. TRANSLATORS: Name of keyboard key
@@ -6192,14 +6091,8 @@ msgstr "Prawy"
 
 #. TRANSLATORS: System cursor name
 #: ../src/propgrid/advprops.cpp:1754
-#, fuzzy
 msgid "Right Arrow"
 msgstr "Prawy"
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1770
-msgid "Right Button"
-msgstr ""
 
 #: ../src/generic/prntdlgg.cpp:892
 msgid "Right margin (mm):"
@@ -6215,11 +6108,6 @@ msgstr "Prawe dostosowanie tekstu."
 #: ../src/generic/fontdlgg.cpp:322
 msgid "Roman"
 msgstr "Roman"
-
-#: ../src/generic/datavgen.cpp:5916
-#, c-format
-msgid "Row %i"
-msgstr ""
 
 #: ../src/richtext/richtextliststylepage.cpp:299
 #: ../src/richtext/richtextbulletspage.cpp:239
@@ -6264,29 +6152,9 @@ msgstr "Zapisz bieżący dokument pod inną nazwą pliku"
 msgid "Save log contents to file"
 msgstr "Zapisz zawartość dziennika do pliku"
 
-#: ../src/common/secretstore.cpp:179
-#, fuzzy, c-format
-msgid "Saving password for \"%s/%s\" failed: %s."
-msgstr "Pobranie '%s' do '%s' nie powiodło się."
-
 #: ../src/generic/fontdlgg.cpp:325
 msgid "Script"
 msgstr "Script"
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:87
-msgid "Scroll Lock"
-msgstr ""
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:87
-msgid "Scroll_lock"
-msgstr ""
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:890
-msgid "Scrollbar"
-msgstr ""
 
 #: ../src/generic/srchctlg.cpp:56 ../src/html/helpwnd.cpp:535
 #: ../src/html/helpwnd.cpp:550
@@ -6334,7 +6202,6 @@ msgstr "Błąd wyszukiwania w pliku '%s' (stdio nie wspiera olbrzymich plików)"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:76
-#, fuzzy
 msgid "Select"
 msgstr "Wybór"
 
@@ -6380,19 +6247,10 @@ msgstr "Wybór"
 msgid "Selects the list level to edit."
 msgstr "Wybiera poziom listy do edycji."
 
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:82
-msgid "Separator"
-msgstr ""
-
 #: ../src/common/cmdline.cpp:1083
 #, c-format
 msgid "Separator expected after the option '%s'."
 msgstr "Oczekiwano separatora po opcji '%s'."
-
-#: ../src/osx/menu_osx.cpp:572
-msgid "Services"
-msgstr ""
 
 #: ../src/richtext/richtextbuffer.cpp:11217
 msgid "Set Cell Style"
@@ -6411,16 +6269,7 @@ msgstr "Ustawienia..."
 msgid "Several active dialup connections found, choosing one randomly."
 msgstr "Znalezione kilka dostępnych połączeń dialup, zostanie użyte pierwsze."
 
-#: ../src/richtext/richtextbackgroundpage.cpp:271
-msgid "Sh&adow spread:"
-msgstr ""
-
-#: ../src/richtext/richtextbackgroundpage.cpp:179
-msgid "Shadow"
-msgstr ""
-
 #: ../src/richtext/richtextbackgroundpage.cpp:258
-#, fuzzy
 msgid "Shadow c&olour:"
 msgstr "Wybierz kolor"
 
@@ -6486,10 +6335,6 @@ msgstr "Pokazuje podgląd ustawień paragrafu."
 msgid "Shows the font preview."
 msgstr "Podgląd czcionki."
 
-#: ../src/propgrid/advprops.cpp:1607
-msgid "Silver"
-msgstr ""
-
 #: ../src/univ/themes/mono.cpp:516
 msgid "Simple monochrome theme"
 msgstr "Prosty czarno-biały motyw"
@@ -6508,31 +6353,6 @@ msgstr "Rozmiar"
 msgid "Size:"
 msgstr "Rozmiar:"
 
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1775
-msgid "Sizing"
-msgstr ""
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1772
-msgid "Sizing N-S"
-msgstr ""
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1771
-msgid "Sizing NE-SW"
-msgstr ""
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1773
-msgid "Sizing NW-SE"
-msgstr ""
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1774
-msgid "Sizing W-E"
-msgstr ""
-
 #: ../src/msw/progdlg.cpp:801
 msgid "Skip"
 msgstr "Pomiń"
@@ -6544,11 +6364,6 @@ msgstr "Pochylony"
 #: ../src/richtext/richtextfontpage.cpp:289
 msgid "Small C&apitals"
 msgstr "K&apitaliki"
-
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:79
-msgid "Snapshot"
-msgstr ""
 
 #: ../src/richtext/richtextborderspage.cpp:611
 msgid "Solid"
@@ -6585,7 +6400,6 @@ msgstr "Plik z dźwiękiem '%s' jest w formacie, który nie jest wspierany."
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:67
-#, fuzzy
 msgid "Space"
 msgstr "Odstępy"
 
@@ -6596,11 +6410,6 @@ msgstr "Odstępy"
 #: ../src/common/stockitem.cpp:197
 msgid "Spell Check"
 msgstr "Sprawdzanie pisowni"
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1776
-msgid "Spraycan"
-msgstr ""
 
 #: ../src/richtext/richtextliststylepage.cpp:490
 #: ../src/richtext/richtextbulletspage.cpp:282
@@ -6650,11 +6459,6 @@ msgstr "Styl:"
 msgid "Subscrip&t"
 msgstr "Indeks &dolny"
 
-#. TRANSLATORS: Name of keyboard key
-#: ../src/common/accelcmn.cpp:83
-msgid "Subtract"
-msgstr ""
-
 #: ../src/richtext/richtextfontpage.cpp:296
 msgid "Supe&rscript"
 msgstr "Indeks &górny"
@@ -6666,10 +6470,6 @@ msgstr "SuperA/SuperA/A4 227 x 356 mm"
 #: ../src/common/paper.cpp:151
 msgid "SuperB/SuperB/A3 305 x 487 mm"
 msgstr "SuperB/SuperB/A3 305 x 487 mm"
-
-#: ../src/richtext/richtextfontpage.cpp:320
-msgid "Suppress hyphe&nation"
-msgstr ""
 
 #: ../src/generic/fontdlgg.cpp:326
 msgid "Swiss"
@@ -6716,7 +6516,6 @@ msgstr "TIFF: Rozmiar obrazu jest wyjątkowo duży."
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:68
-#, fuzzy
 msgid "Tab"
 msgstr "Karty"
 
@@ -6735,10 +6534,6 @@ msgstr "Tabloid, 11 x 17 cali"
 #: ../src/richtext/richtextformatdlg.cpp:354
 msgid "Tabs"
 msgstr "Karty"
-
-#: ../src/propgrid/advprops.cpp:1598
-msgid "Teal"
-msgstr ""
 
 #: ../src/generic/fontdlgg.cpp:327
 msgid "Teletype"
@@ -6793,7 +6588,6 @@ msgstr "Kolor tła."
 #: ../src/richtext/richtextborderspage.cpp:505
 #: ../src/richtext/richtextborderspage.cpp:537
 #: ../src/richtext/richtextborderspage.cpp:539
-#, fuzzy
 msgid "The border line style."
 msgstr "Styl czcionki."
 
@@ -6863,13 +6657,11 @@ msgstr ""
 #: ../src/html/htmprint.cpp:271
 #, c-format
 msgid ""
-"The document \"%s\" doesn't fit on the page horizontally and will be "
-"truncated if printed.\n"
+"The document \"%s\" doesn't fit on the page horizontally and will be truncated if printed.\n"
 "\n"
 "Would you like to proceed with printing it nevertheless?"
 msgstr ""
-"Dokument \"%s\" nie mieści się na stronie poziomo i będzie ucięty na "
-"wydruku.\n"
+"Dokument \"%s\" nie mieści się na stronie poziomo i będzie ucięty na wydruku.\n"
 "\n"
 "Chcesz kontynuować drukowanie mimo to?"
 
@@ -6935,7 +6727,6 @@ msgstr "Nie można wykryć formatu pliku '%s' ."
 
 #: ../src/richtext/richtextbackgroundpage.cpp:219
 #: ../src/richtext/richtextbackgroundpage.cpp:221
-#, fuzzy
 msgid "The horizontal offset."
 msgstr "&Sąsiadująco w poziomie"
 
@@ -7014,14 +6805,6 @@ msgstr "Szerokość obiektu."
 msgid "The outline level."
 msgstr "Poziom kontur."
 
-#: ../src/common/log.cpp:277
-#, fuzzy, c-format
-msgid "The previous message repeated %u time."
-msgid_plural "The previous message repeated %u times."
-msgstr[0] "Poprzedni komunikat powtórzył się %lu raz."
-msgstr[1] "Poprzedni komunikat powtórzył się %lu razy."
-msgstr[2] "Poprzedni komunikat powtórzył się %lu razy."
-
 #: ../src/common/log.cpp:270
 msgid "The previous message repeated once."
 msgstr "Poprzednia wiadomość była raz powtórzona."
@@ -7033,12 +6816,10 @@ msgstr "Zakres do pokazania."
 
 #: ../src/generic/dbgrptg.cpp:322
 msgid ""
-"The report contains the files listed below. If any of these files contain "
-"private information,\n"
+"The report contains the files listed below. If any of these files contain private information,\n"
 "please uncheck them and they will be removed from the report.\n"
 msgstr ""
-"Raport zawiera pliki wymienione niżej. Jeśli którykolwiek z tych plików "
-"zawiera prywatne informacje,\n"
+"Raport zawiera pliki wymienione niżej. Jeśli którykolwiek z tych plików zawiera prywatne informacje,\n"
 "proszę odznacz go w celu usunięcia go z raportu.\n"
 
 #: ../src/common/cmdline.cpp:1254
@@ -7070,26 +6851,10 @@ msgstr "Rozmiar dopełnienia z prawej."
 msgid "The right position."
 msgstr "Pozycja z prawej."
 
-#: ../src/richtext/richtextbackgroundpage.cpp:309
-#: ../src/richtext/richtextbackgroundpage.cpp:311
-msgid "The shadow blur distance."
-msgstr ""
-
 #: ../src/richtext/richtextbackgroundpage.cpp:266
 #: ../src/richtext/richtextbackgroundpage.cpp:268
-#, fuzzy
 msgid "The shadow colour."
 msgstr "Kolor czcionki."
-
-#: ../src/richtext/richtextbackgroundpage.cpp:336
-#: ../src/richtext/richtextbackgroundpage.cpp:338
-msgid "The shadow opacity."
-msgstr ""
-
-#: ../src/richtext/richtextbackgroundpage.cpp:282
-#: ../src/richtext/richtextbackgroundpage.cpp:284
-msgid "The shadow spread."
-msgstr ""
 
 #: ../src/richtext/richtextindentspage.cpp:267
 #: ../src/richtext/richtextliststylepage.cpp:439
@@ -7158,11 +6923,6 @@ msgstr "Pozycja od góry."
 msgid "The value for the option '%s' must be specified."
 msgstr "Wartość opcji '%s' musi zostać podana."
 
-#: ../src/richtext/richtextborderspage.cpp:585
-#: ../src/richtext/richtextborderspage.cpp:587
-msgid "The value of the corner radius."
-msgstr ""
-
 #: ../src/msw/dialup.cpp:433
 #, c-format
 msgid ""
@@ -7174,13 +6934,13 @@ msgstr ""
 
 #: ../src/richtext/richtextbackgroundpage.cpp:242
 #: ../src/richtext/richtextbackgroundpage.cpp:244
-#, fuzzy
 msgid "The vertical offset."
 msgstr "Włącz wyrównanie w pionie."
 
 #: ../src/richtext/richtextprint.cpp:619 ../src/html/htmprint.cpp:745
 msgid ""
-"There was a problem during page setup: you may need to set a default printer."
+"There was a problem during page setup: you may need to set a default "
+"printer."
 msgstr ""
 "Wystąpił błąd podczas konfigurowania strony: powinieneś określić domyślną "
 "drukarkę."
@@ -7228,8 +6988,8 @@ msgid ""
 "Thread module initialization failed: impossible to allocate index in thread "
 "local storage"
 msgstr ""
-"Zainicjowanie modułu wątków nie powiodło się: nie jest możliwe przydzielenie "
-"indeksu w lokalnej pamięci wątków."
+"Zainicjowanie modułu wątków nie powiodło się: nie jest możliwe przydzielenie"
+" indeksu w lokalnej pamięci wątków."
 
 #: ../src/unix/threadpsx.cpp:1043
 msgid "Thread priority setting is ignored."
@@ -7263,16 +7023,6 @@ msgstr "Do:"
 #: ../src/richtext/richtextbuffer.cpp:8363
 msgid "Too many EndStyle calls!"
 msgstr "Zbyt wiele wezwań EndStyle!"
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:891
-msgid "Tooltip"
-msgstr ""
-
-#. TRANSLATORS: Keyword of system colour
-#: ../src/propgrid/advprops.cpp:892
-msgid "TooltipText"
-msgstr ""
 
 #: ../src/richtext/richtextsizepage.cpp:286
 #: ../src/richtext/richtextsizepage.cpp:290 ../src/common/stockitem.cpp:200
@@ -7331,12 +7081,10 @@ msgstr "Typ musi umożliwiać konswersję enum - long"
 
 #: ../src/propgrid/propgridiface.cpp:401
 #, c-format
-msgid ""
-"Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT "
-"\"%s\"."
+msgid "Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT \"%s\"."
 msgstr ""
-"Niepowodzenie operacji typu \"%s\": właściwość nazwana  \"%s\" jest typu \"%s"
-"\", nie \"%s\"."
+"Niepowodzenie operacji typu \"%s\": właściwość nazwana  \"%s\" jest typu "
+"\"%s\", nie \"%s\"."
 
 #: ../src/common/paper.cpp:133
 msgid "US Std Fanfold, 14 7/8 x 11 in"
@@ -7428,11 +7176,6 @@ msgstr "Nie można wysłać stanu zakończenia"
 #: ../src/unix/fswatcher_inotify.cpp:556
 msgid "Unable to read from inotify descriptor"
 msgstr "Błąd odczytu z deskryptora inotify"
-
-#: ../src/unix/fswatcher_inotify.cpp:141
-#, fuzzy, c-format
-msgid "Unable to remove inotify watch %i"
-msgstr "Nie można usunąć czujki inotify"
 
 #: ../src/unix/fswatcher_kqueue.cpp:153
 msgid "Unable to remove kqueue watch"
@@ -7561,7 +7304,6 @@ msgstr "Jednostka pozycji od dołu."
 
 #: ../src/richtext/richtextborderspage.cpp:596
 #: ../src/richtext/richtextborderspage.cpp:598
-#, fuzzy
 msgid "Units for the corner radius."
 msgstr "Jednostki dopełnienia od góry."
 
@@ -7678,7 +7420,6 @@ msgstr "Jednostki pozycji od góry."
 #: ../src/richtext/richtextbackgroundpage.cpp:295
 #: ../src/richtext/richtextbackgroundpage.cpp:320
 #: ../src/richtext/richtextbackgroundpage.cpp:322
-#, fuzzy
 msgid "Units for this value."
 msgstr "Jednostki lewego marginesu."
 
@@ -7793,10 +7534,6 @@ msgstr "Duże litery cyframi rzymskimi"
 msgid "Usage: %s"
 msgstr "Użycie: %s"
 
-#: ../src/richtext/richtextbackgroundpage.cpp:194
-msgid "Use &shadow"
-msgstr ""
-
 #: ../src/richtext/richtextindentspage.cpp:169
 #: ../src/richtext/richtextindentspage.cpp:171
 #: ../src/richtext/richtextliststylepage.cpp:358
@@ -7850,16 +7587,6 @@ msgstr "Przeglądaj pliki w formie listy"
 msgid "Views"
 msgstr "Widoki"
 
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1777
-msgid "Wait"
-msgstr ""
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1779
-msgid "Wait Arrow"
-msgstr ""
-
 #: ../src/unix/epolldispatcher.cpp:213
 #, c-format
 msgid "Waiting for IO on epoll descriptor %d failed"
@@ -7868,11 +7595,6 @@ msgstr "Oczekiwanie na IO w deskryptorze epoll %d nie powiodło się"
 #: ../src/common/log.cpp:223
 msgid "Warning: "
 msgstr "Ostrzeżenie: "
-
-#. TRANSLATORS: System cursor name
-#: ../src/propgrid/advprops.cpp:1778
-msgid "Watch"
-msgstr ""
 
 #. TRANSLATORS: Label of font weight
 #: ../src/propgrid/advprops.cpp:685
@@ -7891,10 +7613,6 @@ msgstr "Zachodnioeuropejski z Euro (ISO-8859-15)"
 msgid "Whether the font is underlined."
 msgstr "Określenie podkreślenia."
 
-#: ../src/propgrid/advprops.cpp:1611
-msgid "White"
-msgstr ""
-
 #: ../src/generic/fdrepdlg.cpp:144
 msgid "Whole word"
 msgstr "Całe słowo"
@@ -7909,19 +7627,16 @@ msgstr "Kompozycja Win32"
 
 #. TRANSLATORS: Keyword of system colour
 #: ../src/propgrid/advprops.cpp:893
-#, fuzzy
 msgid "Window"
 msgstr "&Okno"
 
 #. TRANSLATORS: Keyword of system colour
 #: ../src/propgrid/advprops.cpp:894
-#, fuzzy
 msgid "WindowFrame"
 msgstr "&Okno"
 
 #. TRANSLATORS: Keyword of system colour
 #: ../src/propgrid/advprops.cpp:895
-#, fuzzy
 msgid "WindowText"
 msgstr "&Okno"
 
@@ -7995,19 +7710,16 @@ msgstr "Windows/DOS OEM Cyrylica (CP 866)"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:111
-#, fuzzy
 msgid "Windows_Left"
 msgstr "Windows 7"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:113
-#, fuzzy
 msgid "Windows_Menu"
 msgstr "Windows ME"
 
 #. TRANSLATORS: Name of keyboard key
 #: ../src/common/accelcmn.cpp:112
-#, fuzzy
 msgid "Windows_Right"
 msgstr "Windows Vista"
 
@@ -8047,10 +7759,6 @@ msgstr "XPM: nie zostało kolorów dla maski!"
 #, c-format
 msgid "XPM: truncated image data at line %d!"
 msgstr "XPM: obcięte dane obrazu w linijce %d!"
-
-#: ../src/propgrid/advprops.cpp:1610
-msgid "Yellow"
-msgstr ""
 
 #: ../include/wx/msgdlg.h:276 ../src/common/stockitem.cpp:206
 #: ../src/motif/msgdlg.cpp:196
@@ -8104,13 +7812,11 @@ msgstr "Aplikacja DDEML utworzyła przedłużony wyścig (race condition)."
 # instance -->
 #: ../src/msw/dde.cpp:1129
 msgid ""
-"a DDEML function was called without first calling the DdeInitialize "
-"function,\n"
+"a DDEML function was called without first calling the DdeInitialize function,\n"
 "or an invalid instance identifier\n"
 "was passed to a DDEML function."
 msgstr ""
-"została wywołana funkcja DDEML bez wcześniejszego wywołania funkcji "
-"DdeInitialize,\n"
+"została wywołana funkcja DDEML bez wcześniejszego wywołania funkcji DdeInitialize,\n"
 "lub do funkcji DDEML przesłano\n"
 "nieprawidłowy identyfikator instancji."
 
@@ -8183,7 +7889,8 @@ msgstr ""
 
 #: ../src/msw/dde.cpp:1156
 msgid "an internal call to the PostMessage function has failed. "
-msgstr "wewnętrzne wywołanie funkcji PostMessage zakończyło się niepowodzeniem"
+msgstr ""
+"wewnętrzne wywołanie funkcji PostMessage zakończyło się niepowodzeniem"
 
 #: ../src/msw/dde.cpp:1165
 msgid "an internal error has occurred in the DDEML."
@@ -8352,11 +8059,6 @@ msgstr "nie można zapisać do deskryptora pliku %d"
 msgid "can't write user configuration file."
 msgstr "nie można zapisać pliku konfiguracyjnego użytkownika."
 
-#. TRANSLATORS: Checkbox state name
-#: ../src/generic/treelist.cpp:482 ../src/generic/datavgen.cpp:1261
-msgid "checked"
-msgstr ""
-
 #: ../src/html/chm.cpp:345
 msgid "checksum error"
 msgstr "błąd sumy kontrolnej"
@@ -8477,7 +8179,6 @@ msgstr "nie udało się opróżnić (flush) pliku '%s'"
 
 #. TRANSLATORS: Name of Boolean false value
 #: ../src/generic/datavgen.cpp:1030
-#, fuzzy
 msgid "false"
 msgstr "Fałsz"
 
@@ -8488,32 +8189,6 @@ msgstr "piętnasty"
 #: ../src/common/datetimefmt.cpp:1956
 msgid "fifth"
 msgstr "piąty"
-
-#: ../src/common/fileconf.cpp:579
-#, fuzzy, c-format
-msgid "file '%s', line %zu: '%s' ignored after group header."
-msgstr "plik '%s', linia %d: zignorowano '%s' po nagłówku grupy."
-
-#: ../src/common/fileconf.cpp:608
-#, fuzzy, c-format
-msgid "file '%s', line %zu: '=' expected."
-msgstr "plik '%s', linia %d: oczekiwano '='."
-
-#: ../src/common/fileconf.cpp:631
-#, fuzzy, c-format
-msgid "file '%s', line %zu: key '%s' was first found at line %d."
-msgstr "plik '%s', linia %d: klucz '%s' wystąpił po raz pierwszy w lini %d."
-
-# niezmiennego?
-#: ../src/common/fileconf.cpp:621
-#, fuzzy, c-format
-msgid "file '%s', line %zu: value for immutable key '%s' ignored."
-msgstr "plik '%s', linia %d: zignorowano wartość dla niezmiennego klucza '%s'."
-
-#: ../src/common/fileconf.cpp:543
-#, fuzzy, c-format
-msgid "file '%s': unexpected character %c at line %zu."
-msgstr "plik '%s': nieoczekiwany znak %c w lini %d."
 
 #: ../src/richtext/richtextbuffer.cpp:8738
 msgid "files"
@@ -8883,11 +8558,6 @@ msgstr "końcowy ukośnik odwrotny zignorowany w '%s'"
 msgid "translator-credits"
 msgstr "Michał Trzebiatowski"
 
-#. TRANSLATORS: Name of Boolean true value
-#: ../src/generic/datavgen.cpp:1028
-msgid "true"
-msgstr ""
-
 #: ../src/common/datetimefmt.cpp:1963
 msgid "twelfth"
 msgstr "dwunasty"
@@ -8896,18 +8566,12 @@ msgstr "dwunasty"
 msgid "twentieth"
 msgstr "dwudziesty"
 
-#. TRANSLATORS: Checkbox state name
-#: ../src/generic/treelist.cpp:486 ../src/generic/datavgen.cpp:1263
-msgid "unchecked"
-msgstr ""
-
 #: ../src/common/fontcmn.cpp:802 ../src/common/fontcmn.cpp:978
 msgid "underlined"
 msgstr "podkreślony"
 
 #. TRANSLATORS: Checkbox state name
 #: ../src/generic/treelist.cpp:490
-#, fuzzy
 msgid "undetermined"
 msgstr "podkreślony"
 
@@ -8923,11 +8587,6 @@ msgstr "nieoczekiwany koniec pliku"
 #: ../src/generic/progdlgg.cpp:370 ../src/common/tarstrm.cpp:371
 #: ../src/common/tarstrm.cpp:394 ../src/common/tarstrm.cpp:425
 msgid "unknown"
-msgstr "nieznany"
-
-#: ../src/msw/registry.cpp:150
-#, fuzzy, c-format
-msgid "unknown (%lu)"
 msgstr "nieznany"
 
 #: ../src/common/xtixml.cpp:253
@@ -9092,8 +8751,7 @@ msgstr "~"
 #~ msgstr "Render daty nie może renderować wartości; typ wartości:"
 
 #~ msgid ""
-#~ "Do you want to overwrite the command used to %s files with extension \"%s"
-#~ "\" ?\n"
+#~ "Do you want to overwrite the command used to %s files with extension \"%s\" ?\n"
 #~ "Current value is \n"
 #~ "%s, \n"
 #~ "New value is \n"
@@ -9137,11 +8795,10 @@ msgstr "~"
 #~ msgid "No column for the specified column position existing."
 #~ msgstr "Nie istnieje kolumny dla określonej pozycji kolumny."
 
-#~ msgid ""
-#~ "No renderer or invalid renderer type specified for custom data column."
+#~ msgid "No renderer or invalid renderer type specified for custom data column."
 #~ msgstr ""
-#~ "Nie ma rendera lub nieprawidłowy typ rendera określonego dla własnych "
-#~ "danych kolumny."
+#~ "Nie ma rendera lub nieprawidłowy typ rendera określonego dla własnych danych"
+#~ " kolumny."
 
 #~ msgid "No renderer specified for column."
 #~ msgstr "Nie określono rendera dla kolumny."
@@ -9173,8 +8830,7 @@ msgstr "~"
 #~ msgid "Rendering failed."
 #~ msgstr "Rendering nie powiodł się."
 
-#~ msgid ""
-#~ "Setting directory access times is not supported under this OS version"
+#~ msgid "Setting directory access times is not supported under this OS version"
 #~ msgstr ""
 #~ "Ustawienie czasu dostępu do katalogów nie jest obsługiwane w tej wersji "
 #~ "systemu operacyjnego."
@@ -9216,7 +8872,6 @@ msgstr "~"
 #~ msgid "Win32s on Windows 3.1"
 #~ msgstr "Win32s na Windows 3.1"
 
-#, fuzzy
 #~ msgid "Windows 10"
 #~ msgstr "Windows 98"
 
@@ -9226,11 +8881,9 @@ msgstr "~"
 #~ msgid "Windows 7"
 #~ msgstr "Windows 7"
 
-#, fuzzy
 #~ msgid "Windows 8"
 #~ msgstr "Windows 98"
 
-#, fuzzy
 #~ msgid "Windows 8.1"
 #~ msgstr "Windows 98"
 
@@ -9258,7 +8911,6 @@ msgstr "~"
 #~ msgid "Windows NT %lu.%lu"
 #~ msgstr "Windows NT %lu.%lu"
 
-#, fuzzy
 #~ msgid "Windows Server 10"
 #~ msgstr "Windows Server 2003"
 
@@ -9271,11 +8923,9 @@ msgstr "~"
 #~ msgid "Windows Server 2008 R2"
 #~ msgstr "Windows Server 2008 R2"
 
-#, fuzzy
 #~ msgid "Windows Server 2012"
 #~ msgstr "Windows Server 2003"
 
-#, fuzzy
 #~ msgid "Windows Server 2012 R2"
 #~ msgstr "Windows Server 2008 R2"
 
@@ -9541,7 +9191,6 @@ msgstr "~"
 #~ msgid "1"
 #~ msgstr "1"
 
-#, fuzzy
 #~ msgid "10"
 #~ msgstr "1"
 
@@ -9566,15 +9215,12 @@ msgstr "~"
 #~ msgid "9"
 #~ msgstr "9"
 
-#, fuzzy
 #~ msgid "&Preview..."
 #~ msgstr " Podgląd"
 
-#, fuzzy
 #~ msgid "Preview..."
 #~ msgstr " Podgląd"
 
-#, fuzzy
 #~ msgid "The vertical offset relative to the paragraph."
 #~ msgstr "Domyślny styl dla następnego paragrafu."
 
@@ -9742,8 +9388,8 @@ msgstr "~"
 #~ msgstr "Skocz do strony"
 
 #~ msgid ""
-#~ "HTML pagination algorithm generated more than the allowed maximum number "
-#~ "of pages and it can't continue any longer!"
+#~ "HTML pagination algorithm generated more than the allowed maximum number of "
+#~ "pages and it can't continue any longer!"
 #~ msgstr ""
 #~ "Algorytm paginacji HTML generował więcej niż dozwoloną maksymalną liczbę "
 #~ "stron i nie może być dłużej kontynuowany!"
@@ -9809,11 +9455,10 @@ msgstr "~"
 #~ msgid "Status: "
 #~ msgstr "Status: "
 
-#~ msgid ""
-#~ "Streaming delegates for not already streamed objects not yet supported"
+#~ msgid "Streaming delegates for not already streamed objects not yet supported"
 #~ msgstr ""
-#~ "Delegacja w strumieniu dlaobiektu który nie jest już w strumieniu nie "
-#~ "jest jeszcze wspierana"
+#~ "Delegacja w strumieniu dlaobiektu który nie jest już w strumieniu nie jest "
+#~ "jeszcze wspierana"
 
 #~ msgid "Subclass '%s' not found for resource '%s', not subclassing!"
 #~ msgstr "Nie znaleziono podklasy '%s' dla zasobu '%s', bez podklas!"
@@ -9855,10 +9500,8 @@ msgstr "~"
 #~ msgid "XRC resource: Cannot create bitmap from '%s'."
 #~ msgstr "Zasoby XRC: Nie można utworzyć mapy bitowej z '%s'."
 
-#~ msgid ""
-#~ "XRC resource: Incorrect colour specification '%s' for attribute '%s'."
-#~ msgstr ""
-#~ "Zasoby XRC: Nieprawidłowa specyfikacja koloru '%s' dla atrybutu '%s'."
+#~ msgid "XRC resource: Incorrect colour specification '%s' for attribute '%s'."
+#~ msgstr "Zasoby XRC: Nieprawidłowa specyfikacja koloru '%s' dla atrybutu '%s'."
 
 #~ msgid "[EMPTY]"
 #~ msgstr "[PUSTY]"
@@ -9899,7 +9542,6 @@ msgstr "~"
 #~ msgid "\t%s: %s\n"
 #~ msgstr "\t%s: %s\n"
 
-#, fuzzy
 #~ msgid " Couldn't create the UnicodeConverter"
 #~ msgstr "Nie można utworzyć stopera"
 
@@ -9938,23 +9580,19 @@ msgstr "~"
 #~ msgstr "Nie znaleziono specyfikacji %s zasobu mapy bitowej."
 
 #~ msgid ""
-#~ "Could not resolve control class or id '%s'. Use (non-zero) integer "
-#~ "instead\n"
+#~ "Could not resolve control class or id '%s'. Use (non-zero) integer instead\n"
 #~ " or provide #define (see manual for caveats)"
 #~ msgstr ""
-#~ "Nie rozpoznano klasy lub identyfikatora '%s'. Użyj (niezerową) liczbę "
-#~ "całkowitą \n"
+#~ "Nie rozpoznano klasy lub identyfikatora '%s'. Użyj (niezerową) liczbę całkowitą \n"
 #~ " lub #define (szukaj szczegółów w dokumentacji)"
 
 #~ msgid ""
 #~ "Could not resolve menu id '%s'. Use (non-zero) integer instead\n"
 #~ "or provide #define (see manual for caveats)"
 #~ msgstr ""
-#~ "Nie rozpoznano identyfikatora menu '%s'. Użyj (niezerową) liczbę "
-#~ "całkowitą \n"
+#~ "Nie rozpoznano identyfikatora menu '%s'. Użyj (niezerową) liczbę całkowitą \n"
 #~ " lub #define (szukaj szczegółów w dokumentacji)"
 
-#, fuzzy
 #~ msgid "Couldn't end the context on the overlay window"
 #~ msgstr "Nie można pobrać wskaźnika aktualnego wątku"
 
@@ -10013,7 +9651,6 @@ msgstr "~"
 #~ msgid "Option '%s' requires a value, '=' expected."
 #~ msgstr "Opcja '%s' wymaga wartości, oczekiwane: '='."
 
-#, fuzzy
 #~ msgid "Select all"
 #~ msgstr "&Zaznacz wszystko"
 
@@ -10094,7 +9731,6 @@ msgstr "~"
 #~ msgid "unsupported zip archive"
 #~ msgstr "niewspierane archiwum zip"
 
-#, fuzzy
 #~ msgid ""
 #~ "Failed to get stack backtrace:\n"
 #~ "%s"
@@ -10106,7 +9742,6 @@ msgstr "~"
 #~ msgid "Loading Grey Raw PNM image is not yet implemented."
 #~ msgstr "Ładowanie obrazów Grey Raw PNM nie jest jeszcze zaimplementowane."
 
-#, fuzzy
 #~ msgid "Cannot wait on thread to exit."
 #~ msgstr "Nie można czekać na zakończenie wątku"
 
@@ -10116,9 +9751,7 @@ msgstr "~"
 #~ msgid "ZIP handler currently supports only local files!"
 #~ msgstr "Obsługiwane są tylko lokalne pliki ZIP!"
 
-#, fuzzy
-#~ msgid ""
-#~ "can't seek on file descriptor %d, large files support is not enabled."
+#~ msgid "can't seek on file descriptor %d, large files support is not enabled."
 #~ msgstr "nie można ustawić pozycji w deskryptorze pliku %d"
 
 #~ msgid "More..."

@@ -36,6 +36,7 @@ class wxTopLevelWindow;
 class wxDataViewCtrl;
 class wxBookCtrlBase;
 class wxTimer;
+class wxHyperlinkCtrlBase;
 struct wxLanguageInfo;
 
 namespace Slic3r
@@ -258,6 +259,10 @@ public:
     void update_label_colours();
     // update color mode for window
     void UpdateDarkUI(wxWindow *window, bool highlited = false, bool just_font = false);
+    // theme a hyperlink with the primary accent (instead of the default blue).
+    // Note: only the owner-drawn wxGenericHyperlinkCtrl honors these colours; the native
+    // MSW (SysLink) and GTK (GtkLinkButton) controls ignore them, so create links generic.
+    void tint_hyperlink(wxHyperlinkCtrlBase *link);
     // update color mode for whole dialog including all children
     void UpdateDlgDarkUI(wxDialog *dlg, bool just_buttons_update = false);
     // update color mode for DataViewControl
@@ -287,10 +292,7 @@ public:
     const wxColour &get_color_hovered_btn_label() { return m_color_hovered_btn_label; }
     const wxColour &get_color_selected_btn_bg() { return m_color_selected_btn_bg; }
     void force_colors_update();
-#ifdef _MSW_DARK_MODE
-    void force_menu_update();
-#endif //_MSW_DARK_MODE
-       //#endif
+    //#endif
 
     const wxFont &small_font() { return m_small_font; }
     const wxFont &bold_font() { return m_bold_font; }

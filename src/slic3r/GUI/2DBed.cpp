@@ -9,6 +9,7 @@
 ///|/
 #include "2DBed.hpp"
 #include "GUI_App.hpp"
+#include "Widgets/UIColors.hpp"
 
 #include <wx/dcbuffer.h>
 
@@ -46,11 +47,8 @@ void Bed_2D::repaint(const std::vector<Vec2d> &shape)
         // On MacOS the background is erased, on Windows the background is not erased
         // and on Linux / GTK the background is erased to gray color.
         // Fill DC with the background on Windows & Linux / GTK.
-#ifdef _WIN32
-        auto color = wxGetApp().get_highlight_default_clr();
-#else
-        auto color = wxSystemSettings::GetColour(wxSYS_COLOUR_3DLIGHT); //GetSystemColour
-#endif
+        // preFlight: themed canvas surround so the bed preview matches the active theme.
+        const wxColour color = UIColors::PanelBackground();
         dc.SetPen(wxPen(color, 1, wxPENSTYLE_SOLID));
         dc.SetBrush(wxBrush(color, wxBRUSHSTYLE_SOLID));
         auto rect = GetUpdateRegion().GetBox();
@@ -82,8 +80,8 @@ void Bed_2D::repaint(const std::vector<Vec2d> &shape)
     m_scale_factor = sfactor;
     m_shift = Vec2d(shift(0) + cbb.min(0), shift(1) - (cbb.max(1) - ch));
 
-    // draw bed fill
-    dc.SetBrush(wxBrush(wxColour(255, 255, 255), wxBRUSHSTYLE_SOLID));
+    // draw bed fill - preFlight: themed build-plate surface
+    dc.SetBrush(wxBrush(UIColors::ContentBackground(), wxBRUSHSTYLE_SOLID));
 
     wxPointList pt_list;
     const size_t pt_cnt = shape.size();
@@ -110,7 +108,7 @@ void Bed_2D::repaint(const std::vector<Vec2d> &shape)
     }
     polylines = intersection_pl(polylines, bed_polygon);
 
-    dc.SetPen(wxPen(wxColour(230, 230, 230), 1, wxPENSTYLE_SOLID));
+    dc.SetPen(wxPen(UIColors::HeaderDivider(), 1, wxPENSTYLE_SOLID)); // preFlight: themed grid lines
     for (auto pl : polylines)
     {
         for (size_t i = 0; i < pl.points.size() - 1; i++)
@@ -121,9 +119,9 @@ void Bed_2D::repaint(const std::vector<Vec2d> &shape)
         }
     }
 
-    // draw bed contour
-    dc.SetPen(wxPen(wxColour(0, 0, 0), 1, wxPENSTYLE_SOLID));
-    dc.SetBrush(wxBrush(wxColour(0, 0, 0), wxBRUSHSTYLE_TRANSPARENT));
+    // draw bed contour - preFlight: themed outline
+    dc.SetPen(wxPen(UIColors::PanelForeground(), 1, wxPENSTYLE_SOLID));
+    dc.SetBrush(wxBrush(UIColors::PanelForeground(), wxBRUSHSTYLE_TRANSPARENT));
     dc.DrawPolygon(&pt_list, 0, 0);
 
     auto origin_px = to_pixels(Vec2d(0, 0), ch);
@@ -153,13 +151,13 @@ void Bed_2D::repaint(const std::vector<Vec2d> &shape)
         dc.DrawLine(wxPoint(y_end(0), y_end(1)), wxPoint(end(0), end(1)));
     }
 
-    // draw origin - preFlight: DPI-scaled
-    dc.SetPen(wxPen(wxColour(0, 0, 0), 1, wxPENSTYLE_SOLID));
-    dc.SetBrush(wxBrush(wxColour(0, 0, 0), wxBRUSHSTYLE_SOLID));
+    // draw origin - preFlight: DPI-scaled + themed
+    dc.SetPen(wxPen(UIColors::PanelForeground(), 1, wxPENSTYLE_SOLID));
+    dc.SetBrush(wxBrush(UIColors::PanelForeground(), wxBRUSHSTYLE_SOLID));
     dc.DrawCircle(origin_px(0), origin_px(1), static_cast<int>(3 * scale_factor));
 
     static const auto origin_label = wxString("(0,0)");
-    dc.SetTextForeground(wxColour(0, 0, 0));
+    dc.SetTextForeground(UIColors::PanelForeground());
     dc.SetFont(wxGetApp().normal_font()); // DPI-aware font
     auto extent = dc.GetTextExtent(origin_label);
     const auto origin_label_x = origin_px(0) <= cw / 2 ? origin_px(0) + 1 : origin_px(0) - 1 - extent.GetWidth();

@@ -502,17 +502,18 @@ std::vector<SurfaceFill> group_fills(const Layer &layer)
                         }
                     }
 
-                    // Check if this is a narrow solid surface that should use Ensuring
-                    // (Athena variable-width fill) instead of the configured pattern.
+                    // Narrow solid surfaces use concentric (Athena variable-width beads)
+                    // instead of the configured rectilinear pattern.
                     if ((surface.surface_type == stInternalSolid || surface.surface_type == stTop ||
                          surface.surface_type == stBottom) &&
-                        params.pattern != ipEnsuring && region_config.narrow_to_athena.value)
+                        params.pattern != ipEnsuring && params.pattern != ipConcentric &&
+                        region_config.narrow_to_athena.value)
                     {
                         const float threshold = float(region_config.narrow_to_athena_threshold.value);
                         const bool is_narrow_athena = !is_bridge &&
                                                       is_narrow_at(solid_flow.scaled_width() * threshold / 2.f);
                         if (is_narrow_athena)
-                            params.pattern = ipEnsuring;
+                            params.pattern = ipConcentric;
                         // Ring shapes: check if any hole has a thin wall to the
                         // outer contour. Uses per-hole expansion instead of whole-
                         // expolygon inset, so thin rings connected to wider areas
@@ -520,7 +521,7 @@ std::vector<SurfaceFill> group_fills(const Layer &layer)
                         if (!is_narrow_athena && !is_bridge && !surface.expolygon.holes.empty())
                         {
                             if (has_thin_ring_at(solid_flow.scaled_width() * threshold / 2.f))
-                                params.pattern = ipEnsuring;
+                                params.pattern = ipConcentric;
                         }
                     }
                 }
@@ -1659,7 +1660,11 @@ void Layer::make_fills(FillAdaptive::Octree *adaptive_fill_octree, FillAdaptive:
                                                    perimeter_generator == PerimeterGeneratorType::Athena) &&
                                                   surface_fill.params.pattern == ipConcentric) ||
                                                  surface_fill.params.pattern == ipEnsuring;
-                params.perimeter_generator = perimeter_generator;
+                // Concentric fill always uses Athena for clean variable-width beads,
+                // regardless of the perimeter generator setting.
+                params.perimeter_generator = (surface_fill.params.pattern == ipConcentric)
+                                                 ? PerimeterGeneratorType::Athena
+                                                 : perimeter_generator;
                 params.layer_height = layerm->layer()->height;
                 params.prefer_clockwise_movements = this->object()->print()->config().prefer_clockwise_movements;
 

@@ -40,13 +40,14 @@ Button::Button()
     : paddingSize(Slic3r::GUI::wxGetApp().em_unit(), (Slic3r::GUI::wxGetApp().em_unit() * 8) / 10) // 10x8 at 100%
 {
     background_color = StateColor(std::make_pair(0xF0F0F0, (int) StateColor::Disabled),
-                                  std::make_pair(0xF5B041, (int) StateColor::Hovered |
-                                                               StateColor::Checked),   // preFlight light orange
-                                  std::make_pair(0xEAA032, (int) StateColor::Checked), // preFlight brand orange
+                                  std::make_pair(accent_hover_rgb(),
+                                                 (int) StateColor::Hovered |
+                                                     StateColor::Checked), // themed accent hover
+                                  std::make_pair(accent_primary_rgb(), (int) StateColor::Checked), // themed accent
                                   std::make_pair(*wxLIGHT_GREY, (int) StateColor::Hovered),
                                   std::make_pair(clr_background_normal_light, (int) StateColor::Normal));
-    text_color = StateColor(std::make_pair(*wxLIGHT_GREY, (int) StateColor::Disabled),
-                            std::make_pair(*wxBLACK, (int) StateColor::Normal));
+    text_color = StateColor(std::make_pair(UIColors::InputForegroundDisabled(), (int) StateColor::Disabled),
+                            std::make_pair(UIColors::LabelDefault(), (int) StateColor::Normal));
 }
 
 Button::Button(wxWindow *parent, wxString text, wxString icon, long style, wxSize iconSize /* = wxDefaultSize*/)

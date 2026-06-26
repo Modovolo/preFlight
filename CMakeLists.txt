@@ -560,22 +560,15 @@ add_custom_target(gettext_merge_community_po_with_pot
     COMMENT "Merge community po with new generated pot file"
 )
 file(GLOB L10N_PO_FILES "${L10N_DIR}/*/preFlight*.po")
-# list of names of directories, which are licalized by PS internally
-list(APPEND PS_L10N_DIRS "cs" "de" "es" "fr" "it" "ja" "pl")
+# Merge every language against the preFlight pot so new strings reach all catalogs.
 foreach(po_file ${L10N_PO_FILES})
-    GET_FILENAME_COMPONENT(po_dir "${po_file}" DIRECTORY)
-    GET_FILENAME_COMPONENT(po_dir_name "${po_dir}" NAME)
-    list(FIND PS_L10N_DIRS ${po_dir_name} found_dir_id)
-    # found_dir_id==-1 means that po_dir_name wasn't found in PS_L10N_DIRS
-    if(found_dir_id LESS 0)
-        add_custom_command(
-            TARGET gettext_merge_community_po_with_pot PRE_BUILD
-            COMMAND msgmerge -N -o ${po_file} ${po_file} "${L10N_DIR}/preFlight.pot"
-            # delete obsolete lines from resulting PO to avoid conflicts after a merging of it with wxWidgets.po
-            COMMAND msgattrib --no-obsolete -o ${po_file} ${po_file}
-            DEPENDS ${po_file}
-        )
-    endif()
+    add_custom_command(
+        TARGET gettext_merge_community_po_with_pot PRE_BUILD
+        COMMAND msgmerge -N -o ${po_file} ${po_file} "${L10N_DIR}/preFlight.pot"
+        # delete obsolete lines from resulting PO to avoid conflicts after a merging of it with wxWidgets.po
+        COMMAND msgattrib --no-obsolete -o ${po_file} ${po_file}
+        DEPENDS ${po_file}
+    )
 endforeach()
 
 add_custom_target(gettext_concat_wx_po_with_po
@@ -607,7 +600,7 @@ foreach(po_file ${L10N_PO_FILES})
     SET(mo_file "${po_dir}/preFlight.mo")
     add_custom_command(
         TARGET gettext_po_to_mo PRE_BUILD
-        COMMAND msgfmt ARGS --check-format -o ${mo_file} ${po_file}
+        COMMAND msgfmt ARGS --check -o ${mo_file} ${po_file}
         #COMMAND msgfmt ARGS --check-compatibility -o ${mo_file} ${po_file}
         DEPENDS ${po_file}
     )

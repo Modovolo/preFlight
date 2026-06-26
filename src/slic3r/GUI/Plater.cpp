@@ -8698,12 +8698,32 @@ std::vector<std::string> Plater::get_extruder_color_strings_from_plater_config(
     if (wxGetApp().is_gcode_viewer() && result != nullptr)
         return result->extruder_colors;
 
-    // filament_colour is the single source of truth. The legacy extruder_colour override is
-    // intentionally ignored: it caused the sidebar swatch to silently disagree with the 3D
-    // view, gcode preview, thumbnails, and color mixing gizmo. The config option still loads
-    // from 3MFs and printer presets (for compat) but has no visible effect anywhere.
-    if (p && p->config && p->config->has("filament_colour"))
-        return p->config->option<ConfigOptionStrings>("filament_colour")->values;
+    if (p && p->config)
+    {
+        // Use extruder_colour when set (non-empty, valid hex), otherwise fall back
+        // to filament_colour from the filament preset.
+        const std::vector<std::string> &filament_colors =
+            p->config->has("filament_colour") ? p->config->option<ConfigOptionStrings>("filament_colour")->values
+                                              : std::vector<std::string>();
+        const std::vector<std::string> &extruder_colors =
+            p->config->has("extruder_colour") ? p->config->option<ConfigOptionStrings>("extruder_colour")->values
+                                              : std::vector<std::string>();
+
+        size_t n = std::max(filament_colors.size(), extruder_colors.size());
+        if (n == 0)
+            return {};
+
+        std::vector<std::string> colors(n);
+        for (size_t i = 0; i < n; ++i)
+        {
+            // extruder_colour takes priority when it's a valid hex color
+            if (i < extruder_colors.size() && extruder_colors[i].size() == 7 && extruder_colors[i].front() == '#')
+                colors[i] = extruder_colors[i];
+            else if (i < filament_colors.size())
+                colors[i] = filament_colors[i];
+        }
+        return colors;
+    }
 
     return {};
 }

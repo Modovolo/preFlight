@@ -12,6 +12,7 @@
 BEGIN_EVENT_TABLE(ComboBox, TextInput)
 
 EVT_LEFT_DOWN(ComboBox::mouseDown)
+EVT_MOTION(ComboBox::mouseMove)
 EVT_MOUSEWHEEL(ComboBox::mouseWheelMoved)
 EVT_KEY_DOWN(ComboBox::keyDown)
 
@@ -34,6 +35,7 @@ ComboBox::ComboBox(wxWindow *parent, wxWindowID id, const wxString &value, const
     drop.Create(this, style);
 
     SetFont(Slic3r::GUI::wxGetApp().normal_font());
+    m_readonly = (style & wxCB_READONLY) != 0;
     if (style & wxCB_READONLY)
         GetTextCtrl()->Hide();
     else
@@ -61,7 +63,21 @@ ComboBox::ComboBox(wxWindow *parent, wxWindowID id, const wxString &value, const
                   GetEventHandler()->ProcessEvent(e);
               });
 
-#ifndef _WIN32
+#ifdef __APPLE__
+    this->Bind(wxEVT_SYS_COLOUR_CHANGED,
+               [this](wxSysColourChangedEvent &event)
+               {
+                   event.Skip();
+                   // A combo is an input field: keep the themed input background on appearance changes
+                   // instead of adopting the parent panel's color. The parent's (lighter content) color
+                   // left read-only combos - whose value is custom-drawn from this background - showing
+                   // as a light box on macOS, while editable combos were masked by their themed text ctrl.
+                   const bool is_dark = Slic3r::GUI::wxGetApp().dark_mode();
+                   SetBackgroundColour(is_dark ? UIColors::InputBackgroundDark() : UIColors::InputBackgroundLight());
+                   SetForegroundColour(is_dark ? UIColors::InputForegroundDark() : UIColors::InputForegroundLight());
+               });
+#elif !defined(_WIN32)
+    // GTK/Linux: keep the prior behavior (adopt the parent's background on appearance change).
     this->Bind(wxEVT_SYS_COLOUR_CHANGED,
                [this, parent](wxSysColourChangedEvent &event)
                {
@@ -104,12 +120,16 @@ void ComboBox::SysColorsChanged()
     bool is_dark = Slic3r::GUI::wxGetApp().dark_mode();
     wxColour bg_color = is_dark ? UIColors::InputBackgroundDark() : UIColors::InputBackgroundLight();
     wxColour fg_color = is_dark ? UIColors::InputForegroundDark() : UIColors::InputForegroundLight();
+    wxColour disabled_fg = is_dark ? UIColors::InputForegroundDisabledDark() : UIColors::InputForegroundDisabledLight();
 
     drop.SetBackgroundColour(bg_color);
-    drop.SetTextColor(StateColor(fg_color));
+    // Keep the disabled state so a disabled dropdown dims like the text/spin inputs (don't clobber with a single color).
+    drop.SetTextColor(StateColor(std::make_pair(disabled_fg, (int) StateColor::Disabled),
+                                 std::make_pair(fg_color, (int) StateColor::Normal)));
 
     // Update selector colors for the dropdown items
-    StateColor selector_bg(std::make_pair(0xFDF2E3, (int) StateColor::Checked), // preFlight warm cream for selected
+    StateColor selector_bg(std::make_pair(wxcolour_to_rgb_int(UIColors::HighlightBackground()),
+                                          (int) StateColor::Checked), // themed selection highlight
                            std::make_pair(bg_color, (int) StateColor::Normal));
     drop.SetSelectorBackgroundColor(selector_bg);
 }
@@ -170,7 +190,7 @@ bool ComboBox::SetBackgroundColour(const wxColour &colour)
     bool is_dark = Slic3r::GUI::wxGetApp().dark_mode();
     wxColour disabled_bg = is_dark ? UIColors::InputBackgroundDisabledDark() : UIColors::InputBackgroundDisabledLight();
     wxColour normal_bg = is_dark ? UIColors::InputBackgroundDark() : UIColors::InputBackgroundLight();
-    StateColor selector_colors(std::make_pair(clr_background_focused, (int) StateColor::Checked),
+    StateColor selector_colors(std::make_pair(clr_background_focused(), (int) StateColor::Checked),
                                std::make_pair(disabled_bg, (int) StateColor::Disabled),
                                std::make_pair(normal_bg, (int) StateColor::Normal));
     drop.SetSelectorBackgroundColor(selector_colors);
@@ -182,11 +202,50 @@ bool ComboBox::SetForegroundColour(const wxColour &colour)
 {
     TextInput::SetForegroundColour(colour);
 
-    // DropDowns are never disabled, so just pass the normal color directly
-    // Don't use TextInput::GetTextColor() which includes a Disabled state
-    drop.SetTextColor(StateColor(colour));
+    // Match the disabled foreground used by the text/spin inputs so a disabled dropdown dims consistently
+    // (dropdowns can be disabled, e.g. dependent options).
+    const bool is_dark = Slic3r::GUI::wxGetApp().dark_mode();
+    const wxColour disabled_fg = is_dark ? UIColors::InputForegroundDisabledDark()
+                                         : UIColors::InputForegroundDisabledLight();
+    drop.SetTextColor(StateColor(std::make_pair(disabled_fg, (int) StateColor::Disabled),
+                                 std::make_pair(colour, (int) StateColor::Normal)));
 
     return true;
+}
+
+bool ComboBox::Enable(bool enable)
+{
+    bool changed = TextInput::Enable(enable);
+
+    // A read-only combo normally hides its text control and custom-draws the value (TextInput label).
+    // That custom GDI draw renders the themed disabled color differently from the native edit controls
+    // used by the spin/text inputs. To keep the disabled appearance identical to those fields, show the
+    // value through the native read-only text control while disabled, and restore the custom draw when
+    // enabled (so click-to-open behaviour is unchanged). Gate on a real state transition so wx's enable
+    // propagation (which re-fires Enable() as parents toggle) doesn't redo this work every call.
+    if (changed && m_readonly && !text_off)
+    {
+        const wxString val = GetValue();
+        GetTextCtrl()->ChangeValue(val);
+        GetTextCtrl()->Show(!enable);
+        // When the native edit is shown (disabled), clear the window label so labelSize is 0 and the text
+        // control gets the FULL width in DoSetSize (it subtracts labelSize.x, which would otherwise reserve
+        // space for the value twice and clip it, e.g. "Standard" -> "Stan"). When enabled, restore the label
+        // for the custom-drawn value. SetLabel() calls messureSize() so labelSize updates before the resize.
+        TextInput::SetLabel(enable ? val : wxString());
+
+        // Re-lay-out the now-(in)visible text control to the full width. Skip if the combo has no real size
+        // yet (disabled before its first sizer pass); the next layout runs DoSetSize and corrects it.
+        const wxSize s = GetSize();
+        if (s.x > 1 && s.y > 1)
+        {
+            const wxPoint p = GetPosition();
+            SetSize(p.x, p.y, s.x, s.y, wxSIZE_FORCE);
+        }
+        Refresh();
+    }
+
+    return changed;
 }
 
 void ComboBox::SetBorderColor(StateColor const &color)
@@ -311,6 +370,11 @@ void ComboBox::DoSetItemClientData(unsigned int n, void *data)
 void ComboBox::mouseDown(wxMouseEvent &event)
 {
     SetFocus();
+
+    // If a click-on-icon handler is set and the click is within the icon area, fire it instead of the dropdown
+    if (HandleIconClick(event.GetPosition()))
+        return;
+
     if (drop_down)
     {
         drop.Hide();
@@ -323,6 +387,14 @@ void ComboBox::mouseDown(wxMouseEvent &event)
         wxCommandEvent e(wxEVT_COMBOBOX_DROPDOWN);
         GetEventHandler()->ProcessEvent(e);
     }
+}
+
+void ComboBox::mouseMove(wxMouseEvent &event)
+{
+    wxRect ir = GetIconRect();
+    if (HasIconClickHandler() && !ir.IsEmpty())
+        SetCursor(ir.Contains(event.GetPosition()) ? wxCursor(wxCURSOR_HAND) : wxNullCursor);
+    event.Skip();
 }
 
 void ComboBox::mouseWheelMoved(wxMouseEvent &event)

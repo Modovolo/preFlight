@@ -1,3 +1,4 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: wxWidgets 3.1 -revised 01.08.2017 by bovirus\n"
@@ -10,7 +11,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.0.3\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
@@ -499,7 +500,8 @@ msgstr "&Rete"
 msgid "&New"
 msgstr "&Nuovo"
 
-#: ../src/aui/tabmdi.cpp:111 ../src/generic/mdig.cpp:100 ../src/msw/mdi.cpp:180
+#: ../src/aui/tabmdi.cpp:111 ../src/generic/mdig.cpp:100
+#: ../src/msw/mdi.cpp:180
 msgid "&Next"
 msgstr "&Avanti"
 
@@ -573,7 +575,8 @@ msgstr "Modo &posizione:"
 msgid "&Preferences"
 msgstr "&Preferenze"
 
-#: ../src/aui/tabmdi.cpp:112 ../src/generic/mdig.cpp:101 ../src/msw/mdi.cpp:181
+#: ../src/aui/tabmdi.cpp:112 ../src/generic/mdig.cpp:101
+#: ../src/msw/mdi.cpp:181
 msgid "&Previous"
 msgstr "&Precedente"
 
@@ -2111,8 +2114,7 @@ msgstr "Carattere"
 #: ../src/common/module.cpp:74
 #, c-format
 msgid "Circular dependency involving module \"%s\" detected."
-msgstr ""
-"È stata trovata una dipendenza circolare che coinvolge il modulo \"%s\"."
+msgstr "È stata trovata una dipendenza circolare che coinvolge il modulo \"%s\"."
 
 #: ../src/aui/tabmdi.cpp:108 ../src/generic/mdig.cpp:97
 msgid "Cl&ose"
@@ -2292,8 +2294,8 @@ msgid ""
 "Command line argument %d couldn't be converted to Unicode and will be "
 "ignored."
 msgstr ""
-"L'argomento %d della linea di comando non può essere convertito in Unicode e "
-"verrà ignorato."
+"L'argomento %d della linea di comando non può essere convertito in Unicode e"
+" verrà ignorato."
 
 #: ../src/msw/fontdlg.cpp:120
 #, c-format
@@ -2500,7 +2502,8 @@ msgstr "Impossibile terminare il thread"
 #: ../src/common/xtistrm.cpp:166
 #, c-format
 msgid "Create Parameter %s not found in declared RTTI Parameters"
-msgstr "Create Parameter %s non trovato nella dichiarazione dei parametri RTTI"
+msgstr ""
+"Create Parameter %s non trovato nella dichiarazione dei parametri RTTI"
 
 #: ../src/generic/dirdlgg.cpp:288
 msgid "Create directory"
@@ -2574,7 +2577,8 @@ msgstr ""
 
 #: ../src/common/imagbmp.cpp:1074
 msgid "DIB Header: Image height > 32767 pixels for file."
-msgstr "Intestazione DIB: l'altezza dell'immagine nel file è > di 32767 pixel."
+msgstr ""
+"Intestazione DIB: l'altezza dell'immagine nel file è > di 32767 pixel."
 
 #: ../src/common/imagbmp.cpp:1066
 msgid "DIB Header: Image width > 32767 pixels for file."
@@ -2714,8 +2718,8 @@ msgstr "Sviluppatori"
 
 #: ../src/msw/dialup.cpp:374
 msgid ""
-"Dial up functions are unavailable because the remote access service (RAS) is "
-"not installed on this machine. Please install it."
+"Dial up functions are unavailable because the remote access service (RAS) is"
+" not installed on this machine. Please install it."
 msgstr ""
 "Funzionalità di composizione telefonica non disponibili perchè il servizio "
 "di Accesso Remoto (RAS) non è installato su questo computer. Installa il "
@@ -3337,8 +3341,8 @@ msgstr "Impossibile installare gestore segnale"
 
 #: ../src/unix/threadpsx.cpp:1167
 msgid ""
-"Failed to join a thread, potential memory leak detected - please restart the "
-"program"
+"Failed to join a thread, potential memory leak detected - please restart the"
+" program"
 msgstr ""
 "Impossibile esegure la join su di un thread, possibile memoria persa (leak) "
 "- esegui nuovamente il programma"
@@ -3535,7 +3539,8 @@ msgstr "Impossibile eliminare il file di blocco obsoleto '%s'."
 #: ../src/msw/registry.cpp:529
 #, c-format
 msgid "Failed to rename registry value '%s' to '%s'."
-msgstr "Impossibile rinominare il valore '%s' del registro di sistema in '%s'."
+msgstr ""
+"Impossibile rinominare il valore '%s' del registro di sistema in '%s'."
 
 #: ../src/common/filefn.cpp:1122
 #, c-format
@@ -3549,7 +3554,8 @@ msgstr ""
 #: ../src/msw/registry.cpp:634
 #, c-format
 msgid "Failed to rename the registry key '%s' to '%s'."
-msgstr "Impossibile rinominare la chiave '%s' del registro di sistema in '%s'."
+msgstr ""
+"Impossibile rinominare la chiave '%s' del registro di sistema in '%s'."
 
 #: ../src/common/filename.cpp:2671
 #, c-format
@@ -3559,7 +3565,8 @@ msgstr "Impossibile ottenere le date del file '%s'"
 #: ../src/msw/dialup.cpp:468
 msgid "Failed to retrieve text of RAS error message"
 msgstr ""
-"Impossibile ottenere il testo del messaggio di errore di Accesso Remoto (RAS)"
+"Impossibile ottenere il testo del messaggio di errore di Accesso Remoto "
+"(RAS)"
 
 #: ../src/msw/clipbrd.cpp:748
 msgid "Failed to retrieve the supported clipboard formats"
@@ -4100,8 +4107,8 @@ msgid ""
 "If possible, try changing the layout parameters to make the printout more "
 "narrow."
 msgstr ""
-"Se possibile prova a modificare i parametri del layout per rendere la stampa "
-"più stretta."
+"Se possibile prova a modificare i parametri del layout per rendere la stampa"
+" più stretta."
 
 #: ../src/generic/dbgrptg.cpp:358
 msgid ""
@@ -4113,13 +4120,11 @@ msgstr ""
 
 #: ../src/generic/dbgrptg.cpp:324
 msgid ""
-"If you wish to suppress this debug report completely, please choose the "
-"\"Cancel\" button,\n"
+"If you wish to suppress this debug report completely, please choose the \"Cancel\" button,\n"
 "but be warned that it may hinder improving the program, so if\n"
 "at all possible please do continue with the report generation.\n"
 msgstr ""
-"Se non desideri inviare una segnalazione di errore, scegli il pulsante "
-"\"Annulla\",\n"
+"Se non desideri inviare una segnalazione di errore, scegli il pulsante \"Annulla\",\n"
 "anche se questo potrebbe ostacolare il miglioramento del programma. Ti\n"
 "invitiamo pertanto a continuare con la generazione della segnalazione.\n"
 
@@ -4164,8 +4169,8 @@ msgstr "L'immagine non è di tipo %s."
 
 #: ../src/msw/textctrl.cpp:488
 msgid ""
-"Impossible to create a rich edit control, using simple text control instead. "
-"Please reinstall riched32.dll"
+"Impossible to create a rich edit control, using simple text control instead."
+" Please reinstall riched32.dll"
 msgstr ""
 "Impossibile creare un controllo rich edit, impiegato un controllo di tipo "
 "testo semplice. Per favore reinstallare riched32.dll"
@@ -4652,8 +4657,7 @@ msgstr "Lime"
 #: ../src/generic/helpext.cpp:294
 #, c-format
 msgid "Line %lu of map file \"%s\" has invalid syntax, skipped."
-msgstr ""
-"La riga %lu del file mappa \"%s\" è stata scartata in quanto scorretta."
+msgstr "La riga %lu del file mappa \"%s\" è stata scartata in quanto scorretta."
 
 #: ../src/richtext/richtextliststylepage.cpp:444
 msgid "Line spacing:"
@@ -4662,7 +4666,8 @@ msgstr "Interlinea:"
 #: ../src/html/chm.cpp:838
 msgid "Link contained '//', converted to absolute link."
 msgstr ""
-"Il collegamnto conteneva '//', è stato convertito a un collegamento assoluto."
+"Il collegamnto conteneva '//', è stato convertito a un collegamento "
+"assoluto."
 
 #: ../src/richtext/richtextformatdlg.cpp:364
 msgid "List Style"
@@ -4725,8 +4730,8 @@ msgid ""
 "MS HTML Help functions are unavailable because the MS HTML Help library is "
 "not installed on this machine. Please install it."
 msgstr ""
-"Funzionalità Guida HTML MS non disponibili perchè la relativa libreria non è "
-"installata in questo computer. Installa la libreria."
+"Funzionalità Guida HTML MS non disponibili perchè la relativa libreria non è"
+" installata in questo computer. Installa la libreria."
 
 #: ../src/univ/themes/win32.cpp:3754
 msgid "Ma&ximize"
@@ -5107,13 +5112,11 @@ msgstr "Voci non trovate."
 msgid ""
 "No font for displaying text in encoding '%s' found,\n"
 "but an alternative encoding '%s' is available.\n"
-"Do you want to use this encoding (otherwise you will have to choose another "
-"one)?"
+"Do you want to use this encoding (otherwise you will have to choose another one)?"
 msgstr ""
 "Impossibile trovare un tipo di carattere per la codifica '%s',\n"
 "ma è disponibile la codifica alternativa '%s'.\n"
-"Vuoi utilizzare tale codifica (altrimenti sarà necessario sceglierne una "
-"differente)?"
+"Vuoi utilizzare tale codifica (altrimenti sarà necessario sceglierne una differente)?"
 
 #: ../src/common/fontmap.cpp:426
 #, c-format
@@ -5882,8 +5885,7 @@ msgstr "Stampa"
 
 #: ../src/common/debugrpt.cpp:560
 #, c-format
-msgid ""
-"Processing debug report has failed, leaving the files in \"%s\" directory."
+msgid "Processing debug report has failed, leaving the files in \"%s\" directory."
 msgstr ""
 "L'elaborazione della segnalazione di errore è fallita, i file sono "
 "memorizzati nella cartella \"%s\"."
@@ -5991,8 +5993,7 @@ msgid ""
 "deleting it will leave your system in unusable state:\n"
 "operation aborted."
 msgstr ""
-"Chiave '%s' del registro di sistema necessaria per un corretto funzionamento "
-"del sistema.\n"
+"Chiave '%s' del registro di sistema necessaria per un corretto funzionamento del sistema.\n"
 "La cancellazione renderebbe il sistema inutilizzabile:\n"
 "Operazione abbandonata."
 
@@ -6049,8 +6050,8 @@ msgstr "Rimuovi la pagina corrente dai segnalibri"
 #, c-format
 msgid "Renderer \"%s\" has incompatible version %d.%d and couldn't be loaded."
 msgstr ""
-"Il renderer \"%s\" ha una versione %d.%d che non è compatibile, quindi non è "
-"stato caricato."
+"Il renderer \"%s\" ha una versione %d.%d che non è compatibile, quindi non è"
+" stato caricato."
 
 #: ../src/richtext/richtextbuffer.cpp:4527
 msgid "Renumber List"
@@ -6776,13 +6777,11 @@ msgstr ""
 #: ../src/html/htmprint.cpp:271
 #, c-format
 msgid ""
-"The document \"%s\" doesn't fit on the page horizontally and will be "
-"truncated if printed.\n"
+"The document \"%s\" doesn't fit on the page horizontally and will be truncated if printed.\n"
 "\n"
 "Would you like to proceed with printing it nevertheless?"
 msgstr ""
-"Il documento \"%s\" non è adattato alla pagina orizzontalmente e verrà "
-"troncato in fase di stampa.\n"
+"Il documento \"%s\" non è adattato alla pagina orizzontalmente e verrà troncato in fase di stampa.\n"
 "\n"
 "Procedere comunue con la stampa?"
 
@@ -6944,14 +6943,11 @@ msgstr "Intervallo da visualizzare."
 
 #: ../src/generic/dbgrptg.cpp:322
 msgid ""
-"The report contains the files listed below. If any of these files contain "
-"private information,\n"
+"The report contains the files listed below. If any of these files contain private information,\n"
 "please uncheck them and they will be removed from the report.\n"
 msgstr ""
-"La segnalazione contiene i file elencati. Se qualcuno di questi file "
-"contenesse informazioni\n"
-"private, rimuovi il segno di spunta per prevenirne l'inclusione nella "
-"segnalazione.\n"
+"La segnalazione contiene i file elencati. Se qualcuno di questi file contenesse informazioni\n"
+"private, rimuovi il segno di spunta per prevenirne l'inclusione nella segnalazione.\n"
 
 #: ../src/common/cmdline.cpp:1254
 #, c-format
@@ -7090,7 +7086,8 @@ msgstr "L'offset verticale."
 
 #: ../src/richtext/richtextprint.cpp:619 ../src/html/htmprint.cpp:745
 msgid ""
-"There was a problem during page setup: you may need to set a default printer."
+"There was a problem during page setup: you may need to set a default "
+"printer."
 msgstr ""
 "Si è verificato un problema: potrebbe essere necessario impostare una "
 "stampante predefinita."
@@ -7131,8 +7128,8 @@ msgstr ""
 #: ../src/unix/threadpsx.cpp:1794
 msgid "Thread module initialization failed: failed to create thread key"
 msgstr ""
-"Inizializzazione del modulo dei thread fallita: errore nella creazione della "
-"chiave dei thread"
+"Inizializzazione del modulo dei thread fallita: errore nella creazione della"
+" chiave dei thread"
 
 #: ../src/msw/thread.cpp:1228
 msgid ""
@@ -7245,12 +7242,10 @@ msgstr "Tipo deve avere enumeratore - convertito a long"
 
 #: ../src/propgrid/propgridiface.cpp:401
 #, c-format
-msgid ""
-"Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT "
-"\"%s\"."
+msgid "Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT \"%s\"."
 msgstr ""
-"Tipo operazione \"%s\" fallita: etichetta proprietà:  \"%s\" è del tipo  \"%s"
-"\", NON \"%s\"."
+"Tipo operazione \"%s\" fallita: etichetta proprietà:  \"%s\" è del tipo  "
+"\"%s\", NON \"%s\"."
 
 #: ../src/common/paper.cpp:133
 msgid "US Std Fanfold, 14 7/8 x 11 in"
@@ -7974,7 +7969,8 @@ msgstr "Impossibile aggiungere una nuova cartella a questa sezione."
 #: ../src/propgrid/propgrid.cpp:3299
 msgid "You have entered invalid value. Press ESC to cancel editing."
 msgstr ""
-"È stato inserito un valore non valido. Premi 'ESC' per annullare la modifica."
+"È stato inserito un valore non valido. Premi 'ESC' per annullare la "
+"modifica."
 
 #: ../src/common/stockitem.cpp:209
 msgid "Zoom &In"
@@ -8006,13 +8002,11 @@ msgstr "un'applicazione DDEML ha creato una 'race condition' prolungata."
 
 #: ../src/msw/dde.cpp:1129
 msgid ""
-"a DDEML function was called without first calling the DdeInitialize "
-"function,\n"
+"a DDEML function was called without first calling the DdeInitialize function,\n"
 "or an invalid instance identifier\n"
 "was passed to a DDEML function."
 msgstr ""
-"una funzione DDEML è stata richiamata senza prima richiamare DdeInitialize, "
-"oppure è stato passato ad una funzione DDEML\n"
+"una funzione DDEML è stata richiamata senza prima richiamare DdeInitialize, oppure è stato passato ad una funzione DDEML\n"
 "un identificatore di istanza non valido."
 
 #: ../src/msw/dde.cpp:1147
@@ -8040,7 +8034,8 @@ msgstr ""
 #: ../src/msw/dde.cpp:1135
 msgid "a request for a synchronous execute transaction has timed out."
 msgstr ""
-"una richiesta di transazione sincrona (execute) ha superato il tempo massimo."
+"una richiesta di transazione sincrona (execute) ha superato il tempo "
+"massimo."
 
 #: ../src/msw/dde.cpp:1153
 msgid "a request for a synchronous poke transaction has timed out."
@@ -8097,8 +8092,7 @@ msgid ""
 "Once the application has returned from an XTYP_XACT_COMPLETE callback,\n"
 "the transaction identifier for that callback is no longer valid."
 msgstr ""
-"è stato fornito un identificatore di transazione non valido ad una funzione "
-"DDEML.\n"
+"è stato fornito un identificatore di transazione non valido ad una funzione DDEML.\n"
 "Una volta che l'applicazione è uscita da una callback XTYP_XACT_COMPLETE,\n"
 "l'identificatore di transazione per questa callback non è più valido."
 
@@ -8407,7 +8401,8 @@ msgstr "file '%s', linea %zu: atteso '='."
 #: ../src/common/fileconf.cpp:631
 #, c-format
 msgid "file '%s', line %zu: key '%s' was first found at line %d."
-msgstr "file '%s', linea %zu la chiave '%s' è già stata trovata alla linea %d."
+msgstr ""
+"file '%s', linea %zu la chiave '%s' è già stata trovata alla linea %d."
 
 #: ../src/common/fileconf.cpp:621
 #, c-format
@@ -8738,7 +8733,8 @@ msgstr "standard/triangolo"
 
 #: ../src/common/zipstrm.cpp:1985
 msgid "stored file length not in Zip header"
-msgstr "la lunghezza del file non è memorizzata nell'intestazione del file ZIP"
+msgstr ""
+"la lunghezza del file non è memorizzata nell'intestazione del file ZIP"
 
 #: ../src/common/cmdline.cpp:1488
 msgid "str"
@@ -8993,15 +8989,13 @@ msgstr "~"
 #~ msgstr "Data renderizzazione non può rendere valore; tipo valore:"
 
 #~ msgid ""
-#~ "Do you want to overwrite the command used to %s files with extension \"%s"
-#~ "\" ?\n"
+#~ "Do you want to overwrite the command used to %s files with extension \"%s\" ?\n"
 #~ "Current value is \n"
 #~ "%s, \n"
 #~ "New value is \n"
 #~ "%s %1"
 #~ msgstr ""
-#~ "Si desidera modificare il comando utilizzato per %s i file con estensione "
-#~ "\"%s\"?\n"
+#~ "Si desidera modificare il comando utilizzato per %s i file con estensione \"%s\"?\n"
 #~ "Il valore corrente è \n"
 #~ "%s, \n"
 #~ "Il nuovo valore è \n"
@@ -9038,11 +9032,10 @@ msgstr "~"
 #~ msgid "No column for the specified column position existing."
 #~ msgstr "Nessuna colonna per la posizione esistente specificata."
 
-#~ msgid ""
-#~ "No renderer or invalid renderer type specified for custom data column."
+#~ msgid "No renderer or invalid renderer type specified for custom data column."
 #~ msgstr ""
-#~ "Nessuna o renderizzazione o tipo renderizzazione specificata non valida "
-#~ "per i dati personali colonna."
+#~ "Nessuna o renderizzazione o tipo renderizzazione specificata non valida per "
+#~ "i dati personali colonna."
 
 #~ msgid "No renderer specified for column."
 #~ msgstr "Nessuna renderizzazione specificata per la colonna."
@@ -9075,8 +9068,7 @@ msgstr "~"
 #~ msgid "Rendering failed."
 #~ msgstr "Renderizzazione fallita."
 
-#~ msgid ""
-#~ "Setting directory access times is not supported under this OS version"
+#~ msgid "Setting directory access times is not supported under this OS version"
 #~ msgstr ""
 #~ "Impostazione accesso temporizzato all cartella non è supportato da questo "
 #~ "sistema operativo."
@@ -9468,8 +9460,7 @@ msgstr "~"
 #~ msgstr "9"
 
 #~ msgid "Can't monitor non-existent path \"%s\" for changes."
-#~ msgstr ""
-#~ "Impossibile monitorare cambiamenti del percorso non esistente \"%s\"."
+#~ msgstr "Impossibile monitorare cambiamenti del percorso non esistente \"%s\"."
 
 #~ msgid "File system containing watched object was unmounted"
 #~ msgstr "Il file system contiene oggetti monitorati che sono stati smontati"
@@ -9602,15 +9593,14 @@ msgstr "~"
 
 #~ msgid "Cannot convert dialog units: dialog unknown."
 #~ msgstr ""
-#~ "Impossibile convertire le unità di misura del riquadro di dialogo: "
-#~ "riguadro di dialogo sconosciuto."
+#~ "Impossibile convertire le unità di misura del riquadro di dialogo: riguadro "
+#~ "di dialogo sconosciuto."
 
 #~ msgid "Cannot convert from the charset '%s'!"
 #~ msgstr "Impossibile convertire il set di caratteri '%s'!"
 
 #~ msgid "Cannot find container for unknown control '%s'."
-#~ msgstr ""
-#~ "Impossibile trovare il contenitore per il controllo sconosciuto '%s'."
+#~ msgstr "Impossibile trovare il contenitore per il controllo sconosciuto '%s'."
 
 #~ msgid "Cannot find font node '%s'."
 #~ msgstr "Impossibile trovare il nodo di tipo font '%s'."
@@ -9655,20 +9645,17 @@ msgstr "~"
 #~ msgstr "Potresti aggiungere la colonna alle strutture interne."
 
 #~ msgid ""
-#~ "Could not resolve control class or id '%s'. Use (non-zero) integer "
-#~ "instead\n"
+#~ "Could not resolve control class or id '%s'. Use (non-zero) integer instead\n"
 #~ " or provide #define (see manual for caveats)"
 #~ msgstr ""
-#~ "Impossibile risolvere la classe del controllo o l'id '%s'. Impiegare in "
-#~ "sostituzione un intero (non nullo)\n"
+#~ "Impossibile risolvere la classe del controllo o l'id '%s'. Impiegare in sostituzione un intero (non nullo)\n"
 #~ " o fornire #define (vedere il manuale per avvertimenti)"
 
 #~ msgid ""
 #~ "Could not resolve menu id '%s'. Use (non-zero) integer instead\n"
 #~ "or provide #define (see manual for caveats)"
 #~ msgstr ""
-#~ "Impossibile risolvere l'id del menu '%s'. Impiegare in sostituzione un "
-#~ "intero (non nullo)\n"
+#~ "Impossibile risolvere l'id del menu '%s'. Impiegare in sostituzione un intero (non nullo)\n"
 #~ " o fornire #define (vedere il manuale per avvertimenti)"
 
 #~ msgid "Could not unlock mutex"
@@ -9741,11 +9728,11 @@ msgstr "~"
 #~ msgstr "Vai alla pagina"
 
 #~ msgid ""
-#~ "HTML pagination algorithm generated more than the allowed maximum number "
-#~ "of pages and it can't continue any longer!"
+#~ "HTML pagination algorithm generated more than the allowed maximum number of "
+#~ "pages and it can't continue any longer!"
 #~ msgstr ""
-#~ "L'algoritmo di paginazione HTML ha generato un numero di pagine maggiore "
-#~ "di quello consentito e non è in grado di proseguire!"
+#~ "L'algoritmo di paginazione HTML ha generato un numero di pagine maggiore di "
+#~ "quello consentito e non è in grado di proseguire!"
 
 #~ msgid "I64"
 #~ msgstr "I64"
@@ -9764,8 +9751,7 @@ msgstr "~"
 
 #~ msgid "Invalid XRC resource '%s': doesn't have root node 'resource'."
 #~ msgstr ""
-#~ "Risorsa XRC '%s' non valida: il nodo radice deve essere di tipo "
-#~ "'resource'."
+#~ "Risorsa XRC '%s' non valida: il nodo radice deve essere di tipo 'resource'."
 
 #~ msgid "Long Conversions not supported"
 #~ msgstr "Long conversion non supportata"
@@ -9828,11 +9814,10 @@ msgstr "~"
 #~ msgstr "Spiacente, impossibile salvare il file."
 
 #~ msgid ""
-#~ "Sorry, docking is not supported for ports other than wxMSW, wxMac and "
-#~ "wxGTK"
+#~ "Sorry, docking is not supported for ports other than wxMSW, wxMac and wxGTK"
 #~ msgstr ""
-#~ "Mi dispiace ma docking non è supportato per le porte tranne che per "
-#~ "wxMSW, wxMac e wxGTK"
+#~ "Mi dispiace ma docking non è supportato per le porte tranne che per wxMSW, "
+#~ "wxMac e wxGTK"
 
 #~ msgid "Sorry, print preview needs a printer to be installed."
 #~ msgstr "Spiacente, l'anteprima di stampa richiede una stampante installata."
@@ -9840,8 +9825,7 @@ msgstr "~"
 #~ msgid "Status: "
 #~ msgstr "Stato: "
 
-#~ msgid ""
-#~ "Streaming delegates for not already streamed objects not yet supported"
+#~ msgid "Streaming delegates for not already streamed objects not yet supported"
 #~ msgstr "Streaming con oggetti non stream non ancora supportato"
 
 #~ msgid "String conversions not supported"
@@ -9849,8 +9833,7 @@ msgstr "~"
 
 #~ msgid "Subclass '%s' not found for resource '%s', not subclassing!"
 #~ msgstr ""
-#~ "Sottoclasse '%s' non trovata per la risorsa '%s', subclassing non "
-#~ "eseguito!"
+#~ "Sottoclasse '%s' non trovata per la risorsa '%s', subclassing non eseguito!"
 
 #~ msgid "TIFF library error."
 #~ msgstr "Errore della libreria TIFF."
@@ -9859,14 +9842,14 @@ msgstr "~"
 #~ msgstr "messaggio di avviso della libreria TIFF."
 
 #~ msgid ""
-#~ "The data format for the GET-direction of the to be added data object "
-#~ "already exists"
+#~ "The data format for the GET-direction of the to be added data object already"
+#~ " exists"
 #~ msgstr ""
 #~ "Il formato dati per la direzione-GET dell'oggetto dati aggiunto esiste già"
 
 #~ msgid ""
-#~ "The data format for the SET-direction of the to be added data object "
-#~ "already exists"
+#~ "The data format for the SET-direction of the to be added data object already"
+#~ " exists"
 #~ msgstr ""
 #~ "Il formato dati per la direzione-SET dell'oggetto dati aggiunto esiste già"
 
@@ -9929,8 +9912,7 @@ msgstr "~"
 #~ msgstr "Risorsa XRC: Impossibile creare una bitmap a partire da '%s'."
 
 #~ msgid "XRC resource: Incorrect colour specification '%s' for property '%s'."
-#~ msgstr ""
-#~ "Risorsa XRC: Specifica di colore '%s' errata per la proprietà '%s'.'"
+#~ msgstr "Risorsa XRC: Specifica di colore '%s' errata per la proprietà '%s'.'"
 
 #~ msgid "[EMPTY]"
 #~ msgstr "[VUOTO]"

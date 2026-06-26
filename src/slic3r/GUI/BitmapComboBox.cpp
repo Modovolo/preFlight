@@ -38,6 +38,7 @@
 #include "Plater.hpp"
 #include "MainFrame.hpp"
 #include "format.hpp"
+#include "Widgets/UIColors.hpp"
 
 // A workaround for a set of issues related to text fitting into gtk widgets:
 // Fix for bitmap combo box appearance
@@ -169,7 +170,8 @@ void BitmapComboBox::DrawBackground_(wxDC& dc, const wxRect& rect, int WXUNUSED(
     }
     else
     {
-        dc.SetTextForeground(flags & ODCB_PAINTING_DISABLED ? wxColour(108,108,108) : wxGetApp().get_label_clr_default());
+        dc.SetTextForeground(flags & ODCB_PAINTING_DISABLED ? UIColors::InputForegroundDisabled() :
+                                                              wxGetApp().get_label_clr_default());
 
         wxColour selCol = flags & ODCB_PAINTING_DISABLED ?
 #ifdef _MSW_DARK_MODE

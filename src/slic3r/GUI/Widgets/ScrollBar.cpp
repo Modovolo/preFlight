@@ -101,11 +101,17 @@ void ScrollBar::OnPaint(wxPaintEvent &event)
     // No track - just draw the thumb directly on the background for cleaner look
     dc.SetPen(*wxTRANSPARENT_PEN);
 
-    // Thumb colors
-    wxColour thumbColor = is_dark ? wxColour(80, 75, 68)       // Warm medium gray
-                                  : wxColour(180, 175, 168);   // Medium warm gray
-    wxColour thumbHoverColor = is_dark ? wxColour(100, 95, 85) // Lighter on hover
-                                       : wxColour(160, 155, 148);
+    // Themed thumb: a visible accent-tinted mid-tone at rest (the accent blended ~50% over the track it is
+    // drawn on, so it reads as subtly themed without being a glowing bar), full accent on hover/drag.
+    const wxColour accent = UIColors::AccentPrimary();
+    auto blend = [](unsigned char from, unsigned char to, double t) -> unsigned char
+    {
+        return (unsigned char) std::max(0, std::min(255, int(from + (to - from) * t + 0.5)));
+    };
+    const double rest_t = 0.5; // 0 = track bg, 1 = full accent
+    wxColour thumbColor(blend(bgColor.Red(), accent.Red(), rest_t), blend(bgColor.Green(), accent.Green(), rest_t),
+                        blend(bgColor.Blue(), accent.Blue(), rest_t));
+    wxColour thumbHoverColor = accent;
 
     // Check if mouse is over thumb for hover effect
     wxPoint mousePos = ScreenToClient(wxGetMousePosition());

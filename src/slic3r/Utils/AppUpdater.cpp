@@ -507,7 +507,12 @@ void AppUpdater::priv::parse_version_string(const std::string &body)
         platform_section = "release:win-amd64";
 #endif
 #elif __APPLE__
+        // Apple Silicon uses the default osx section; Intel builds fetch the x86_64 asset
+#ifdef __aarch64__
         platform_section = "release:osx";
+#else
+        platform_section = "release:osx-x64";
+#endif
 #else
         {
             // Map uname machine to release section (e.g. release:linux-amd64, release:linux-aarch64)

@@ -207,8 +207,7 @@ bool check_dark_mode()
 #ifdef _WIN32
 void update_dark_ui(wxWindow *window)
 {
-    bool is_dark = wxGetApp().app_config->get_bool(
-        "dark_color_mode"); // ? true : check_dark_mode();// #ysDarkMSW - Allow it when we deside to support the sustem colors for application
+    bool is_dark = wxGetApp().dark_mode(); // active theme's is_dark
     // UNIFIED THEMING: Use UIColors for ALL themes, not wxSystemSettings
     // This ensures our custom colors are used instead of Windows system colors
     window->SetBackgroundColour(is_dark ? UIColors::PanelBackgroundDark() : UIColors::PanelBackgroundLight());
@@ -223,6 +222,18 @@ void update_dark_ui(wxWindow *window)
         NppDarkMode::AllowDarkModeForWindow(tlw->GetHWND());
         NppDarkMode::SetDarkTitleBar(tlw->GetHWND());
     }
+}
+#elif defined(__APPLE__)
+void update_dark_ui(wxWindow *window)
+{
+    // macOS: GUI_App::UpdateDarkUI is a no-op, so theme the window background here - otherwise the dialog
+    // (and its plain container panels) show the native gray instead of the active theme. Scoped to dialogs
+    // and panels; frames own their surfaces, and self-themed controls are never passed here.
+    if (!dynamic_cast<wxDialog *>(window) && !dynamic_cast<wxPanel *>(window))
+        return;
+    const bool is_dark = wxGetApp().dark_mode();
+    window->SetBackgroundColour(is_dark ? UIColors::PanelBackgroundDark() : UIColors::PanelBackgroundLight());
+    window->SetForegroundColour(is_dark ? UIColors::InputForegroundDark() : UIColors::InputForegroundLight());
 }
 #endif
 

@@ -14,8 +14,13 @@
 namespace DoubleSlider
 {
 
-// Theme-independent colors
-const ImU32 thumb_bg_clr = ImGui::ColorConvertFloat4ToU32(ImGuiPureWrap::COL_ORANGE_LIGHT);
+// preFlight: themed accent fill for the slider thumbs / value labels. Must be a runtime function, not a
+// static const: a const initialized at program start would freeze the default orange before the theme
+// loads (and would never follow an in-process theme switch).
+inline ImU32 get_thumb_fill_clr()
+{
+    return ImGui::ColorConvertFloat4ToU32(ImGuiPureWrap::COL_ORANGE_LIGHT);
+}
 
 // Theme-aware color helpers (computed at runtime)
 inline ImU32 get_label_bg_clr()
@@ -380,7 +385,7 @@ void ImGuiControl::draw_scroll_line(const ImRect &scroll_line, const ImRect &sli
     if (m_cb_draw_scroll_line)
         m_cb_draw_scroll_line(scroll_line, slideable_region);
     else
-        ImGui::RenderFrame(scroll_line.Min, scroll_line.Max, thumb_bg_clr, false, m_draw_opts.rounding());
+        ImGui::RenderFrame(scroll_line.Min, scroll_line.Max, get_thumb_fill_clr(), false, m_draw_opts.rounding());
 }
 
 void ImGuiControl::draw_background(const ImRect &slideable_region)
@@ -474,8 +479,8 @@ void ImGuiControl::draw_label(std::string label, const ImRect &thumb, bool is_mi
                                     : pos_1 + ImVec2(triangle_offset_x_b, 0.f);
         }
 
-        ImGui::RenderFrame(text_rect_b.Min, text_rect_b.Max, thumb_bg_clr, true, rounding);
-        ImGui::GetCurrentWindow()->DrawList->AddTriangleFilled(pos_1, pos_2, pos_3, thumb_bg_clr);
+        ImGui::RenderFrame(text_rect_b.Min, text_rect_b.Max, get_thumb_fill_clr(), true, rounding);
+        ImGui::GetCurrentWindow()->DrawList->AddTriangleFilled(pos_1, pos_2, pos_3, get_thumb_fill_clr());
     }
 
     ImVec2 pos_1 = is_horizontal() ? ImVec2(text_rect.Min.x + rounding, text_rect.Max.y)
@@ -491,10 +496,11 @@ void ImGuiControl::draw_label(std::string label, const ImRect &thumb, bool is_mi
         pos_3 = is_horizontal() ? pos_1 - ImVec2(0.f, triangle_offset_y) : pos_1 + ImVec2(triangle_offset_x, 0.f);
     }
 
-    // Orange background with black text for visibility
-    ImGui::RenderFrame(text_rect.Min, text_rect.Max, thumb_bg_clr, true, rounding);
-    ImGui::GetCurrentWindow()->DrawList->AddTriangleFilled(pos_1, pos_2, pos_3, thumb_bg_clr);
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+    // Accent fill with the themed glyph color (matches the Slice/Export button).
+    const wxColour &atc = Slic3r::GUI::active_palette().accent_text;
+    ImGui::RenderFrame(text_rect.Min, text_rect.Max, get_thumb_fill_clr(), true, rounding);
+    ImGui::GetCurrentWindow()->DrawList->AddTriangleFilled(pos_1, pos_2, pos_3, get_thumb_fill_clr());
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(atc.Red() / 255.0f, atc.Green() / 255.0f, atc.Blue() / 255.0f, 1.0f));
     ImGui::RenderText(text_start + text_padding, label.c_str());
     ImGui::PopStyleColor();
 
@@ -516,7 +522,7 @@ void ImGuiControl::draw_thumb(const ImVec2 &center, bool mark /* = false*/)
     // Theme-aware border color for thumb
     const ImU32 thumb_border = get_border_clr();
     ImGuiPureWrap::draw_hexagon(center, radius, thumb_border, hexagon_angle, rounding);
-    ImGuiPureWrap::draw_hexagon(center, radius - line_width, thumb_bg_clr, hexagon_angle, rounding);
+    ImGuiPureWrap::draw_hexagon(center, radius - line_width, get_thumb_fill_clr(), hexagon_angle, rounding);
 
     if (mark)
     {

@@ -8,6 +8,7 @@
 
 #include "GLToolbar.hpp"
 #include "InputEvents_wx.hpp"
+#include "ThemePalette.hpp"
 
 #include "slic3r/GUI/GLCanvas3D.hpp"
 #include "slic3r/GUI/GUI_App.hpp"
@@ -1472,7 +1473,16 @@ void GLToolbar::render_horizontal(const GLCanvas3D &parent)
     const float right = left + width;
     const float bottom = top - height;
 
-    render_background(left, top, right, bottom, border_w, border_h);
+    // preFlight: themed solid backdrop, corners rounded only on the canvas-facing side
+    // (per-item highlights below keep the texture / brand color).
+    {
+        const Slic3r::GUI::RGBAf &bg = Slic3r::GUI::active_palette().toolbar_background;
+        const float radius_x = 2.0f * 8.0f * inv_cnv_w;
+        const float radius_y = 2.0f * 8.0f * inv_cnv_h;
+        const bool vtop = (m_layout.vertical_orientation == Layout::VO_Top);
+        GLTexture::render_solid_quad(left, right, bottom, top, bg.r, bg.g, bg.b, bg.a, radius_x, radius_y,
+                                     /*tl*/ !vtop, /*tr*/ !vtop, /*bl*/ vtop, /*br*/ vtop);
+    }
 
     const float margin_w = border_w + gap_size_x;
     const float margin_h = border_h + gap_size_y;
@@ -1541,7 +1551,16 @@ void GLToolbar::render_vertical(const GLCanvas3D &parent)
     const float right = left + width;
     const float bottom = top - height;
 
-    render_background(left, top, right, bottom, border_w, border_h);
+    // preFlight: themed solid backdrop, corners rounded only on the canvas-facing side
+    // (per-item highlights below keep the texture / brand color).
+    {
+        const Slic3r::GUI::RGBAf &bg = Slic3r::GUI::active_palette().toolbar_background;
+        const float radius_x = 2.0f * 8.0f * inv_cnv_w;
+        const float radius_y = 2.0f * 8.0f * inv_cnv_h;
+        const bool hleft = (m_layout.horizontal_orientation == Layout::HO_Left);
+        GLTexture::render_solid_quad(left, right, bottom, top, bg.r, bg.g, bg.b, bg.a, radius_x, radius_y,
+                                     /*tl*/ !hleft, /*tr*/ hleft, /*bl*/ !hleft, /*br*/ hleft);
+    }
 
     left += border_w + gap_size_x;
     top -= border_h + gap_size_y;

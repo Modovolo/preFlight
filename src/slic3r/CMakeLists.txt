@@ -146,6 +146,8 @@ set(SLIC3R_GUI_SOURCES
     GUI/GUI_Utils.hpp
     GUI/Theme.cpp
     GUI/Theme.hpp
+    GUI/ThemePalette.cpp
+    GUI/ThemePalette.hpp
     GUI/GUI_Geometry.cpp
     GUI/GUI_Geometry.hpp
     GUI/I18N.cpp
@@ -204,6 +206,8 @@ set(SLIC3R_GUI_SOURCES
     GUI/OG_CustomCtrl.hpp
     GUI/BedShapeDialog.cpp
     GUI/BedShapeDialog.hpp
+    GUI/ThumbnailsDialog.cpp
+    GUI/ThumbnailsDialog.hpp
     GUI/2DBed.cpp
     GUI/2DBed.hpp
     GUI/3DBed.cpp

@@ -11,6 +11,7 @@
 #include "GUI_App.hpp"
 #include "GUI_Init.hpp" // IWYU pragma: keep
 #include "Widgets/UIColors.hpp"
+#include "ThemePalette.hpp"
 #include "GUI_ObjectList.hpp"
 #include "GUI_ObjectManipulation.hpp"
 #include "GUI_Factories.hpp"
@@ -58,6 +59,7 @@
 #include <wx/richmsgdlg.h>
 #include <wx/log.h>
 #include <wx/intl.h>
+#include <wx/hyperlink.h>
 
 #include <wx/dialog.h>
 #include <wx/textctrl.h>
@@ -128,6 +130,9 @@
 #ifdef __WXMSW__
 #include <dbt.h>
 #include <shlobj.h>
+#include <d3d11.h>
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "dxgi.lib")
 // Define _MSW_DARK_MODE to enable dark mode code paths with our implementation
 #define _MSW_DARK_MODE
 #include "DarkMode.hpp"
@@ -160,6 +165,205 @@ namespace GUI
 {
 
 class MainFrame;
+
+#ifdef __WXMSW__
+// DirectComposition splash - renders through a DWM pipeline immune to nVidia's OpenGL ICD.
+// Uses a raw Win32 popup (WS_EX_NOREDIRECTIONBITMAP at CreateWindowEx time) + DComp surface.
+MIDL_INTERFACE("C37EA93A-E7AA-450D-B16F-9746CB0407F3") IDCompositionDevice : public IUnknown
+{
+public:
+    virtual HRESULT STDMETHODCALLTYPE Commit() = 0;
+    virtual HRESULT STDMETHODCALLTYPE WaitForCommitCompletion() = 0;
+    virtual HRESULT STDMETHODCALLTYPE GetFrameStatistics(void *) = 0;
+    virtual HRESULT STDMETHODCALLTYPE CreateTargetForHwnd(HWND, BOOL, void **) = 0;
+    virtual HRESULT STDMETHODCALLTYPE CreateVisual(void **) = 0;
+};
+MIDL_INTERFACE("EACDD04C-117E-4E17-88F4-D1B12B0E3D89") IDCompositionTarget : public IUnknown
+{
+public:
+    virtual HRESULT STDMETHODCALLTYPE SetRoot(IUnknown *) = 0;
+};
+MIDL_INTERFACE("4D93059D-097B-4651-9A60-F0F25116E2F3") IDCompositionVisual : public IUnknown
+{
+public:
+    virtual HRESULT STDMETHODCALLTYPE SetOffsetX_1(void *) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetOffsetX_2(float) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetOffsetY_1(void *) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetOffsetY_2(float) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetTransform_1(void *) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetTransform_2(void *) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetTransformParent(IUnknown *) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetEffect(IUnknown *) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetBitmapInterpolationMode(int) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetBorderMode(int) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetClip_1(void *) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetClip_2(void *) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetContent(IUnknown *) = 0;
+};
+
+typedef HRESULT(WINAPI *PFN_DCompositionCreateDevice)(IDXGIDevice *, REFIID, void **);
+
+struct DCompSplash
+{
+    HWND hwnd{NULL};
+    IDCompositionDevice *device{nullptr};
+    IDCompositionTarget *target{nullptr};
+    IDCompositionVisual *visual{nullptr};
+
+    // Create the splash at physical pixel dimensions. The caller provides the bitmap
+    // already rendered at the correct DPI scale (the SVG rasterizer handles this).
+    bool Create(HINSTANCE hInst, int x, int y, int w, int h, const wxImage &img)
+    {
+        // Guard against double-Create without Close
+        if (hwnd)
+            Close();
+
+        static bool s_class_registered = false;
+        if (!s_class_registered)
+        {
+            WNDCLASSW wc = {};
+            wc.hInstance = hInst;
+            wc.lpszClassName = L"pfSplash";
+            wc.lpfnWndProc = DefWindowProcW;
+            RegisterClassW(&wc);
+            s_class_registered = true;
+        }
+
+        hwnd = CreateWindowExW(WS_EX_NOREDIRECTIONBITMAP | WS_EX_TOPMOST | WS_EX_TOOLWINDOW, L"pfSplash", L"",
+                               WS_POPUP | WS_VISIBLE, x, y, w, h, NULL, NULL, hInst, NULL);
+        if (!hwnd)
+            return false;
+
+        ID3D11Device *d3d = nullptr;
+        D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, NULL,
+                          D3D11_CREATE_DEVICE_BGRA_SUPPORT | D3D11_CREATE_DEVICE_SINGLETHREADED, nullptr, 0,
+                          D3D11_SDK_VERSION, &d3d, nullptr, nullptr);
+        if (!d3d)
+        {
+            DestroyWindow(hwnd);
+            hwnd = NULL;
+            return false;
+        }
+
+        IDXGIDevice *dxgi = nullptr;
+        d3d->QueryInterface(__uuidof(IDXGIDevice), (void **) &dxgi);
+
+        // LOAD_LIBRARY_SEARCH_SYSTEM32 prevents DLL planting from CWD
+        HMODULE hDcomp = LoadLibraryExA("dcomp.dll", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
+        auto pfnCreate = hDcomp ? (PFN_DCompositionCreateDevice) GetProcAddress(hDcomp, "DCompositionCreateDevice")
+                                : nullptr;
+
+        if (pfnCreate && dxgi)
+        {
+            pfnCreate(dxgi, __uuidof(IDCompositionDevice), (void **) &device);
+            if (device)
+            {
+                HRESULT hr1 = device->CreateTargetForHwnd(hwnd, TRUE, (void **) &target);
+                HRESULT hr2 = device->CreateVisual((void **) &visual);
+
+                if (FAILED(hr1) || FAILED(hr2) || !target || !visual)
+                {
+                    // Cleanup partial state and bail
+                    if (dxgi)
+                        dxgi->Release();
+                    d3d->Release();
+                    Close();
+                    return false;
+                }
+
+                // CreateSurface: vtable index 8 (IUnknown[3] + Commit,Wait,GetFrame,CreateTarget,CreateVisual,CreateSurface)
+                // These offsets are frozen by COM binary compatibility for the interface GUID above.
+                typedef HRESULT(STDMETHODCALLTYPE * PFN_CreateSurface)(void *, UINT, UINT, DXGI_FORMAT, UINT, void **);
+                auto fnCreateSurface = (PFN_CreateSurface) (*(void ***) device)[8];
+                IUnknown *surface = nullptr;
+                fnCreateSurface(device, w, h, DXGI_FORMAT_B8G8R8A8_UNORM, 1 /*DXGI_ALPHA_MODE_PREMULTIPLIED*/,
+                                (void **) &surface);
+
+                if (surface)
+                {
+                    // BeginDraw/EndDraw: vtable index 3/4 (IUnknown[3] + BeginDraw, EndDraw)
+                    typedef HRESULT(STDMETHODCALLTYPE * PFN_BeginDraw)(void *, const RECT *, REFIID, void **, POINT *);
+                    typedef HRESULT(STDMETHODCALLTYPE * PFN_EndDraw)(void *);
+                    auto fnBeginDraw = (PFN_BeginDraw) (*(void ***) surface)[3];
+                    auto fnEndDraw = (PFN_EndDraw) (*(void ***) surface)[4];
+
+                    POINT offset = {};
+                    ID3D11Texture2D *tex = nullptr;
+                    if (SUCCEEDED(fnBeginDraw(surface, nullptr, __uuidof(ID3D11Texture2D), (void **) &tex, &offset)))
+                    {
+                        std::vector<unsigned char> pixels(w * h * 4);
+                        unsigned char *src_rgb = img.GetData();
+                        unsigned char *src_a = img.HasAlpha() ? img.GetAlpha() : nullptr;
+                        for (int py = 0; py < h; py++)
+                            for (int px = 0; px < w; px++)
+                            {
+                                int si = py * w + px;
+                                int di = si * 4;
+                                unsigned char a = src_a ? src_a[si] : 255;
+                                pixels[di + 0] = (src_rgb[si * 3 + 2] * a + 127) / 255; // B
+                                pixels[di + 1] = (src_rgb[si * 3 + 1] * a + 127) / 255; // G
+                                pixels[di + 2] = (src_rgb[si * 3 + 0] * a + 127) / 255; // R
+                                pixels[di + 3] = a;
+                            }
+
+                        ID3D11DeviceContext *ctx = nullptr;
+                        d3d->GetImmediateContext(&ctx);
+                        D3D11_BOX box = {(UINT) offset.x,       (UINT) offset.y,       0,
+                                         (UINT) (offset.x + w), (UINT) (offset.y + h), 1};
+                        ctx->UpdateSubresource(tex, 0, &box, pixels.data(), w * 4, 0);
+                        ctx->Release();
+                        tex->Release();
+                        fnEndDraw(surface);
+                    }
+                    visual->SetContent(surface);
+                    surface->Release();
+                }
+                target->SetRoot(visual);
+                device->Commit();
+            }
+        }
+
+        if (dxgi)
+            dxgi->Release();
+        d3d->Release();
+
+        // If DComp setup failed, destroy the orphaned window
+        if (!device)
+        {
+            DestroyWindow(hwnd);
+            hwnd = NULL;
+            return false;
+        }
+        return true;
+    }
+
+    void Close()
+    {
+        if (visual)
+        {
+            visual->Release();
+            visual = nullptr;
+        }
+        if (target)
+        {
+            target->Release();
+            target = nullptr;
+        }
+        if (device)
+        {
+            device->Release();
+            device = nullptr;
+        }
+        if (hwnd)
+        {
+            DestroyWindow(hwnd);
+            hwnd = NULL;
+        }
+    }
+};
+
+static DCompSplash s_dcomp_splash;
+#endif // __WXMSW__
 
 // wxSplashScreen shows itself in its constructor before we can control it, causing flash on wrong monitor
 // By using wxFrame directly, we control exactly when the window becomes visible
@@ -194,61 +398,64 @@ public:
         wxASSERT(bitmap.IsOk());
 
 #ifdef __WXMSW__
-        HWND hwnd = (HWND) this->GetHandle();
-        if (hwnd)
+        // DirectComposition renders the splash through a pipeline immune to nVidia's OpenGL ICD.
+        // The wxFrame stays hidden; the DComp raw popup provides the visible transparent splash.
         {
-            SetWindowLong(hwnd, GWL_EXSTYLE, GetWindowLong(hwnd, GWL_EXSTYLE) | WS_EX_LAYERED);
-
-            HDC screenDC = GetDC(NULL);
-            HDC memDC = CreateCompatibleDC(screenDC);
-
-            BITMAPINFO bmi = {0};
-            bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-            bmi.bmiHeader.biWidth = bitmap.GetWidth();
-            bmi.bmiHeader.biHeight = -bitmap.GetHeight();
-            bmi.bmiHeader.biPlanes = 1;
-            bmi.bmiHeader.biBitCount = 32;
-            bmi.bmiHeader.biCompression = BI_RGB;
-
-            void *ppvBits;
-            HBITMAP hBitmap = CreateDIBSection(memDC, &bmi, DIB_RGB_COLORS, &ppvBits, NULL, 0);
-
-            if (hBitmap)
+            wxPoint splash_pos = GetPosition();
+            wxImage img = bitmap.ConvertToImage();
+            m_dcomp_ok = s_dcomp_splash.Create(GetModuleHandle(NULL), splash_pos.x, splash_pos.y, bitmap.GetWidth(),
+                                               bitmap.GetHeight(), img);
+        }
+        // Fallback: if DComp isn't available (RDP, no GPU), use the wxFrame with UpdateLayeredWindow.
+        // The nVidia transparency glitch may occur, but the splash at least appears.
+        if (!m_dcomp_ok)
+        {
+            HWND fhwnd = (HWND) this->GetHandle();
+            if (fhwnd)
             {
-                wxImage img = bitmap.ConvertToImage();
-                if (img.HasAlpha())
+                SetWindowLong(fhwnd, GWL_EXSTYLE, GetWindowLong(fhwnd, GWL_EXSTYLE) | WS_EX_LAYERED);
+                HDC screenDC = GetDC(NULL);
+                HDC memDC = CreateCompatibleDC(screenDC);
+                BITMAPINFO bmi = {0};
+                bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+                bmi.bmiHeader.biWidth = bitmap.GetWidth();
+                bmi.bmiHeader.biHeight = -bitmap.GetHeight();
+                bmi.bmiHeader.biPlanes = 1;
+                bmi.bmiHeader.biBitCount = 32;
+                bmi.bmiHeader.biCompression = BI_RGB;
+                void *ppvBits;
+                HBITMAP hBmp = CreateDIBSection(memDC, &bmi, DIB_RGB_COLORS, &ppvBits, NULL, 0);
+                if (hBmp)
                 {
-                    unsigned char *data = (unsigned char *) ppvBits;
-                    for (int y = 0; y < img.GetHeight(); y++)
+                    wxImage img2 = bitmap.ConvertToImage();
+                    if (img2.HasAlpha())
                     {
-                        for (int x = 0; x < img.GetWidth(); x++)
+                        unsigned char *data = (unsigned char *) ppvBits;
+                        unsigned char *rgb = img2.GetData();
+                        unsigned char *alpha = img2.GetAlpha();
+                        int count = img2.GetWidth() * img2.GetHeight();
+                        for (int i = 0; i < count; i++)
                         {
-                            int idx = (y * img.GetWidth() + x) * 4;
-                            unsigned char alpha = img.GetAlpha(x, y);
-                            data[idx + 0] = (img.GetBlue(x, y) * alpha + 127) / 255;
-                            data[idx + 1] = (img.GetGreen(x, y) * alpha + 127) / 255;
-                            data[idx + 2] = (img.GetRed(x, y) * alpha + 127) / 255;
-                            data[idx + 3] = alpha;
+                            unsigned char a = alpha[i];
+                            data[i * 4 + 0] = (rgb[i * 3 + 2] * a + 127) / 255;
+                            data[i * 4 + 1] = (rgb[i * 3 + 1] * a + 127) / 255;
+                            data[i * 4 + 2] = (rgb[i * 3 + 0] * a + 127) / 255;
+                            data[i * 4 + 3] = a;
                         }
                     }
+                    HGDIOBJ oldBmp = SelectObject(memDC, hBmp);
+                    wxPoint p = GetPosition();
+                    POINT ptDst = {p.x, p.y};
+                    SIZE sizeWnd = {bitmap.GetWidth(), bitmap.GetHeight()};
+                    POINT ptSrc = {0, 0};
+                    BLENDFUNCTION blend = {AC_SRC_OVER, 0, 255, AC_SRC_ALPHA};
+                    UpdateLayeredWindow(fhwnd, screenDC, &ptDst, &sizeWnd, memDC, &ptSrc, 0, &blend, ULW_ALPHA);
+                    SelectObject(memDC, oldBmp);
+                    DeleteObject(hBmp);
                 }
-
-                HGDIOBJ oldBitmap = SelectObject(memDC, hBitmap);
-
-                wxPoint target_pos = GetPosition();
-                POINT ptDst = {target_pos.x, target_pos.y};
-                SIZE sizeWnd = {bitmap.GetWidth(), bitmap.GetHeight()};
-                POINT ptSrc = {0, 0};
-                BLENDFUNCTION blend = {AC_SRC_OVER, 0, 255, AC_SRC_ALPHA};
-
-                UpdateLayeredWindow(hwnd, screenDC, &ptDst, &sizeWnd, memDC, &ptSrc, 0, &blend, ULW_ALPHA);
-
-                SelectObject(memDC, oldBitmap);
-                DeleteObject(hBitmap);
+                DeleteDC(memDC);
+                ReleaseDC(NULL, screenDC);
             }
-
-            DeleteDC(memDC);
-            ReleaseDC(NULL, screenDC);
         }
 #else
         // preFlight: Linux/Mac - paint the splash bitmap with transparency support
@@ -329,11 +536,13 @@ public:
              [this](wxCloseEvent &evt)
              {
 #ifdef __WXMSW__
-                 // Set alpha to 0 so the layered window vanishes instantly
-                 // without flashing opaque during destruction
-                 HWND hwnd = (HWND) GetHandle();
-                 if (hwnd)
-                     SetLayeredWindowAttributes(hwnd, 0, 0, LWA_ALPHA);
+                 s_dcomp_splash.Close();
+                 if (!m_dcomp_ok)
+                 {
+                     HWND fhwnd = (HWND) GetHandle();
+                     if (fhwnd)
+                         SetLayeredWindowAttributes(fhwnd, 0, 0, LWA_ALPHA);
+                 }
 #endif
                  Hide();
                  evt.Skip();
@@ -346,7 +555,12 @@ public:
             m_timer.StartOnce(milliseconds);
         }
 
+#ifdef __WXMSW__
+        if (!m_dcomp_ok)
+            Show(); // Fallback: show the wxFrame with UpdateLayeredWindow
+#else
         Show();
+#endif
     }
 
     // API compatibility - text overlay not used in simplified splash
@@ -364,6 +578,9 @@ private:
     wxTimer m_timer;
     wxBitmap m_bitmap;
     bool m_has_alpha{false};
+#ifdef __WXMSW__
+    bool m_dcomp_ok{false};
+#endif
 };
 
 #ifdef __linux__
@@ -1235,11 +1452,12 @@ void GUI_App::init_single_instance_checker(const std::string &name, const std::s
                                                                           boost::nowide::widen(path));
 }
 
-#ifdef __APPLE__
-// preFlight: Custom renderer that draws a 1px outline border for selected items
-// instead of the default macOS blue filled rectangle.  Installed via
-// wxRendererNative::Set() in on_init_inner().  Only affects wxTreeCtrl
-// instances; all other controls fall through to the default renderer.
+#if defined(__APPLE__) || defined(__linux__) || defined(_WIN32)
+// preFlight: Custom renderer that replaces the default platform-specific selection rect with a themed
+// fill. Installed via wxRendererNative::Set() in on_init_inner(). Used by controls that route selection
+// through wxRendererNative: the settings page tree (generic wxTreeCtrl on macOS/Linux) and the object
+// list (generic wxDataViewCtrl on Windows). Native controls (Win32 TreeView, GTK/macOS DataViewCtrl)
+// don't use this and are themed separately.
 class preFlightRendererNative : public wxDelegateRendererNative
 {
 public:
@@ -1247,7 +1465,11 @@ public:
 
     void DrawItemSelectionRect(wxWindow *win, wxDC &dc, const wxRect &rect, int flags = 0) override
     {
-        if (!dynamic_cast<wxTreeCtrl *>(win))
+#ifdef __APPLE__
+        // macOS: muted accent fill on wxTreeCtrl (the settings page tree). Native controls like the
+        // object list (wxDataViewCtrl) don't route through this renderer and are themed separately.
+        auto *tree = dynamic_cast<wxTreeCtrl *>(win);
+        if (!tree)
         {
             m_rendererNative.DrawItemSelectionRect(win, dc, rect, flags);
             return;
@@ -1256,20 +1478,78 @@ public:
         if (!(flags & wxCONTROL_SELECTED))
             return;
 
-        // 1px outline, white in dark mode / black in light mode (matches Windows).
-        // Fill with the actual tree background color to clear the default blue.
-        // NOTE: GetBackgroundColour() returns wrong value on macOS generic tree,
-        // so use the UIColors values directly.
-        bool isDark = mac_dark_mode();
-        wxColour border = isDark ? *wxWHITE : *wxBLACK;
-        wxColour bgCol = isDark ? wxColour(22, 27, 34) : wxColour(250, 248, 244);
+        // GetBackgroundColour is unreliable on the macOS generic tree, so blend over the themed input
+        // background. Muted = 1/4 accent + 3/4 base, matching the Linux selection tint.
+        wxColour accent = UIColors::AccentPrimary();
+        wxColour base = UIColors::InputBackground();
+        wxColour bgCol((accent.Red() + base.Red() * 3) / 4, (accent.Green() + base.Green() * 3) / 4,
+                       (accent.Blue() + base.Blue() * 3) / 4);
 
-        wxDCPenChanger setPen(dc, wxPen(border, 1));
+        wxDCPenChanger setPen(dc, wxPen(bgCol, 1));
         wxDCBrushChanger setBrush(dc, wxBrush(bgCol));
         dc.DrawRectangle(rect);
+
+        // wx forces selected-item text to white on macOS; reset to the item's own themed color.
+        wxColour txt;
+        if (!(tree->GetWindowStyleFlag() & wxTR_MULTIPLE))
+        {
+            wxTreeItemId sel = tree->GetSelection();
+            if (sel.IsOk())
+                txt = tree->GetItemTextColour(sel);
+        }
+        if (!txt.IsOk())
+            txt = tree->GetForegroundColour();
+        dc.SetTextForeground(txt);
+#elif defined(_WIN32)
+        // Windows: the object list (generic wxDataViewCtrl) draws its selection through this renderer.
+        // Fill with the themed selected-button background to match Linux/macOS instead of the native
+        // highlight. The settings tree is a native Win32 TreeView and is themed separately (NppDarkMode).
+        if (!(flags & wxCONTROL_SELECTED))
+            return;
+
+        wxColour bgCol = UIColors::SelectedBtnBackground();
+        wxDCPenChanger setPen(dc, wxPen(bgCol, 1));
+        wxDCBrushChanger setBrush(dc, wxBrush(bgCol));
+        dc.DrawRectangle(rect);
+        if (win)
+            dc.SetTextForeground(win->GetForegroundColour());
+#else
+        // Linux: accent-tinted fill for all controls (wxTreeCtrl, wxDataViewCtrl, etc.)
+        if (!(flags & wxCONTROL_SELECTED))
+            return;
+
+        wxColour accent = UIColors::AccentPrimary();
+        wxColour base = win ? win->GetBackgroundColour() : UIColors::InputBackground();
+        if (!base.IsOk())
+            base = UIColors::InputBackground();
+        wxColour bgCol((accent.Red() + base.Red() * 3) / 4, (accent.Green() + base.Green() * 3) / 4,
+                       (accent.Blue() + base.Blue() * 3) / 4);
+
+        wxDCPenChanger setPen(dc, wxPen(bgCol, 1));
+        wxDCBrushChanger setBrush(dc, wxBrush(bgCol));
+        dc.DrawRectangle(rect);
+
+        if (auto *tree = dynamic_cast<wxTreeCtrl *>(win))
+        {
+            wxColour txt;
+            if (!(tree->GetWindowStyleFlag() & wxTR_MULTIPLE))
+            {
+                wxTreeItemId sel = tree->GetSelection();
+                if (sel.IsOk())
+                    txt = tree->GetItemTextColour(sel);
+            }
+            if (!txt.IsOk())
+                txt = tree->GetForegroundColour();
+            dc.SetTextForeground(txt);
+        }
+        else if (win)
+        {
+            dc.SetTextForeground(win->GetForegroundColour());
+        }
+#endif
     }
 };
-#endif // __APPLE__
+#endif // __APPLE__ || __linux__
 
 bool GUI_App::OnInit()
 {
@@ -1389,6 +1669,18 @@ void GUI_App::remove_desktop_files_dialog()
 }
 #endif //(__linux__) && !defined(SLIC3R_DESKTOP_INTEGRATION)
 
+// preFlight: surface a deferred "theme could not be loaded" message. The active palette is resolved at
+// startup (and on a theme switch) before the GUI is painting, so load_active_theme() stashes the message
+// and we drain it here. A modal dialog is used rather than a canvas notification because the failure can
+// occur before the notification system is rendering, and the user must not miss that the theme didn't apply.
+static void flush_theme_load_error()
+{
+    const std::string err = take_theme_load_error();
+    if (err.empty())
+        return;
+    MessageDialog(nullptr, from_u8(err), _L("Theme could not be loaded"), wxOK | wxICON_WARNING).ShowModal();
+}
+
 bool GUI_App::on_init_inner()
 {
     // TODO: remove this when all asserts are gone.
@@ -1451,10 +1743,18 @@ bool GUI_App::on_init_inner()
 
     // If load_language() fails, the application closes.
     load_language(wxString(), true);
+
+    // preFlight: resolve and load the active theme palette before any color is
+    // read or any window is created. dark_mode() reads the active theme's is_dark.
+    load_active_theme();
+
 #ifdef _MSW_DARK_MODE
-    bool init_dark_color_mode = app_config->get_bool("dark_color_mode");
-    bool init_sys_menu_enabled = app_config->get_bool("sys_menu_enabled");
-    NppDarkMode::InitDarkMode(init_dark_color_mode, init_sys_menu_enabled);
+    NppDarkMode::InitDarkMode(active_theme_is_dark(), false);
+#endif
+#ifdef __APPLE__
+    // Pin the macOS app appearance to the active theme so native controls (buttons, static text)
+    // render in the matching light/dark mode instead of following the system setting.
+    mac_set_appearance(active_theme_is_dark());
 #endif
 
     // Apply CPU stability preferences before any slicing work spins up TBB workers.
@@ -1477,13 +1777,24 @@ bool GUI_App::on_init_inner()
     init_ui_colours();
     init_fonts();
 
-#ifdef __APPLE__
-    // preFlight: Install custom renderer for tree selection outlines.
+#if defined(__APPLE__) || defined(__linux__) || defined(_WIN32)
+    // preFlight: Install custom renderer for themed selection fills (settings tree on macOS/Linux,
+    // object list on Windows).
     // CRITICAL: Must call Get() first to trigger wxRendererPtr lazy initialization.
     // Without this, the first Get() after Set() calls DoInit() which resets the
     // internal pointer to NULL, silently discarding our custom renderer.
     (void) wxRendererNative::Get();
     wxRendererNative::Set(new preFlightRendererNative());
+#endif
+
+#ifdef __APPLE__
+    // Native NSOutlineView controls (wxDataViewCtrl, e.g. the object list) draw their own selection and
+    // bypass the renderer above. Match the object-list selection used on Windows/Linux: the themed
+    // selected-button background (a subtle neutral highlight), not the accent.
+    {
+        const wxColour sel = UIColors::SelectedBtnBackground();
+        mac_install_themed_table_selection(sel.Red(), sel.Green(), sel.Blue());
+    }
 #endif
 
     std::string older_data_dir_path;
@@ -1502,32 +1813,68 @@ bool GUI_App::on_init_inner()
         older_data_dir_path = check_older_app_config(Semver(), false);
         if (!older_data_dir_path.empty())
             m_last_app_conf_lower_version = true;
-
-        // Force dark mode on fresh install regardless of imported settings
-        app_config->set("dark_color_mode", "1");
     }
 
-#ifdef _MSW_DARK_MODE
-    // app_config can be updated in check_older_app_config(), so check if dark_color_mode and sys_menu_enabled was changed
-    if (bool new_dark_color_mode = app_config->get_bool("dark_color_mode"); init_dark_color_mode != new_dark_color_mode)
+    // app_config may have been updated in check_older_app_config(); re-resolve the
+    // active theme and re-apply colors if the resolved appearance changed.
     {
-        NppDarkMode::SetDarkMode(new_dark_color_mode);
-        init_ui_colours();
-        update_ui_colours_from_appconfig();
-    }
-    if (bool new_sys_menu_enabled = app_config->get_bool("sys_menu_enabled");
-        init_sys_menu_enabled != new_sys_menu_enabled)
-        NppDarkMode::SetSystemMenuForApp(new_sys_menu_enabled);
+        const bool was_dark = active_theme_is_dark();
+        load_active_theme();
+        if (active_theme_is_dark() != was_dark)
+        {
+#ifdef _MSW_DARK_MODE
+            NppDarkMode::SetDarkMode(active_theme_is_dark());
 #endif
+            init_ui_colours();
+            update_ui_colours_from_appconfig();
+        }
+    }
 
 #ifdef __linux__
-    // preFlight: Tell GTK to use the dark theme variant for window decorations
-    // (title bar) when the app is in dark mode. Must be set before any dialogs
-    // are shown so that all windows get dark decorations.
-    if (dark_mode())
+    // preFlight: pin GTK's dark/light preference to the active theme at startup so native controls
+    // and window decorations (title bar) match it regardless of the system GTK default. This mirrors
+    // the macOS NSAppearance pin and the recreate-GUI path; setting only TRUE-when-dark previously
+    // left light themes rendering dark native controls (white-on-light text) on dark-default systems.
+    // Must run before any dialogs are shown so every window picks up the right variant.
+    if (GtkSettings *gtk_settings = gtk_settings_get_default())
+        g_object_set(gtk_settings, "gtk-application-prefer-dark-theme", active_theme_is_dark() ? TRUE : FALSE, NULL);
+
+    // Override GTK's default blue selection highlight with the theme's accent color
+    // for menus, tree views, and list views.
+    // GTK3 CSS does NOT support !important - use PRIORITY_USER to override themes.
     {
-        GtkSettings *gtk_settings = gtk_settings_get_default();
-        g_object_set(gtk_settings, "gtk-application-prefer-dark-theme", TRUE, NULL);
+        const ThemePalette &p = active_palette();
+        wxColour menu_bg = p.menu_background;
+        wxColour menu_fg = p.menu_text;
+        wxColour accent = p.accent_primary;
+        wxColour accent_text = p.accent_text;
+
+        char css[2048];
+        snprintf(css, sizeof(css),
+                 // Menus
+                 "menu { background-color:#%02x%02x%02x; color:#%02x%02x%02x; }"
+                 " menuitem { color:#%02x%02x%02x; }"
+                 " menuitem:hover { background-color:#%02x%02x%02x; color:#%02x%02x%02x; }"
+                 // DataViewCtrl (ObjectList) selection - subtle highlight, keep text readable
+                 " .view:selected, .view:selected:focus, .view:selected:backdrop"
+                 " { background-color:#%02x%02x%02x; color:#%02x%02x%02x; }"
+                 // Remove GTK's blue focus border on text entries (TextInput has its own border)
+                 " entry { border:none; outline:none; box-shadow:none; }",
+                 // Menu args
+                 menu_bg.Red(), menu_bg.Green(), menu_bg.Blue(), menu_fg.Red(), menu_fg.Green(), menu_fg.Blue(),
+                 menu_fg.Red(), menu_fg.Green(), menu_fg.Blue(), accent.Red(), accent.Green(), accent.Blue(),
+                 accent_text.Red(), accent_text.Green(), accent_text.Blue(),
+                 // DVC selection: bg + text color to prevent GTK from forcing white
+                 p.selected_btn_background.Red(), p.selected_btn_background.Green(), p.selected_btn_background.Blue(),
+                 p.input_foreground.Red(), p.input_foreground.Green(), p.input_foreground.Blue());
+
+        GtkCssProvider *provider = gtk_css_provider_new();
+        gtk_css_provider_load_from_data(provider, css, -1, nullptr);
+        GdkScreen *screen = gdk_screen_get_default();
+        if (screen)
+            gtk_style_context_add_provider_for_screen(screen, GTK_STYLE_PROVIDER(provider),
+                                                      GTK_STYLE_PROVIDER_PRIORITY_USER);
+        g_object_unref(provider);
     }
 #endif
 
@@ -2066,6 +2413,10 @@ bool GUI_App::on_init_inner()
 
     m_initialized = true;
 
+    // preFlight: if the selected theme failed to load at startup, the palette fell back to Auto; show the
+    // warning dialog once the UI is up (deferred so there is a running event loop to host the modal).
+    CallAfter([]() { flush_theme_load_error(); });
+
     if (const std::string &crash_reason = app_config->get("restore_win_position");
         boost::starts_with(crash_reason, "crashed"))
     {
@@ -2105,22 +2456,10 @@ unsigned GUI_App::get_colour_approx_luma(const wxColour &colour)
 
 bool GUI_App::dark_mode()
 {
-    // During early initialization, app_config may not exist yet.
-    // Default to dark mode (preFlight's primary theme).
-    if (!wxGetApp().app_config)
-        return true;
-
-#if __APPLE__
-    // The check for dark mode returns false positive on 10.12 and 10.13,
-    // which allowed setting dark menu bar and dock area, which is
-    // is detected as dark mode. We must run on at least 10.14 where the
-    // proper dark mode was first introduced.
-    return wxPlatformInfo::Get().CheckOSVersion(10, 14) && mac_dark_mode();
-#else
-    if (wxGetApp().app_config->has("dark_color_mode"))
-        return wxGetApp().app_config->get_bool("dark_color_mode");
-    return check_dark_mode();
-#endif
+    // preFlight: the active theme's is_dark is the single master for dark/light on
+    // all platforms (theme selection overrides OS-follow). Defaults to dark until
+    // the theme is loaded at startup.
+    return Slic3r::GUI::active_theme_is_dark();
 }
 
 // Global helper for UIColors - allows UIColors.hpp to check theme without including GUI_App.hpp
@@ -2143,7 +2482,11 @@ const wxColour GUI_App::get_label_default_clr_modified()
 
 const std::vector<std::string> GUI_App::get_mode_default_palette()
 {
-    return {"#EAA032", "#32BBED", "#E74C3C"}; // Orange (Simple), Blue (Advanced), Red (Expert)
+    // preFlight: Simple/Advanced markers follow the theme accent + secondary (orange/blue by default,
+    // baked into the Default palettes); Expert stays red.
+    const ThemePalette &p = active_palette();
+    return {into_u8(p.accent_primary.GetAsString(wxC2S_HTML_SYNTAX)),
+            into_u8(p.accent_secondary.GetAsString(wxC2S_HTML_SYNTAX)), "#E74C3C"};
 }
 
 void GUI_App::init_ui_colours()
@@ -2152,18 +2495,15 @@ void GUI_App::init_ui_colours()
     m_color_label_sys = get_label_default_clr_system();
     m_mode_palette = get_mode_default_palette();
 
-    bool is_dark_mode = dark_mode();
-    m_color_label_default = is_dark_mode ? UIColors::LabelDefaultDark()
-                                         : wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-    m_color_highlight_label_default = is_dark_mode ? UIColors::HighlightLabelDark()
-                                                   : wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-    m_color_highlight_default = is_dark_mode ? UIColors::HighlightBackgroundDark()
-                                             : UIColors::HighlightBackgroundLight();
-    m_color_hovered_btn_label = is_dark_mode ? UIColors::HoveredBtnLabelDark() : UIColors::HoveredBtnLabelLight();
-    m_color_default_btn_label = is_dark_mode ? UIColors::DefaultBtnLabelDark() : UIColors::DefaultBtnLabelLight();
-    m_color_selected_btn_bg = is_dark_mode ? UIColors::SelectedBtnBackgroundDark()
-                                           : UIColors::SelectedBtnBackgroundLight();
-    m_color_window_default = is_dark_mode ? UIColors::InputBackgroundDark() : UIColors::InputBackgroundLight();
+    // preFlight: all label/button colors come from the active theme palette via the unified
+    // accessors (no OS-system-color fallback, which would break light themes under a dark OS).
+    m_color_label_default = UIColors::LabelDefault();
+    m_color_highlight_label_default = UIColors::HighlightLabel();
+    m_color_highlight_default = UIColors::HighlightBackground();
+    m_color_hovered_btn_label = UIColors::HoveredBtnLabel();
+    m_color_default_btn_label = UIColors::DefaultBtnLabel();
+    m_color_selected_btn_bg = UIColors::SelectedBtnBackground();
+    m_color_window_default = UIColors::InputBackground();
 }
 
 void GUI_App::update_ui_colours_from_appconfig()
@@ -2210,6 +2550,13 @@ static bool is_focused(HWND hWnd)
 void GUI_App::UpdateDarkUI(wxWindow *window, bool highlited /* = false*/, bool just_font /* = false*/)
 {
 #ifdef _WIN32
+    // Hyperlinks: keep the accent colour and skip the generic foreground reset below, which would
+    // otherwise repaint the link in the regular label colour when a dialog themes its children.
+    if (auto *link = dynamic_cast<wxHyperlinkCtrlBase *>(window))
+    {
+        tint_hyperlink(link);
+        return;
+    }
     bool is_focused_button = false;
     bool is_default_button = false;
     if (wxButton *btn = dynamic_cast<wxButton *>(window))
@@ -2310,11 +2657,95 @@ void GUI_App::UpdateDarkUI(wxWindow *window, bool highlited /* = false*/, bool j
     {
         NppDarkMode::SetDarkExplorerTheme(hwnd);
     }
+#elif defined(__linux__)
+    // Linux/GTK: set background and foreground on widgets so they follow the active theme palette.
+    // GTK3 buttons need per-widget CSS since SetBackgroundColour is ignored by the CSS engine.
+    if (auto *link = dynamic_cast<wxHyperlinkCtrlBase *>(window))
+    {
+        tint_hyperlink(link);
+        return;
+    }
+
+    if (wxButton *btn = dynamic_cast<wxButton *>(window))
+    {
+        bool is_borderless = (btn->GetWindowStyle() & (wxNO_BORDER | wxBU_EXACTFIT)) != 0;
+        GtkWidget *gtk_btn = static_cast<GtkWidget *>(btn->GetHandle());
+        if (gtk_btn)
+        {
+            wxColour bg = highlited ? m_color_highlight_default : m_color_window_default;
+            wxColour fg = m_color_label_default;
+            wxColour hover_bg = m_color_highlight_default;
+            wxColour border = UIColors::StaticBoxBorderDark();
+
+            char css[512];
+            if (is_borderless)
+            {
+                // ScalableButton and other borderless buttons: colors only, no padding/border changes
+                snprintf(css, sizeof(css),
+                         "button { background-image:none; background-color:#%02x%02x%02x;"
+                         " color:#%02x%02x%02x; border:none; }"
+                         "button:hover { background-color:#%02x%02x%02x; }",
+                         bg.Red(), bg.Green(), bg.Blue(), fg.Red(), fg.Green(), fg.Blue(), hover_bg.Red(),
+                         hover_bg.Green(), hover_bg.Blue());
+            }
+            else
+            {
+                // Standard dialog/settings buttons: full theming
+                snprintf(css, sizeof(css),
+                         "button { background-image:none; background-color:#%02x%02x%02x;"
+                         " color:#%02x%02x%02x; border:1px solid #%02x%02x%02x; border-radius:4px; padding:4px 12px; }"
+                         "button:hover { background-color:#%02x%02x%02x; }",
+                         bg.Red(), bg.Green(), bg.Blue(), fg.Red(), fg.Green(), fg.Blue(), border.Red(), border.Green(),
+                         border.Blue(), hover_bg.Red(), hover_bg.Green(), hover_bg.Blue());
+            }
+
+            GtkCssProvider *provider = gtk_css_provider_new();
+            gtk_css_provider_load_from_data(provider, css, -1, nullptr);
+            gtk_style_context_add_provider(gtk_widget_get_style_context(gtk_btn), GTK_STYLE_PROVIDER(provider),
+                                           GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+            g_object_unref(provider);
+        }
+    }
+
+    if (wxCheckBox *cb = dynamic_cast<wxCheckBox *>(window))
+    {
+        GtkWidget *gtk_cb = static_cast<GtkWidget *>(cb->GetHandle());
+        if (gtk_cb)
+        {
+            wxColour fg = m_color_label_default;
+            wxColour border = UIColors::StaticBoxBorderDark();
+            char css[512];
+            snprintf(css, sizeof(css),
+                     "checkbutton, checkbutton label { color:#%02x%02x%02x; }"
+                     "checkbutton check { border-color:#%02x%02x%02x; }",
+                     fg.Red(), fg.Green(), fg.Blue(), border.Red(), border.Green(), border.Blue());
+            GtkCssProvider *provider = gtk_css_provider_new();
+            gtk_css_provider_load_from_data(provider, css, -1, nullptr);
+            gtk_style_context_add_provider(gtk_widget_get_style_context(gtk_cb), GTK_STYLE_PROVIDER(provider),
+                                           GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+            g_object_unref(provider);
+        }
+    }
+
+    bool is_transparent = (window->GetWindowStyle() & wxTRANSPARENT_WINDOW) != 0;
+    if (!just_font && !dynamic_cast<wxStaticBox *>(window) && !dynamic_cast<wxButton *>(window) && !is_transparent)
+        window->SetBackgroundColour(highlited ? m_color_highlight_default : m_color_window_default);
+    window->SetForegroundColour(m_color_label_default);
 #endif
 }
 
+void GUI_App::tint_hyperlink(wxHyperlinkCtrlBase *link)
+{
+    if (!link)
+        return;
+    // Hyperlinks follow the primary accent instead of the default web-blue.
+    link->SetNormalColour(UIColors::AccentPrimary());
+    link->SetHoverColour(UIColors::AccentHover());
+    link->SetVisitedColour(UIColors::AccentPrimary());
+}
+
 // recursive function for scaling fonts for all controls in Window
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__linux__)
 static void update_dark_children_ui(wxWindow *window, bool just_buttons_update = false)
 {
     bool is_btn = dynamic_cast<wxButton *>(window) != nullptr;
@@ -2459,6 +2890,8 @@ void GUI_App::UpdateDlgDarkUI(wxDialog *dlg, bool just_buttons_update /* = false
                       }
                   }
               });
+#elif defined(__linux__)
+    update_dark_children_ui(dlg, just_buttons_update);
 #endif
 }
 void GUI_App::UpdateDVCDarkUI(wxDataViewCtrl *dvc, bool highlited /* = false*/)
@@ -2524,7 +2957,7 @@ void GUI_App::UpdateDVCDarkUI(wxDataViewCtrl *dvc, bool highlited /* = false*/)
 
 void GUI_App::UpdateAllStaticTextDarkUI(wxWindow *parent)
 {
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__linux__)
     if (!parent)
         return;
 
@@ -2557,6 +2990,20 @@ void GUI_App::SetWindowVariantForButton(wxButton *btn)
         btn->SetWindowVariant(wxWINDOW_VARIANT_LARGE);
         btn->SetFont(m_normal_font);
     }
+
+    // Theme the native button so dialog/standard buttons follow the active theme instead of the system
+    // default blue (affirmative) and gray (others). Deferred via CallAfter because the dialog calls
+    // SetDefault() AFTER this hook, so is_default() is only reliable once the current call stack unwinds.
+    // CallAfter is dropped automatically if the button is destroyed first, so the captured pointer is safe.
+    btn->CallAfter(
+        [btn]()
+        {
+            const bool dflt = is_default(btn);
+            const wxColour bezel = dflt ? UIColors::AccentPrimary() : UIColors::SelectedBtnBackground();
+            const wxColour title = dflt ? UIColors::AccentText() : UIColors::LabelDefault();
+            mac_set_button_bezel_color(btn->GetHandle(), bezel.Red(), bezel.Green(), bezel.Blue());
+            mac_set_button_title_color(btn->GetHandle(), title.Red(), title.Green(), title.Blue());
+        });
 #endif
 }
 
@@ -2753,15 +3200,15 @@ void GUI_App::check_printer_presets()
 
 void GUI_App::recreate_GUI(const wxString &msg_name)
 {
-#ifdef __APPLE__
-    // On macOS, in-process GUI recreation crashes due to wxWidgets' Cocoa
-    // backend throwing NSException during NSView teardown. Restart the
-    // entire process instead - this is standard macOS behavior for settings
-    // changes that require a restart.
+#if defined(__APPLE__) || defined(__linux__)
+    // In-process GUI recreation leaves stale toolkit state (Cocoa NSView teardown
+    // crashes on macOS; GTK CSS theme caching keeps old colors on Linux). Restart
+    // the entire process for a guaranteed clean slate.
     app_config->save();
     auto exe_path = boost::dll::program_location();
     BOOST_LOG_TRIVIAL(info) << "Restarting application: " << exe_path;
-    const char *argv[] = {exe_path.string().c_str(), nullptr};
+    const std::string exe = exe_path.string();
+    const char *argv[] = {exe.c_str(), nullptr};
     execv(argv[0], const_cast<char *const *>(argv));
     // execv only returns on failure
     BOOST_LOG_TRIVIAL(error) << "execv failed, falling through to in-process recreation";
@@ -2769,6 +3216,25 @@ void GUI_App::recreate_GUI(const wxString &msg_name)
 
     m_is_recreating_gui = true;
     m_legacy_prepare_layout = app_config->get_bool("legacy_prepare_layout");
+
+    // preFlight: re-resolve the active theme so a theme change applies on GUI recreation
+    // (on_init_inner is not re-run in the in-process recreate path used on Windows/Linux).
+    load_active_theme();
+    init_ui_colours();
+    // Refresh ImGui style + icon atlas so the 3D-canvas overlays (gcode legend, toolbars) pick up the
+    // new theme; the in-process recreate path does not re-run ImGui init.
+    if (m_imgui)
+    {
+        m_imgui->refresh_style();
+        m_imgui->invalidate_font();
+    }
+#ifdef _MSW_DARK_MODE
+    NppDarkMode::SetDarkMode(active_theme_is_dark());
+#endif
+#ifdef __linux__
+    if (GtkSettings *gtk_settings = gtk_settings_get_default())
+        g_object_set(gtk_settings, "gtk-application-prefer-dark-theme", active_theme_is_dark() ? TRUE : FALSE, NULL);
+#endif
 
     mainframe->shutdown();
 
@@ -2864,17 +3330,10 @@ static void update_scrolls(wxWindow *window)
 }
 #endif //_MSW_DARK_MODE
 
-#ifdef _MSW_DARK_MODE
-void GUI_App::force_menu_update()
-{
-    NppDarkMode::SetSystemMenuForApp(app_config->get_bool("sys_menu_enabled"));
-}
-#endif //_MSW_DARK_MODE
-
 void GUI_App::force_colors_update()
 {
 #ifdef _MSW_DARK_MODE
-    NppDarkMode::SetDarkMode(app_config->get_bool("dark_color_mode"));
+    NppDarkMode::SetDarkMode(active_theme_is_dark());
     // The upstream fork made wxToolTip::GetToolTipCtrl() public, but it's private in stock wx.
     // Tooltip theming is a minor issue - skip it.
     NppDarkMode::SetDarkTitleBar(mainframe->GetHWND());
@@ -2923,6 +3382,9 @@ void GUI_App::update_ui_from_settings()
     // Apply tabbed sidebar preference change immediately  // preFlight: tabbed sidebar toggle
     if (plater())
         plater()->sidebar().SetTabbedMode(app_config->get_bool("use_tabbed_sidebar"));
+
+    // preFlight: if the just-applied theme failed to load, surface the warning dialog (deferred to the loop).
+    CallAfter([]() { flush_theme_load_error(); });
 }
 
 void GUI_App::persist_window_geometry(wxTopLevelWindow *window, bool default_maximized)
@@ -3582,14 +4044,10 @@ void GUI_App::open_preferences(const std::string &highlight_option /*= std::stri
 
     // Capture dialog state before recreate_GUI() potentially destroys it
     const bool should_recreate = mainframe->preferences_dialog->recreate_GUI();
-    const bool seq_top_changed = mainframe->preferences_dialog->seq_top_layer_only_changed();
     const bool layout_changed = mainframe->preferences_dialog->settings_layout_changed();
 
     if (should_recreate)
         recreate_GUI(_L("Restart application") + dots);
-
-    if (seq_top_changed)
-        this->plater_->reload_print();
 
 #ifdef _WIN32
     if (is_editor())

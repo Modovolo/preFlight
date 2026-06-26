@@ -10,6 +10,7 @@
 #include "../Utils/MacDarkMode.hpp"
 #include "GUI.hpp"
 #include "GUI_Utils.hpp"
+#include "ThemePalette.hpp"
 
 #include <boost/filesystem.hpp>
 #include <boost/nowide/cstdio.hpp>
@@ -28,6 +29,70 @@ namespace Slic3r
 {
 namespace GUI
 {
+
+// preFlight: the active theme's accent as an "#RRGGBB" string, for recoloring the brand orange that is
+// baked into the SVG icons (the same string-replace path that turns black into white for dark themes).
+static std::string theme_accent_hex()
+{
+    const wxColour &c = active_palette().accent_primary;
+    auto byte_hex = [](int v)
+    {
+        const char *d = "0123456789ABCDEF";
+        std::string s;
+        s += d[(v >> 4) & 0xF];
+        s += d[v & 0xF];
+        return s;
+    };
+    return "#" + byte_hex(c.Red()) + byte_hex(c.Green()) + byte_hex(c.Blue());
+}
+
+// preFlight: the active theme's disabled foreground as "#RRGGBB", used to recolor the disabled-only
+// placeholder (#C8C8C8) in the disabled checkbox glyphs so they dim with the same color as disabled text.
+static std::string theme_input_fg_disabled_hex()
+{
+    const wxColour &c = active_palette().input_foreground_disabled;
+    auto byte_hex = [](int v)
+    {
+        const char *d = "0123456789ABCDEF";
+        std::string s;
+        s += d[(v >> 4) & 0xF];
+        s += d[v & 0xF];
+        return s;
+    };
+    return "#" + byte_hex(c.Red()) + byte_hex(c.Green()) + byte_hex(c.Blue());
+}
+
+// preFlight: the active theme's disabled input background as "#RRGGBB" (the disabled checkbox box fill,
+// so a disabled checkbox reads like a small disabled input field rather than a bright/bluish glyph).
+static std::string theme_input_bg_disabled_hex()
+{
+    const wxColour &c = active_palette().input_background_disabled;
+    auto byte_hex = [](int v)
+    {
+        const char *d = "0123456789ABCDEF";
+        std::string s;
+        s += d[(v >> 4) & 0xF];
+        s += d[v & 0xF];
+        return s;
+    };
+    return "#" + byte_hex(c.Red()) + byte_hex(c.Green()) + byte_hex(c.Blue());
+}
+
+// preFlight: the active theme's static-box border as "#RRGGBB" (the disabled checkbox box border, matching
+// the border of the disabled input fields).
+static std::string theme_static_box_border_hex()
+{
+    const wxColour &c = active_palette().static_box_border;
+    auto byte_hex = [](int v)
+    {
+        const char *d = "0123456789ABCDEF";
+        std::string s;
+        s += d[(v >> 4) & 0xF];
+        s += d[v & 0xF];
+        return s;
+    };
+    return "#" + byte_hex(c.Red()) + byte_hex(c.Green()) + byte_hex(c.Blue());
+}
 
 BitmapCache::BitmapCache()
 {
@@ -442,10 +507,15 @@ wxBitmapBundle *BitmapCache::from_svg(const std::string &bitmap_name, unsigned t
 {
     if (target_width == 0)
         target_width = target_height;
+    // preFlight: themed colors are part of the cache key so a theme switch never serves a stale recolor.
+    const std::string accent = theme_accent_hex();
+    const std::string disabled_fg = theme_input_fg_disabled_hex();
+    const std::string disabled_bg = theme_input_bg_disabled_hex();
+    const std::string box_border = theme_static_box_border_hex();
     std::string bitmap_key = bitmap_name +
                              (target_height != 0 ? "-h" + std::to_string(target_height)
                                                  : "-w" + std::to_string(target_width)) +
-                             (dark_mode ? "-dm" : "") + new_color;
+                             (dark_mode ? "-dm" : "") + new_color + accent + disabled_fg + disabled_bg + box_border;
 
     auto it = m_bndl_map.find(bitmap_key);
     if (it != m_bndl_map.end())
@@ -457,12 +527,30 @@ wxBitmapBundle *BitmapCache::from_svg(const std::string &bitmap_name, unsigned t
     {
         replaces["#808080"] = "#FFFFFF";
         replaces["#000000"] = "#FFFFFF"; // Black icons -> white for dark mode
-        // The disabled checkbox/control icons use #C8C8C8 as background which is too light for dark mode
-        replaces["#C8C8C8"] = "#404040"; // Light gray disabled bg -> dark gray
-        replaces["#c8c8c8"] = "#404040"; // lowercase variant
+    }
+
+    // Disabled checkbox glyphs (check_*_disabled.svg) use reserved placeholders so a disabled checkbox
+    // mirrors a disabled input field: #C8C8C8 box fill -> disabled input bg, #C7C7C7 border -> static-box
+    // border, #C6C6C6 check -> disabled input text. Scoped to the checkbox glyphs so an unrelated icon that
+    // happens to use one of these grays is never silently recolored.
+    if (bitmap_name.rfind("check_", 0) == 0)
+    {
+        replaces["#C8C8C8"] = disabled_bg;
+        replaces["#c8c8c8"] = disabled_bg;
+        replaces["#C7C7C7"] = box_border;
+        replaces["#c7c7c7"] = box_border;
+        replaces["#C6C6C6"] = disabled_fg;
+        replaces["#c6c6c6"] = disabled_fg;
     }
 
     replaces["#ButtonBG"] = dark_mode ? "#4E4E4E" : "#828282";
+
+    // preFlight: recolor the baked brand orange to the active theme's accent (no-op for orange themes).
+    if (accent != "#EAA032")
+    {
+        replaces["#EAA032"] = accent;
+        replaces["#eaa032"] = accent;
+    }
 
 #ifdef _WIN32
     // Windows: wxBitmapBundle::FromSVG() works natively via WIC/Direct2D
@@ -550,11 +638,16 @@ wxBitmap *BitmapCache::load_svg(const std::string &bitmap_name, unsigned target_
                                 const bool grayscale /* = false*/, const bool dark_mode /* = false*/,
                                 const std::string &new_color /*= ""*/)
 {
+    const std::string accent = theme_accent_hex();
+    const std::string disabled_fg = theme_input_fg_disabled_hex();
+    const std::string disabled_bg = theme_input_bg_disabled_hex();
+    const std::string box_border = theme_static_box_border_hex();
     std::string bitmap_key = bitmap_name +
                              (target_height != 0 ? "-h" + std::to_string(target_height)
                                                  : "-w" + std::to_string(target_width)) +
                              (m_scale != 1.0f ? "-s" + float_to_string_decimal_point(m_scale) : "") +
-                             (dark_mode ? "-dm" : "") + (grayscale ? "-gs" : "") + new_color;
+                             (dark_mode ? "-dm" : "") + (grayscale ? "-gs" : "") + new_color + accent + disabled_fg +
+                             disabled_bg + box_border;
 
     auto it = m_map.find(bitmap_key);
     if (it != m_map.end())
@@ -566,6 +659,25 @@ wxBitmap *BitmapCache::load_svg(const std::string &bitmap_name, unsigned target_
     {
         replaces["#808080"] = "#FFFFFF";
         replaces["#000000"] = "#FFFFFF"; // Black icons -> white for dark mode
+    }
+
+    // Disabled checkbox glyphs (see other recolor path), scoped to the checkbox glyphs: box fill / border /
+    // check -> disabled input bg / static-box border / disabled input text.
+    if (bitmap_name.rfind("check_", 0) == 0)
+    {
+        replaces["#C8C8C8"] = disabled_bg;
+        replaces["#c8c8c8"] = disabled_bg;
+        replaces["#C7C7C7"] = box_border;
+        replaces["#c7c7c7"] = box_border;
+        replaces["#C6C6C6"] = disabled_fg;
+        replaces["#c6c6c6"] = disabled_fg;
+    }
+
+    // preFlight: recolor the baked brand orange to the active theme's accent (no-op for orange themes).
+    if (accent != "#EAA032")
+    {
+        replaces["#EAA032"] = accent;
+        replaces["#eaa032"] = accent;
     }
 
     NSVGimage *image = nsvgParseFromFileWithReplace(Slic3r::var(bitmap_name + ".svg").c_str(), "px", 96.0f, replaces);

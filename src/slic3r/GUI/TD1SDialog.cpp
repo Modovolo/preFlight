@@ -14,14 +14,16 @@
 #include "I18N.hpp"
 #include "GUI_App.hpp"
 #include "Tab.hpp"
+#include "Widgets/UIColors.hpp"
 #include "libslic3r/PresetBundle.hpp"
 
-namespace Slic3r {
-namespace GUI {
+namespace Slic3r
+{
+namespace GUI
+{
 
 TD1SDialog::TD1SDialog(wxWindow *parent, const ColorRGB &color, float td, const std::string &hex_color)
-    : wxDialog(parent, wxID_ANY, _L("TD1S Filament Detected"), wxDefaultPosition, wxDefaultSize,
-               wxDEFAULT_DIALOG_STYLE)
+    : wxDialog(parent, wxID_ANY, _L("TD1S Filament Detected"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE)
     , m_td(td)
 {
     int em = wxGetApp().em_unit();
@@ -35,10 +37,9 @@ TD1SDialog::TD1SDialog(wxWindow *parent, const ColorRGB &color, float td, const 
     wxBitmap swatch_bmp(swatch_size, swatch_size);
     {
         wxMemoryDC dc(swatch_bmp);
-        dc.SetBrush(wxBrush(wxColour((unsigned char)(color.r() * 255.0f),
-                                      (unsigned char)(color.g() * 255.0f),
-                                      (unsigned char)(color.b() * 255.0f))));
-        dc.SetPen(wxPen(wxColour(128, 128, 128), 1));
+        dc.SetBrush(wxBrush(wxColour((unsigned char) (color.r() * 255.0f), (unsigned char) (color.g() * 255.0f),
+                                     (unsigned char) (color.b() * 255.0f))));
+        dc.SetPen(wxPen(UIColors::StaticBoxBorder(), 1)); // themed swatch outline
         dc.DrawRectangle(0, 0, swatch_size, swatch_size);
     }
     auto *swatch_img = new wxStaticBitmap(this, wxID_ANY, swatch_bmp);
@@ -54,9 +55,10 @@ TD1SDialog::TD1SDialog(wxWindow *parent, const ColorRGB &color, float td, const 
 
     // Color info (small, informational)
     auto *color_note = new wxStaticText(this, wxID_ANY,
-        wxString::Format(_L("Transmission color: #%s (for reference only)"), hex_color));
+                                        wxString::Format(_L("Transmission color: #%s (for reference only)"),
+                                                         hex_color));
     color_note->SetFont(wxGetApp().normal_font());
-    color_note->SetForegroundColour(wxColour(140, 140, 140));
+    color_note->SetForegroundColour(UIColors::SecondaryText()); // themed informational text
     info_sizer->Add(color_note, 0);
 
     measure_sizer->Add(info_sizer, 1, wxALL | wxALIGN_CENTER_VERTICAL, em);
@@ -145,7 +147,7 @@ void TD1SDialog::on_apply(wxCommandEvent &)
     {
         if (td_opt->values.empty())
             td_opt->values.push_back(4.0);
-        td_opt->values[0] = (double)m_td;
+        td_opt->values[0] = (double) m_td;
 
         if (filament_tab)
         {

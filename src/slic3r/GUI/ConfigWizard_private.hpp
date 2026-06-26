@@ -36,6 +36,8 @@
 #include "wxExtensions.hpp"
 
 #include "Widgets/SpinInput.hpp"
+#include "Widgets/CheckBox.hpp"
+#include "Widgets/ScrollablePanel.hpp"
 
 namespace fs = boost::filesystem;
 
@@ -155,10 +157,10 @@ typedef std::function<bool(const VendorProfile::PrinterModel &)> ModelFilter;
 
 struct PrinterPicker : wxPanel
 {
-    struct Checkbox : wxCheckBox
+    struct Checkbox : ::CheckBox
     {
         Checkbox(wxWindow *parent, const wxString &label, const std::string &model, const std::string &variant)
-            : wxCheckBox(parent, wxID_ANY, label), model(model), variant(variant)
+            : ::CheckBox(parent, label), model(model), variant(variant)
         {
         }
 
@@ -223,8 +225,8 @@ struct ConfigWizardPage : wxPanel
 struct PageWelcome : ConfigWizardPage
 {
     wxStaticText *welcome_text;
-    wxCheckBox *cbox_reset;
-    wxCheckBox *cbox_integrate;
+    ::CheckBox *cbox_reset;
+    ::CheckBox *cbox_integrate;
 
     PageWelcome(ConfigWizard *parent);
 
@@ -240,8 +242,8 @@ struct PageUpdateManager : ConfigWizardPage
     bool is_active{false};
 
     // Vendor selection checkboxes (populated from loaded bundles)
-    wxScrolledWindow *vendor_scroll{nullptr};
-    std::map<std::string, wxCheckBox *> vendor_checkboxes;
+    ScrollablePanel *vendor_scroll{nullptr};
+    std::map<std::string, ::CheckBox *> vendor_checkboxes;
 
     PageUpdateManager(ConfigWizard *parent);
     void populate_vendor_list();
@@ -476,7 +478,7 @@ struct PageCustom : ConfigWizardPage
 private:
     static const char *default_profile_name;
 
-    wxCheckBox *cb_custom{nullptr};
+    ::CheckBox *cb_custom{nullptr};
     SavePresetDialog::Item *profile_name_editor{nullptr};
 };
 
@@ -509,16 +511,16 @@ struct PageReloadFromDisk : ConfigWizardPage
 struct PageFilesAssociation : ConfigWizardPage
 {
 private:
-    wxCheckBox *cb_3mf{nullptr};
-    wxCheckBox *cb_stl{nullptr};
+    ::CheckBox *cb_3mf{nullptr};
+    ::CheckBox *cb_stl{nullptr};
     //    wxCheckBox* cb_gcode;
 
 public:
     PageFilesAssociation(ConfigWizard *parent);
 
-    bool associate_3mf() const { return cb_3mf->IsChecked(); }
-    bool associate_stl() const { return cb_stl->IsChecked(); }
-    //    bool associate_gcode() const { return cb_gcode->IsChecked(); }
+    bool associate_3mf() const { return cb_3mf->GetValue(); }
+    bool associate_stl() const { return cb_stl->GetValue(); }
+    //    bool associate_gcode() const { return cb_gcode->GetValue(); }
 };
 #endif // _WIN32
 
@@ -528,7 +530,7 @@ struct PageMode : ConfigWizardPage
     wxRadioButton *radio_advanced;
     wxRadioButton *radio_expert;
 
-    wxCheckBox *check_inch;
+    ::CheckBox *check_inch;
 
     PageMode(ConfigWizard *parent);
 
@@ -669,7 +671,7 @@ struct ConfigWizard::priv
     // Set to true if there are none FFF printers on the main FFF page. If true, only SLA printers are shown (not even custom printers)
     bool only_sla_mode{false};
 
-    wxScrolledWindow *hscroll = nullptr;
+    ScrollablePanel *hscroll = nullptr;
     wxBoxSizer *hscroll_sizer = nullptr;
     wxBoxSizer *btnsizer = nullptr;
     ConfigWizardPage *page_current = nullptr;

@@ -86,6 +86,25 @@ void disable_background_fadeout_animation();
 
 bool undo_redo_list(const ImVec2 &size, const bool is_undo, bool (*items_getter)(const bool, int, const char **),
                     int &hovered, int &selected, int &mouse_wheel);
+
+// Returns a near-black or near-white text color that contrasts with the given fill (by luminance), so
+// labels stay readable on themed highlight/accent fills (e.g. selected list/header/combo items).
+ImVec4 contrasting_text(const ImVec4 &fill);
+
+// Predicts whether the next full-width item (Selectable/MenuItem) drawn at the current cursor will be
+// hovered, using the rect ImGui highlights. Lets callers push contrasting_text before drawing so the
+// whole highlighted row (label plus any trailing columns) stays readable.
+bool item_will_hover(const ImVec2 &size = ImVec2(0, 0));
+
+// Same prediction as item_will_hover, but also returns the rect ImGui would highlight. Lets a caller
+// draw its own highlight from the returned flag so the fill and the contrasting text flip on the exact
+// same frame (raw ImGui hover for the fill can otherwise lag the predicted flag used for the text).
+bool item_hover_rect(ImVec2 &out_min, ImVec2 &out_max, const ImVec2 &size = ImVec2(0, 0));
+
+// Like ImGui::Selectable but keeps the label readable on the themed selected/hovered header fill on every
+// theme (hover is predicted from the item rect, since plain ImGui::Selectable uses ImGuiCol_Text regardless).
+bool selectable_contrast(const char *label, bool selected, ImGuiSelectableFlags flags = 0,
+                         const ImVec2 &size = ImVec2(0, 0));
 void scroll_up();
 void scroll_down();
 void process_mouse_wheel(int &mouse_wheel);
@@ -168,16 +187,17 @@ bool menu_item_with_icon(const char *label, const char *shortcut, ImVec2 icon_si
 const ImVec4 COL_GREY_DARK = {0.129f, 0.149f, 0.176f, 1.0f};
 // #30363D = RGB(48, 54, 61) - hover state
 const ImVec4 COL_GREY_LIGHT = {0.188f, 0.212f, 0.239f, 1.0f};
-// Primary brand color #EAA032 (RGB: 234, 160, 50)
-const ImVec4 COL_ORANGE_DARK = {0.784f, 0.549f, 0.157f, 1.0f};  // Theme::PrimaryDark
-const ImVec4 COL_ORANGE_LIGHT = {0.918f, 0.627f, 0.196f, 1.0f}; // Theme::Primary
-// Note: New code should use Theme::Primary::GetImGuiColor() instead
-// These constants maintained for backward compatibility
+// preFlight: themed brand accent. These are refreshed from the active theme palette's accent tokens by
+// ImGuiWrapper::init_style() (which runs at startup and on every theme switch), so all ImGui overlay
+// accents follow the theme. Mutable inline variables (single shared instance across TUs) rather than
+// const so the refresh can update them in place without touching the many call sites.
+inline ImVec4 COL_ORANGE_DARK = {0.784f, 0.549f, 0.157f, 1.0f};  // accent_dark  (default #C88C28)
+inline ImVec4 COL_ORANGE_LIGHT = {0.918f, 0.627f, 0.196f, 1.0f}; // accent_primary (default #EAA032)
 // #161B22 = RGB(22, 27, 34) - popup/window background
 const ImVec4 COL_WINDOW_BACKGROUND = {0.086f, 0.106f, 0.133f, 0.95f};
-const ImVec4 COL_BUTTON_BACKGROUND = COL_ORANGE_DARK;
-const ImVec4 COL_BUTTON_HOVERED = COL_ORANGE_LIGHT;
-const ImVec4 COL_BUTTON_ACTIVE = COL_BUTTON_HOVERED;
+inline ImVec4 COL_BUTTON_BACKGROUND = COL_ORANGE_DARK;
+inline ImVec4 COL_BUTTON_HOVERED = COL_ORANGE_LIGHT;
+inline ImVec4 COL_BUTTON_ACTIVE = COL_BUTTON_HOVERED;
 } // namespace ImGuiPureWrap
 
 #endif // slic3r_ImGuiPureWrap_hpp_

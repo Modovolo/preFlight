@@ -4,6 +4,7 @@
 ///|/
 #include "Label.hpp"
 #include "StaticBox.hpp"
+#include "UIColors.hpp"
 
 #include <wx/settings.h>
 
@@ -137,8 +138,7 @@ void Label::SetWindowStyleFlag(long style)
     if (style & LB_HYPERLINK)
     {
         this->color = GetForegroundColour();
-        static wxColor clr_url("#EAA032"); // preFlight brand orange
-        SetForegroundColour(clr_url);
+        SetForegroundColour(UIColors::AccentPrimary()); // themed accent (hyperlink color)
     }
     else
     {

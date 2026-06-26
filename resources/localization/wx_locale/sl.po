@@ -1,3 +1,4 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: wxWidgets 3.1\n"
@@ -10,10 +11,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
-"%100==4 ? 3 : 0);\n"
-"X-Poedit-SourceCharset: iso-8859-1\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100>=3 && n%100<=4 ? 2 : 3);\n"
 "X-Generator: Poedit 2.0.4\n"
+"X-Poedit-SourceCharset: iso-8859-1\n"
 
 #: ../src/common/debugrpt.cpp:586
 msgid ""
@@ -591,7 +591,8 @@ msgid "&New"
 msgstr "&Nov"
 
 # msw/mdi.cpp:188
-#: ../src/aui/tabmdi.cpp:111 ../src/generic/mdig.cpp:100 ../src/msw/mdi.cpp:180
+#: ../src/aui/tabmdi.cpp:111 ../src/generic/mdig.cpp:100
+#: ../src/msw/mdi.cpp:180
 msgid "&Next"
 msgstr "&Naslednji"
 
@@ -687,7 +688,8 @@ msgid "&Preferences"
 msgstr "&Možnosti"
 
 # html/helpfrm.cpp:512
-#: ../src/aui/tabmdi.cpp:112 ../src/generic/mdig.cpp:101 ../src/msw/mdi.cpp:181
+#: ../src/aui/tabmdi.cpp:112 ../src/generic/mdig.cpp:101
+#: ../src/msw/mdi.cpp:181
 msgid "&Previous"
 msgstr "&Prejšnji"
 
@@ -1868,7 +1870,7 @@ msgstr "Ni mogoče samodejno določiti obliko slike za vnos brez iskanja."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/registry.cpp:418
 #: ../src/msw/registry.cpp:506
 #, c-format
@@ -1884,7 +1886,7 @@ msgstr "Vrednosti nepodprtega tipa %d ni mogoče kopirati."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/registry.cpp:399
 #: ../src/msw/registry.cpp:487
 #, c-format
@@ -1894,7 +1896,7 @@ msgstr "Registrskega ključa »%s« ni mogoče ustvariti."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/thread.cpp:519
 #: ../src/msw/thread.cpp:665
 msgid "Can't create thread"
@@ -1903,7 +1905,7 @@ msgstr "Niti ni mogoče ustvariti."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # common/file.cpp:200
 #: ../src/msw/window.cpp:3691
 #, c-format
@@ -1913,7 +1915,7 @@ msgstr "Okna ali razreda %s ni mogoče ustvariti."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/registry.cpp:658
 #: ../src/msw/registry.cpp:777
 #, c-format
@@ -1923,7 +1925,7 @@ msgstr "Ključa »%s« ni mogoče izbrisati."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/iniconf.cpp:476
 #: ../src/msw/iniconf.cpp:458
 #, c-format
@@ -1945,7 +1947,7 @@ msgstr "Podključev ključa »%s« ni mogoče prešteti."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/registry.cpp:975
 #: ../src/msw/registry.cpp:1132
 #, c-format
@@ -1961,7 +1963,7 @@ msgstr "Vrednosti nepodprtega tipa %d ni mogoče izvoziti."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # common/ffile.cpp:234
 #: ../src/common/ffile.cpp:254
 #, c-format
@@ -2003,12 +2005,13 @@ msgstr "Branje iz napihovalnega toka ni možno: %s"
 
 #: ../src/common/zstream.cpp:244
 msgid "Can't read inflate stream: unexpected EOF in underlying stream."
-msgstr "Branje napihovalnega toka ni uspelo: nepričakovan EOF v osnovnem toku."
+msgstr ""
+"Branje napihovalnega toka ni uspelo: nepričakovan EOF v osnovnem toku."
 
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/registry.cpp:899
 #: ../src/msw/registry.cpp:1064
 #, c-format
@@ -2018,7 +2021,7 @@ msgstr "Vrednosti »%s« ni mogoče prebrati."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/registry.cpp:774
 # msw/registry.cpp:813
 #: ../src/msw/registry.cpp:878 ../src/msw/registry.cpp:910
@@ -2048,7 +2051,7 @@ msgstr "Prioritet niti ni bilo mogoče nastaviti."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/registry.cpp:799
 # msw/registry.cpp:923
 #: ../src/msw/registry.cpp:896 ../src/msw/registry.cpp:938
@@ -2293,7 +2296,7 @@ msgstr "Sredinsko"
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/thread.cpp:519
 #: ../src/richtext/richtextindentspage.cpp:162
 #: ../src/richtext/richtextindentspage.cpp:164
@@ -2338,7 +2341,7 @@ msgstr "Spremembe ne bodo shranjene v izogib prepisu obstoječe datoteke \"%s\""
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/registry.cpp:399
 #: ../src/gtk/filepicker.cpp:190 ../src/gtk/filedlg.cpp:87
 #, c-format
@@ -2472,7 +2475,7 @@ msgstr "&Zapri "
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/thread.cpp:519
 #: ../src/msw/ole/automtn.cpp:684
 msgid "Class not registered."
@@ -2758,7 +2761,7 @@ msgstr "Polmer o&glišča:"
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # common/file.cpp:580
 # common/file.cpp:583
 #: ../src/html/chm.cpp:718
@@ -2915,7 +2918,8 @@ msgstr "Niti ni mogoče končati."
 #, c-format
 msgid "Create Parameter %s not found in declared RTTI Parameters"
 msgstr ""
-"V prijavljenih spremenljivkah RTTI ustvarjenega parametra %s ni mogoče najti."
+"V prijavljenih spremenljivkah RTTI ustvarjenega parametra %s ni mogoče "
+"najti."
 
 # generic/dirdlgg.cpp:572
 #: ../src/generic/dirdlgg.cpp:288
@@ -3117,7 +3121,7 @@ msgstr "Želite izbrisati slog %s?"
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/iniconf.cpp:476
 #: ../src/unix/snglinst.cpp:301
 #, c-format
@@ -3154,8 +3158,8 @@ msgstr "Razvijalci"
 # msw/dialup.cpp:354
 #: ../src/msw/dialup.cpp:374
 msgid ""
-"Dial up functions are unavailable because the remote access service (RAS) is "
-"not installed on this machine. Please install it."
+"Dial up functions are unavailable because the remote access service (RAS) is"
+" not installed on this machine. Please install it."
 msgstr ""
 "Funkcije klicne povezave niso na voljo, ker storitev oddaljenega dostopa "
 "(RAS) na tem računalniku ni nameščena. Prosimo, namestite jo."
@@ -3550,8 +3554,7 @@ msgstr "Razpostri"
 #, c-format
 msgid ""
 "Exporting registry key: file \"%s\" already exists and won't be overwritten."
-msgstr ""
-"Izvoz registrskega ključa: datoteka \"%s\" že obstaja in ne bo prepisana."
+msgstr "Izvoz registrskega ključa: datoteka \"%s\" že obstaja in ne bo prepisana."
 
 #: ../src/common/fmapbase.cpp:195
 msgid "Extended Unix Codepage for Japanese (EUC-JP)"
@@ -3607,7 +3610,7 @@ msgstr "Neuspešno preverjanje zapisa slikovne datoteke \"%s\"."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/registry.cpp:399
 #: ../src/common/debugrpt.cpp:239
 #, c-format
@@ -3704,7 +3707,7 @@ msgstr "Brezimne cevi ni mogoče ustvariti."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/registry.cpp:399
 #: ../src/msw/ole/automtn.cpp:522
 #, c-format
@@ -3726,7 +3729,7 @@ msgstr "Kazalke ni mogoče ustvariti."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/registry.cpp:399
 #: ../src/common/debugrpt.cpp:209
 #, c-format
@@ -3752,7 +3755,7 @@ msgstr "Deskriptorja epoll ni mogoče ustvariti"
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/registry.cpp:399
 #: ../src/msw/mimetype.cpp:238
 #, c-format
@@ -3785,7 +3788,7 @@ msgstr "Izpraznitev odložišča ni uspela."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/registry.cpp:399
 #: ../src/unix/displayx11.cpp:212
 msgid "Failed to enumerate video modes"
@@ -3832,7 +3835,7 @@ msgstr "Neuspešno pridobivanje imen ISP: %s"
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/registry.cpp:399
 #: ../src/msw/ole/automtn.cpp:574
 #, c-format
@@ -3890,8 +3893,8 @@ msgstr "Nameščanje signalne ročice ni bilo uspešno."
 
 #: ../src/unix/threadpsx.cpp:1167
 msgid ""
-"Failed to join a thread, potential memory leak detected - please restart the "
-"program"
+"Failed to join a thread, potential memory leak detected - please restart the"
+" program"
 msgstr ""
 "Pridružitev k niti ni uspela, odkrita možna izguba spomina - prosimo, "
 "ponovno zaženite program"
@@ -4032,7 +4035,7 @@ msgstr "Zaslona \"%s\" ni mogoče odpreti."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # common/file.cpp:580
 # common/file.cpp:583
 #: ../src/common/filename.cpp:1062
@@ -4108,7 +4111,7 @@ msgstr "Kodiranja za nabor znakov '%s' ni bilo mogoče zapomniti."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # common/file.cpp:552
 # common/file.cpp:562
 #: ../src/common/debugrpt.cpp:227
@@ -4119,7 +4122,7 @@ msgstr "Datoteke poročila o razhroščevanju »%s« ni mogoče odstraniti."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # common/file.cpp:552
 # common/file.cpp:562
 #: ../src/unix/snglinst.cpp:328
@@ -4130,7 +4133,7 @@ msgstr "Zaklenjene datoteke »%s« ni mogoče odstraniti."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # common/file.cpp:580
 # common/file.cpp:583
 #: ../src/unix/snglinst.cpp:288
@@ -4798,13 +4801,11 @@ msgstr ""
 
 #: ../src/generic/dbgrptg.cpp:324
 msgid ""
-"If you wish to suppress this debug report completely, please choose the "
-"\"Cancel\" button,\n"
+"If you wish to suppress this debug report completely, please choose the \"Cancel\" button,\n"
 "but be warned that it may hinder improving the program, so if\n"
 "at all possible please do continue with the report generation.\n"
 msgstr ""
-"Če želite popolnoma preprečiti to poročilo o razhroščevanju, prosimo, "
-"izberite gumb \"Razveljavi\",\n"
+"Če želite popolnoma preprečiti to poročilo o razhroščevanju, prosimo, izberite gumb \"Razveljavi\",\n"
 "vendar vedite, da to lahko onemogoča izboljšanje programa, tako da če je\n"
 "le mogoče, prosimo, nadaljujte s tvorbo poročila.\n"
 
@@ -4853,8 +4854,8 @@ msgstr "Slika ni vrste %s."
 # msw/textctrl.cpp:219
 #: ../src/msw/textctrl.cpp:488
 msgid ""
-"Impossible to create a rich edit control, using simple text control instead. "
-"Please reinstall riched32.dll"
+"Impossible to create a rich edit control, using simple text control instead."
+" Please reinstall riched32.dll"
 msgstr ""
 "Kontrolnika za bogato urejanje ni mogoče ustvariti, namesto tega bo "
 "uporabljen kontrolnik za enostavno urejanje besedila. Prosimo, ponovno "
@@ -5426,7 +5427,7 @@ msgstr "Zaklenjena datoteka '%s' ima nepravilna dovoljenja."
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # generic/logg.cpp:538
 #: ../src/generic/logg.cpp:576
 #, c-format
@@ -5452,8 +5453,8 @@ msgid ""
 "MS HTML Help functions are unavailable because the MS HTML Help library is "
 "not installed on this machine. Please install it."
 msgstr ""
-"Funkcije MS HTML Help niso na voljo, ker knjižnica MS HTML Help ni nameščena "
-"na tem računalniku. Prosimo, namestite jo."
+"Funkcije MS HTML Help niso na voljo, ker knjižnica MS HTML Help ni nameščena"
+" na tem računalniku. Prosimo, namestite jo."
 
 #: ../src/univ/themes/win32.cpp:3754
 msgid "Ma&ximize"
@@ -5850,8 +5851,7 @@ msgstr "Vnosa ni mogoče najti."
 msgid ""
 "No font for displaying text in encoding '%s' found,\n"
 "but an alternative encoding '%s' is available.\n"
-"Do you want to use this encoding (otherwise you will have to choose another "
-"one)?"
+"Do you want to use this encoding (otherwise you will have to choose another one)?"
 msgstr ""
 "Nobena pisava za prikaz besedila, kodiranega v '%s', ne obstaja,\n"
 "na voljo pa je drugaćno kodiranje '%s'.\n"
@@ -6742,11 +6742,10 @@ msgstr "Izpis"
 
 #: ../src/common/debugrpt.cpp:560
 #, c-format
-msgid ""
-"Processing debug report has failed, leaving the files in \"%s\" directory."
+msgid "Processing debug report has failed, leaving the files in \"%s\" directory."
 msgstr ""
-"Obdelava poročila o razhroščevanju ni uspela, datoteke so ostale v mapi \"%s"
-"\"."
+"Obdelava poročila o razhroščevanju ni uspela, datoteke so ostale v mapi "
+"\"%s\"."
 
 #: ../src/common/prntbase.cpp:545
 msgid "Progress:"
@@ -6938,7 +6937,7 @@ msgstr "Ponovno oštevilči seznam"
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/filedlg.cpp:445
 #: ../src/common/stockitem.cpp:188
 msgid "Rep&lace"
@@ -6951,7 +6950,7 @@ msgstr "Zamenjaj"
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/filedlg.cpp:445
 #: ../src/generic/fdrepdlg.cpp:182
 msgid "Replace &all"
@@ -6960,7 +6959,7 @@ msgstr "Zamenjaj &vse"
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # msw/filedlg.cpp:445
 #: ../src/common/stockitem.cpp:261
 msgid "Replace selection"
@@ -7751,8 +7750,7 @@ msgstr ""
 #: ../src/html/htmprint.cpp:271
 #, c-format
 msgid ""
-"The document \"%s\" doesn't fit on the page horizontally and will be "
-"truncated if printed.\n"
+"The document \"%s\" doesn't fit on the page horizontally and will be truncated if printed.\n"
 "\n"
 "Would you like to proceed with printing it nevertheless?"
 msgstr ""
@@ -7929,12 +7927,10 @@ msgstr "Prikazano območje."
 
 #: ../src/generic/dbgrptg.cpp:322
 msgid ""
-"The report contains the files listed below. If any of these files contain "
-"private information,\n"
+"The report contains the files listed below. If any of these files contain private information,\n"
 "please uncheck them and they will be removed from the report.\n"
 msgstr ""
-"Poročilo vsebuje datoteke, navedene spodaj. Če katere od teh datotek "
-"vsebujejo zasebne podatke,\n"
+"Poročilo vsebuje datoteke, navedene spodaj. Če katere od teh datotek vsebujejo zasebne podatke,\n"
 "jih, prosimo, odznačite in odstranjene bodo iz poročila.\n"
 
 # common/cmdline.cpp:761
@@ -8086,7 +8082,8 @@ msgstr "Navpični odmik."
 
 #: ../src/richtext/richtextprint.cpp:619 ../src/html/htmprint.cpp:745
 msgid ""
-"There was a problem during page setup: you may need to set a default printer."
+"There was a problem during page setup: you may need to set a default "
+"printer."
 msgstr ""
 "Med pripravo strani je prišlo do težave: morda morate nastaviti privzeti "
 "tiskalnik."
@@ -8095,7 +8092,8 @@ msgstr ""
 msgid ""
 "This document doesn't fit on the page horizontally and will be truncated "
 "when it is printed."
-msgstr "Ta dokument je vodoravno prevelik za stran in bo pri tiskanju porezan."
+msgstr ""
+"Ta dokument je vodoravno prevelik za stran in bo pri tiskanju porezan."
 
 # common/imagpcx.cpp:434
 #: ../src/common/image.cpp:2854
@@ -8112,8 +8110,8 @@ msgid ""
 "This program was compiled with a too old version of GTK+, please rebuild "
 "with GTK+ 2.12 or newer."
 msgstr ""
-"Program je bil preveden z zastarelo različico GTK+, ponovno ga zgradite z GTK"
-"+ 2.12 ali novejšim."
+"Program je bil preveden z zastarelo različico GTK+, ponovno ga zgradite z "
+"GTK+ 2.12 ali novejšim."
 
 # msw/thread.cpp:1083
 #: ../src/msw/thread.cpp:1240
@@ -8121,8 +8119,8 @@ msgid ""
 "Thread module initialization failed: cannot store value in thread local "
 "storage"
 msgstr ""
-"Inicializacija modula niti ni uspela: vrednosti ni mogoče shraniti v lokalni "
-"shrambi niti"
+"Inicializacija modula niti ni uspela: vrednosti ni mogoče shraniti v lokalni"
+" shrambi niti"
 
 #: ../src/unix/threadpsx.cpp:1794
 msgid "Thread module initialization failed: failed to create thread key"
@@ -8247,9 +8245,7 @@ msgstr "Tip mora imeti pretvorbo enum - long"
 
 #: ../src/propgrid/propgridiface.cpp:401
 #, c-format
-msgid ""
-"Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT "
-"\"%s\"."
+msgid "Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT \"%s\"."
 msgstr ""
 "Operacija »%s« je spodletela: lastnost z oznako »%s« je vrste »%s« in NE "
 "»%s«."
@@ -8328,7 +8324,8 @@ msgstr "Ni mogoče pridobiti dogodkov iz kqueue"
 #: ../src/gtk/app.cpp:435
 msgid "Unable to initialize GTK+, is DISPLAY set properly?"
 msgstr ""
-"GTK+ ni mogoče inicializirati, je spremenljivka DISPLAY nastavljena pravilno?"
+"GTK+ ni mogoče inicializirati, je spremenljivka DISPLAY nastavljena "
+"pravilno?"
 
 # generic/dirdlgg.cpp:550
 #: ../include/wx/unix/private/fswatcher_kqueue.h:57
@@ -9078,8 +9075,7 @@ msgstr "Program DDEML je ustvaril podaljšano stanje sledenja."
 # msw/dde.cpp:985
 #: ../src/msw/dde.cpp:1129
 msgid ""
-"a DDEML function was called without first calling the DdeInitialize "
-"function,\n"
+"a DDEML function was called without first calling the DdeInitialize function,\n"
 "or an invalid instance identifier\n"
 "was passed to a DDEML function."
 msgstr ""
@@ -9233,7 +9229,7 @@ msgstr "ni mogoče zapreti datotečnega deskriptorja %d"
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # common/file.cpp:557
 # common/file.cpp:567
 #: ../src/common/file.cpp:586
@@ -9244,7 +9240,7 @@ msgstr "ni mogoče uveljaviti sprememb datoteke '%s'"
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # common/file.cpp:200
 #: ../src/common/file.cpp:178
 #, c-format
@@ -9254,7 +9250,7 @@ msgstr "ni mogoče ustvariti datoteke '%s'"
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # common/fileconf.cpp:920
 #: ../src/common/fileconf.cpp:1141
 #, c-format
@@ -9271,7 +9267,7 @@ msgstr ""
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # common/ffile.cpp:234
 #: ../src/common/zipstrm.cpp:1692
 msgid "can't find central directory in zip"
@@ -9348,7 +9344,7 @@ msgstr "ni mogoče brati iz deskriptorja %d"
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # common/file.cpp:552
 # common/file.cpp:562
 #: ../src/common/file.cpp:581
@@ -9359,7 +9355,7 @@ msgstr "ni mogoče odstraniti datoteke '%s'"
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # common/file.cpp:580
 # common/file.cpp:583
 #: ../src/common/file.cpp:598
@@ -9376,7 +9372,7 @@ msgstr "ni mogoče iskati na datotečnem deskriptorju %d"
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 # common/textfile.cpp:359
 #: ../src/common/textfile.cpp:273
 #, c-format
@@ -9561,7 +9557,8 @@ msgstr "datoteka »%s«, vrstica %zu: ključ »%s« je bil že najden v vrstici 
 #, c-format
 msgid "file '%s', line %zu: value for immutable key '%s' ignored."
 msgstr ""
-"datoteka »%s«, vrstica %zu: vrednost nespremenljivega ključa »%s« ignorirana."
+"datoteka »%s«, vrstica %zu: vrednost nespremenljivega ključa »%s« "
+"ignorirana."
 
 # common/fileconf.cpp:449
 #: ../src/common/fileconf.cpp:543

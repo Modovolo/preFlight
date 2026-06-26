@@ -983,7 +983,7 @@ void GLCanvas3D::Labels::render(const std::vector<const ModelInstance *> &sorted
         const float scale = m_canvas.get_imgui()->get_style_scaling();
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, (owner.selected ? 3.0f : 1.5f) * scale);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-        ImGui::PushStyleColor(ImGuiCol_Border, owner.selected ? ImVec4(0.757f, 0.404f, 0.216f, 1.0f)
+        ImGui::PushStyleColor(ImGuiCol_Border, owner.selected ? ImGuiPureWrap::COL_ORANGE_LIGHT // themed accent
                                                               : ImVec4(0.75f, 0.75f, 0.75f, 1.0f));
         ImGuiPureWrap::set_next_window_pos(x, y, ImGuiCond_Always, 0.5f, 0.5f);
         ImGuiPureWrap::begin(owner.title, ImGuiWindowFlags_NoMouseInputs | ImGuiWindowFlags_AlwaysAutoResize |
@@ -5530,11 +5530,15 @@ void GLCanvas3D::_render_thumbnail_internal(ThumbnailData &thumbnail_data, const
         {
             const ModelVolume &mv = *model_objects[obj_idx]->volumes[vol_idx];
             const size_t extruder_idx = ModelVolume::get_extruder_color_idx(mv, extruders_count);
-            const ColorRGBA default_color = (vol->printable && !vol->is_outside &&
-                                             extruder_idx < extruders_colors.size())
-                                                ? extruders_colors[extruder_idx]
-                                                : ColorRGBA::GRAY();
             const std::vector<ColorRGBA> palette = build_painted_palette(mv);
+            // preFlight: a single-color (unpainted) object renders in the themed "selected" accent color so
+            // the thumbnail matches the active theme. Painted/MMU objects (non-empty palette) keep their
+            // per-region painted colors, including their unpainted base filament color.
+            const ColorRGBA default_color = palette.empty() ? GLVolume::selected_color()
+                                                            : ((vol->printable && !vol->is_outside &&
+                                                                extruder_idx < extruders_colors.size())
+                                                                   ? extruders_colors[extruder_idx]
+                                                                   : ColorRGBA::GRAY());
             TriangleSelectorMmGui ts(mv.mesh(), palette, default_color);
             // Prefer color_mixing_facets when present (active painting wins over legacy MMU).
             if (!mv.color_mixing_facets.empty() && !mv.color_mixing_palette.empty())
@@ -7684,11 +7688,15 @@ void GLCanvas3D::_render_sidebar_toggle_imgui()
     // Remove button border by setting FrameBorderSize to 0
     ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
 
-    // Make button borderless but visible
+    // Themed borderless button: transparent at rest, subtle themed fill on hover/press, muted themed icon.
+    const Slic3r::GUI::ThemePalette &pal = Slic3r::GUI::active_palette();
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.26f, 0.26f, 0.26f, 0.8f));
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.16f, 0.16f, 0.16f, 0.9f));
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f)); // Always visible gray text
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
+                          ImVec4(pal.imgui_frame_hover.r, pal.imgui_frame_hover.g, pal.imgui_frame_hover.b, 0.8f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive,
+                          ImVec4(pal.imgui_frame_bg.r, pal.imgui_frame_bg.g, pal.imgui_frame_bg.b, 0.9f));
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(pal.imgui_text_disabled.r, pal.imgui_text_disabled.g,
+                                                pal.imgui_text_disabled.b, pal.imgui_text_disabled.a));
 
     // Draw custom hamburger menu icon
     ImVec2 button_pos = ImGui::GetCursorScreenPos();
@@ -7697,13 +7705,11 @@ void GLCanvas3D::_render_sidebar_toggle_imgui()
     // Check hover state
     bool hovered = ImGui::IsItemHovered();
 
-    // Draw background on hover
+    // No backdrop at rest; themed fill only on hover.
     ImDrawList *draw_list = ImGui::GetWindowDrawList();
     if (hovered)
-    {
         draw_list->AddRectFilled(button_pos, ImVec2(button_pos.x + button_size, button_pos.y + button_size),
                                  ImGui::GetColorU32(ImGuiCol_ButtonHovered));
-    }
 
     // Draw three horizontal lines for hamburger menu
     const float line_height = 2.0f * scale;
@@ -7712,7 +7718,8 @@ void GLCanvas3D::_render_sidebar_toggle_imgui()
     const float margin = (button_size - line_width) / 2.0f;
     const float top_margin = (button_size - (3 * line_height + 2 * line_spacing)) / 2.0f;
 
-    ImU32 line_color = ImGui::GetColorU32(ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+    const wxColour &icon_clr = pal.icon_enabled; // match the 3D toolbar icon color
+    ImU32 line_color = IM_COL32(icon_clr.Red(), icon_clr.Green(), icon_clr.Blue(), 255);
     for (int i = 0; i < 3; i++)
     {
         float y = button_pos.y + top_margin + i * (line_height + line_spacing);

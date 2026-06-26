@@ -31,6 +31,14 @@ bool mac_dark_mode()
 
 }
 
+void mac_set_appearance(bool dark)
+{
+    // Pin the application appearance to the active theme so native controls don't follow the
+    // (possibly opposite) macOS system setting. Applied at startup; theme changes restart the app.
+    NSAppearanceName name = dark ? NSAppearanceNameDarkAqua : NSAppearanceNameAqua;
+    [NSApp setAppearance:[NSAppearance appearanceNamed:name]];
+}
+
 double mac_max_scaling_factor()
 {
     double scaling = 1.;
@@ -236,6 +244,117 @@ void mac_set_window_transparent(void *nsview_handle)
         [window setOpaque:NO];
         [window setBackgroundColor:[NSColor clearColor]];
     }
+}
+
+void mac_set_button_title_color(void *nsview_handle, unsigned char r, unsigned char g, unsigned char b)
+{
+    if (!nsview_handle)
+        return;
+    NSView *view = (__bridge NSView *)nsview_handle;
+    if (![view isKindOfClass:[NSButton class]])
+        return;
+    NSButton *btn = (NSButton *)view;
+    NSMutableAttributedString *title = [[NSMutableAttributedString alloc] initWithAttributedString:[btn attributedTitle]];
+    NSColor *color = [NSColor colorWithSRGBRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1.0];
+    [title addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, [title length])];
+    [btn setAttributedTitle:title];
+}
+
+// Native NSOutlineView controls (wxDataViewCtrl, e.g. the object list) draw their own selection and don't
+// route through wxRendererNative, so the renderer-based tree theming can't reach them. wx's outline view is
+// cell-based, so selection is painted by -[NSTableView highlightSelectionInClipRect:]; override it to fill
+// selected rows with the themed muted-accent color instead of the system blue/gray. The theme only changes
+// via a full process restart, so the color is fixed for the process lifetime and set once here.
+static NSColor *s_table_selection_color = nil;
+static IMP s_orig_highlightSelection = NULL;
+
+static void preflight_highlightSelectionInClipRect(id self, SEL _cmd, NSRect clipRect)
+{
+    NSTableView *table = (NSTableView *) self;
+    if (!s_table_selection_color)
+    {
+        if (s_orig_highlightSelection)
+            ((void (*)(id, SEL, NSRect)) s_orig_highlightSelection)(self, _cmd, clipRect);
+        return;
+    }
+    NSIndexSet *selected = [table selectedRowIndexes];
+    if (selected.count == 0)
+        return;
+    [s_table_selection_color set];
+    const NSRange rows = [table rowsInRect:clipRect];
+    for (NSUInteger i = rows.location; i < NSMaxRange(rows); ++i)
+        if ([selected containsIndex:i])
+            NSRectFill([table rectOfRow:i]);
+}
+
+void mac_install_themed_table_selection(unsigned char r, unsigned char g, unsigned char b)
+{
+    s_table_selection_color = [NSColor colorWithSRGBRed:r / 255.0 green:g / 255.0 blue:b / 255.0 alpha:1.0];
+    static dispatch_once_t once;
+    dispatch_once(&once,
+                  ^{
+                      Method m =
+                          class_getInstanceMethod([NSTableView class], @selector(highlightSelectionInClipRect:));
+                      if (m)
+                      {
+                          s_orig_highlightSelection = method_getImplementation(m);
+                          method_setImplementation(m, (IMP) preflight_highlightSelectionInClipRect);
+                      }
+                  });
+}
+
+void mac_set_insertion_point_color(void *nsview_handle, unsigned char r, unsigned char g, unsigned char b)
+{
+    if (!nsview_handle)
+        return;
+    NSView *view = (__bridge NSView *)nsview_handle;
+    NSColor *color = [NSColor colorWithSRGBRed:r / 255.0 green:g / 255.0 blue:b / 255.0 alpha:1.0];
+    // Multiline controls are NSTextView; single-line wxTextCtrl is an NSTextField whose caret is drawn by
+    // the window's shared field editor (only valid while the field is first responder).
+    if ([view isKindOfClass:[NSTextView class]])
+    {
+        [(NSTextView *) view setInsertionPointColor:color];
+    }
+    else if ([view isKindOfClass:[NSTextField class]])
+    {
+        NSTextField *tf = (NSTextField *) view;
+        NSText *editor = [[tf window] fieldEditor:YES forObject:tf];
+        if ([editor isKindOfClass:[NSTextView class]])
+            [(NSTextView *) editor setInsertionPointColor:color];
+    }
+}
+
+void mac_set_focus_ring_none(void *nsview_handle)
+{
+    if (!nsview_handle)
+        return;
+    NSView *view = (__bridge NSView *)nsview_handle;
+    // Suppress the native blue focus ring; themed inputs draw their own focused border.
+    [view setFocusRingType:NSFocusRingTypeNone];
+}
+
+void mac_set_button_bezel_color(void *nsview_handle, unsigned char r, unsigned char g, unsigned char b)
+{
+    if (!nsview_handle)
+        return;
+    NSView *view = (__bridge NSView *)nsview_handle;
+    if (![view isKindOfClass:[NSButton class]])
+        return;
+    // Tints the rounded push-button bezel so dialog buttons follow the active theme instead of the
+    // system default blue/gray. macOS draws a flat colored bezel when bezelColor is set.
+    [(NSButton *)view setBezelColor:[NSColor colorWithSRGBRed:r / 255.0 green:g / 255.0 blue:b / 255.0 alpha:1.0]];
+}
+
+void mac_set_button_image_dims_when_disabled(void *nsview_handle, bool dims)
+{
+    if (!nsview_handle)
+        return;
+    NSView *view = (__bridge NSView *)nsview_handle;
+    if (![view isKindOfClass:[NSButton class]])
+        return;
+    NSCell *cell = [(NSButton *)view cell];
+    if ([cell isKindOfClass:[NSButtonCell class]])
+        [(NSButtonCell *)cell setImageDimsWhenDisabled:dims];
 }
 
 void mac_set_view_corner_radius(void *nsview_handle, double radius)

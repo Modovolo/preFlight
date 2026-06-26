@@ -1024,17 +1024,20 @@ void GCodeViewer::SequentialView::GCodeWindow::render(float top, float bottom, s
         assert(m_lines_cache.size() == m_cache_range.size());
     };
 
-    static const ImVec4 LINE_NUMBER_COLOR = ImGuiPureWrap::COL_ORANGE_LIGHT;
-    static const ImVec4 SELECTION_RECT_COLOR = ImGuiPureWrap::COL_ORANGE_DARK;
-    static const ImVec4 COMMAND_COLOR = {0.8f, 0.8f, 0.0f, 1.0f};
-    // Theme-aware colors for G-code text
+    // Not static: must re-read the themed accent each render so an in-process theme switch is reflected.
+    const ImVec4 LINE_NUMBER_COLOR = ImGuiPureWrap::COL_ORANGE_LIGHT;
+    const ImVec4 SELECTION_RECT_COLOR = ImGuiPureWrap::COL_ORANGE_DARK;
+    // Theme-aware colors for G-code text (re-read each render so an in-process theme switch is reflected).
+    float command_r, command_g, command_b, command_a;
+    UIColors::GCodeCommandRGBA(command_r, command_g, command_b, command_a);
+    const ImVec4 COMMAND_COLOR = {command_r, command_g, command_b, command_a};
     float params_r, params_g, params_b, params_a;
     UIColors::LegendTextRGBA(params_r, params_g, params_b, params_a);
     const ImVec4 PARAMETERS_COLOR = {params_r, params_g, params_b, params_a};
     float comment_r, comment_g, comment_b, comment_a;
     UIColors::GCodeCommentRGBA(comment_r, comment_g, comment_b, comment_a);
     const ImVec4 COMMENT_COLOR = {comment_r, comment_g, comment_b, comment_a};
-    static const ImVec4 ELLIPSIS_COLOR = {0.0f, 0.7f, 0.0f, 1.0f};
+    const ImVec4 ELLIPSIS_COLOR = PARAMETERS_COLOR; // truncation marker matches the coordinate (parameter) text
 
     // FORCE the G-code window to always be visible in preview mode
     // This fixes issues where m_visible gets set to false after tolerance changes
@@ -1237,8 +1240,8 @@ void GCodeViewer::SequentialView::GCodeWindow::render(float top, float bottom, s
     // line number's column width (already using legend font from PushFont above)
     const float id_width = ImGui::CalcTextSize(std::to_string(*visible_range.max).c_str()).x;
 
-    auto add_item_to_line = [](const std::string &txt, const ImVec4 &color, float spacing, size_t &current_length,
-                               const std::string &full_line_text = "")
+    auto add_item_to_line = [ELLIPSIS_COLOR](const std::string &txt, const ImVec4 &color, float spacing,
+                                             size_t &current_length, const std::string &full_line_text = "")
     {
         static const size_t LENGTH_THRESHOLD = 60;
 
@@ -1493,9 +1496,8 @@ void GCodeViewer::load_as_gcode(const GCodeProcessorResult &gcode_result, const 
 {
     m_loaded_as_preview = false;
 
-    const bool current_top_layer_only = m_viewer.is_top_layer_only_view_range();
-    const bool required_top_layer_only = get_app_config()->get_bool("seq_top_layer_only");
-    if (current_top_layer_only != required_top_layer_only)
+    // preFlight: the sequential preview slider always restricts to the top layer
+    if (!m_viewer.is_top_layer_only_view_range())
         m_viewer.toggle_top_layer_only_view_range();
 
     // Restore legend toggle button states from app config
@@ -2923,7 +2925,10 @@ void GCodeViewer::render_shells()
         glsafe(::glDisable(GL_BLEND));
         glsafe(::glDepthMask(true));
 
-        const ColorRGBA shell_color(Theme::Secondary::R_NORM, Theme::Secondary::G_NORM, Theme::Secondary::B_NORM, 1.0f);
+        const ColorRGBA shell_color(active_palette().accent_primary.Red() / 255.0f,
+                                    active_palette().accent_primary.Green() / 255.0f,
+                                    active_palette().accent_primary.Blue() / 255.0f,
+                                    1.0f); // themed object accent (matches selection)
 
         for (GLVolume *volume : m_shells.volumes.volumes)
         {
@@ -3003,8 +3008,11 @@ void GCodeViewer::render_shells()
         glsafe(::glDisable(GL_BLEND));
         glsafe(::glDepthMask(true));
 
-        // Use theme secondary color (blue) for shells
-        const ColorRGBA shell_color(Theme::Secondary::R_NORM, Theme::Secondary::G_NORM, Theme::Secondary::B_NORM, 1.0f);
+        // Themed object accent for shells (matches object selection)
+        const ColorRGBA shell_color(active_palette().accent_primary.Red() / 255.0f,
+                                    active_palette().accent_primary.Green() / 255.0f,
+                                    active_palette().accent_primary.Blue() / 255.0f,
+                                    1.0f); // themed object accent (matches selection)
 
         for (GLVolume *volume : m_shells.volumes.volumes)
         {
@@ -3032,9 +3040,10 @@ void GCodeViewer::render_shells()
         glsafe(::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
         glsafe(::glDepthMask(false));
 
-        // Use translucent theme secondary color for top half
-        const ColorRGBA shell_color_translucent(Theme::Secondary::R_NORM, Theme::Secondary::G_NORM,
-                                                Theme::Secondary::B_NORM, 0.3f);
+        // Translucent themed object accent for the not-yet-sliced top half
+        const ColorRGBA shell_color_translucent(active_palette().accent_primary.Red() / 255.0f,
+                                                active_palette().accent_primary.Green() / 255.0f,
+                                                active_palette().accent_primary.Blue() / 255.0f, 0.3f);
 
         for (GLVolume *volume : m_shells.volumes.volumes)
         {
@@ -3183,30 +3192,24 @@ void GCodeViewer::render_legend(float &legend_height)
         const std::string &metres = _CTX_utf8(L_CONTEXT("m", "Metre"), "Metre");
         if (callback != nullptr)
         {
-            if (ImGui::MenuItem(label.c_str()))
-                callback();
-            else
+            // Draw the hover highlight and the contrasting text from a single predicted-hover flag so
+            // the fill and the text colour flip on the exact same frame. ImGui's own MenuItem highlight
+            // is suppressed (transparent header colours) because its hover can lag the predicted flag
+            // by a frame, which showed as the text changing a beat before the background.
+            ImVec2 hl_min, hl_max;
+            const bool row_hovered = ImGuiPureWrap::item_hover_rect(hl_min, hl_max);
+            if (row_hovered)
             {
-                // show tooltip
-                if (ImGui::IsItemHovered())
-                {
-                    if (!visible)
-                        ImGui::PopStyleVar();
-                    // Theme-aware tooltip background (matches slider labels)
-                    float tt_r, tt_g, tt_b, tt_a;
-                    UIColors::SliderLabelBackgroundRGBA(tt_r, tt_g, tt_b, tt_a);
-                    ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(tt_r, tt_g, tt_b, tt_a));
-                    ImGui::BeginTooltip();
-                    ImGuiPureWrap::text(visible ? _u8L("Click to hide") : _u8L("Click to show"));
-                    ImGui::EndTooltip();
-                    ImGui::PopStyleColor();
-                    if (!visible)
-                        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.3333f);
-
-                    // preFlight: Removed set_requires_extra_frame() that fired on every
-                    // hover over legend items, creating a continuous render loop.
-                }
+                ImGui::GetWindowDrawList()->AddRectFilled(hl_min, hl_max, ImGui::GetColorU32(ImGuiCol_HeaderHovered));
+                ImGui::PushStyleColor(ImGuiCol_Text, ImGuiPureWrap::contrasting_text(
+                                                         ImGui::GetStyleColorVec4(ImGuiCol_HeaderHovered)));
             }
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+            ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+            const bool clicked = ImGui::MenuItem(label.c_str());
+            const bool item_hovered = ImGui::IsItemHovered();
+            ImGui::PopStyleColor(2); // header hover/active suppression
 
             if (!time.empty())
             {
@@ -3230,6 +3233,31 @@ void GCodeViewer::render_legend(float &legend_height)
                 ImGuiPureWrap::text(format("%1$.2f %2%", used_filament_m, (imperial_units ? inches : metres)));
                 ImGui::SameLine(offsets[4]);
                 ImGuiPureWrap::text(format("%1$.2f %2%", used_filament_g, grams));
+            }
+
+            if (row_hovered)
+                ImGui::PopStyleColor();
+
+            if (clicked)
+                callback();
+            else if (item_hovered)
+            {
+                // show tooltip
+                if (!visible)
+                    ImGui::PopStyleVar();
+                // Theme-aware tooltip background (matches slider labels)
+                float tt_r, tt_g, tt_b, tt_a;
+                UIColors::SliderLabelBackgroundRGBA(tt_r, tt_g, tt_b, tt_a);
+                ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(tt_r, tt_g, tt_b, tt_a));
+                ImGui::BeginTooltip();
+                ImGuiPureWrap::text(visible ? _u8L("Click to hide") : _u8L("Click to show"));
+                ImGui::EndTooltip();
+                ImGui::PopStyleColor();
+                if (!visible)
+                    ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.3333f);
+
+                // preFlight: Removed set_requires_extra_frame() that fired on every
+                // hover over legend items, creating a continuous render loop.
             }
         }
         else
@@ -4406,8 +4434,12 @@ void GCodeViewer::render_legend(float &legend_height)
                                        (time_mode.time / 3600.0f);
 
                     ImGui::TableNextRow();
-                    // Highlight Total row with header-style background
-                    ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, ImGui::GetColorU32(ImGuiCol_TableHeaderBg));
+                    // preFlight: subtle translucent emphasis band on the Total row instead of a solid header
+                    // background. Lighten on dark themes / darken on light themes so it's visible in both; the
+                    // text uses the themed LEGEND_TEXT_COLOR.
+                    const ImU32 total_row_bg = wxGetApp().dark_mode() ? IM_COL32(255, 255, 255, 20)
+                                                                      : IM_COL32(0, 0, 0, 38);
+                    ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, total_row_bg);
                     ImGui::TableSetColumnIndex(0);
                     ImGuiPureWrap::text_colored(LEGEND_TEXT_COLOR, _u8L("Total").c_str());
                     ImGui::TableSetColumnIndex(3);

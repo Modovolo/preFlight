@@ -406,7 +406,7 @@ bool combo(const std::string &label, const std::vector<std::string> &options, in
     {
         for (int i = 0; i < (int) options.size(); i++)
         {
-            if (ImGui::Selectable(options[i].c_str(), i == selection))
+            if (selectable_contrast(options[i].c_str(), i == selection))
             {
                 selection_out = i;
                 res = true;
@@ -484,17 +484,68 @@ void process_mouse_wheel(int &mouse_wheel)
     mouse_wheel = 0;
 }
 
+ImVec4 contrasting_text(const ImVec4 &fill)
+{
+    const float luma = 0.299f * fill.x + 0.587f * fill.y + 0.114f * fill.z;
+    return luma > 0.5f ? ImVec4(0.10f, 0.10f, 0.10f, 1.0f) : ImVec4(0.95f, 0.95f, 0.95f, 1.0f);
+}
+
+bool item_hover_rect(ImVec2 &out_min, ImVec2 &out_max, const ImVec2 &size)
+{
+    // Predict the hover the same way ImGui draws it so callers can cover the WHOLE highlighted cell: the
+    // item rect (size.x == 0 spans the available width) expanded by half the item spacing on each side
+    // (ImGui fills the inter-row gap).
+    const ImGuiStyle &style = ImGui::GetStyle();
+    const ImVec2 p0 = ImGui::GetCursorScreenPos();
+    const float w = (size.x > 0.0f) ? size.x : ImGui::GetContentRegionAvail().x;
+    const float h = (size.y > 0.0f) ? size.y : ImGui::GetTextLineHeight();
+    const float pad_l = IM_FLOOR(style.ItemSpacing.x * 0.5f);
+    const float pad_u = IM_FLOOR(style.ItemSpacing.y * 0.5f);
+    out_min = ImVec2(p0.x - pad_l, p0.y - pad_u);
+    out_max = ImVec2(p0.x + w + (style.ItemSpacing.x - pad_l), p0.y + h + (style.ItemSpacing.y - pad_u));
+    return ImGui::IsMouseHoveringRect(out_min, out_max);
+}
+
+bool item_will_hover(const ImVec2 &size)
+{
+    ImVec2 r_min, r_max;
+    return item_hover_rect(r_min, r_max, size);
+}
+
+bool selectable_contrast(const char *label, bool selected, ImGuiSelectableFlags flags, const ImVec2 &size)
+{
+    // ImGui::Selectable uses ImGuiCol_Text whether or not the row sits on the bright header fill, so push
+    // contrasting text for the highlighted state (predicted hover, or an explicitly selected row).
+    const bool will_hover = item_will_hover(size);
+    const bool highlighted = selected || will_hover;
+    if (highlighted)
+        ImGui::PushStyleColor(ImGuiCol_Text, contrasting_text(ImGui::GetStyleColorVec4(
+                                                 will_hover ? ImGuiCol_HeaderHovered : ImGuiCol_Header)));
+    const bool clicked = ImGui::Selectable(label, selected, flags, size);
+    if (highlighted)
+        ImGui::PopStyleColor();
+    return clicked;
+}
+
 bool undo_redo_list(const ImVec2 &size, const bool is_undo, bool (*items_getter)(const bool, int, const char **),
                     int &hovered, int &selected, int &mouse_wheel)
 {
     bool is_hovered = false;
     ImGui::ListBoxHeader("", size);
 
+    // Highlighted items draw on the themed header fill (often the bright accent); use contrasting text.
+    const ImVec4 highlighted_text = contrasting_text(ImGui::GetStyleColorVec4(ImGuiCol_Header));
+
     int i = 0;
     const char *item_text;
     while (items_getter(is_undo, i, &item_text))
     {
+        const bool highlighted = i <= hovered; // selected range plus the hovered boundary item
+        if (highlighted)
+            ImGui::PushStyleColor(ImGuiCol_Text, highlighted_text);
         ImGui::Selectable(item_text, i < hovered);
+        if (highlighted)
+            ImGui::PopStyleColor();
 
         if (ImGui::IsItemHovered())
         {

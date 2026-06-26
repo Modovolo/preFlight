@@ -31,7 +31,7 @@ GLGizmoScale3D::GLGizmoScale3D(GLCanvas3D &parent, const std::string &icon_filen
     , m_snap_step(0.05)
     , m_base_color(DEFAULT_BASE_COLOR)
     , m_drag_color(DEFAULT_DRAG_COLOR)
-    , m_highlight_color(DEFAULT_HIGHLIGHT_COLOR)
+    , m_highlight_color(default_highlight_color())
 {
     m_grabber_connections[0].grabber_indices = {0, 1};
     m_grabber_connections[1].grabber_indices = {2, 3};

@@ -22,6 +22,7 @@
 #include "slic3r/GUI/Sidebar.hpp" // IWYU pragma: keep
 #include "format.hpp"
 #include "GUI_App.hpp"
+#include "ThemePalette.hpp"
 #include "Plater.hpp"
 #include "Tab.hpp"
 #include "ExtraRenderers.hpp"
@@ -66,7 +67,12 @@ static std::string def_text_color()
     return encode_color(ColorRGB(def_colour.Red(), def_colour.Green(), def_colour.Blue()));
 }
 static std::string grey = "#808080";
-static std::string orange = "#eaa032";
+// preFlight: the modified-value highlight follows the active theme accent (was a frozen "#eaa032").
+static std::string accent_clr()
+{
+    const wxColour &c = active_palette().accent_primary;
+    return encode_color(ColorRGB(c.Red(), c.Green(), c.Blue()));
+}
 
 static void color_string(wxString &str, const std::string &color)
 {
@@ -178,7 +184,7 @@ ModelNode::ModelNode(ModelNode *parent, const wxString &text, const wxString &ol
 
     // "color" strings
     color_string(m_old_value, def_text_color());
-    color_string(m_mod_value, orange);
+    color_string(m_mod_value, accent_clr());
     color_string(m_new_value, def_text_color());
 
     UpdateIcons();
@@ -199,14 +205,14 @@ void ModelNode::UpdateEnabling()
     {
         change_text_color(m_text, def_text_color(), grey);
         change_text_color(m_old_value, def_text_color(), grey);
-        change_text_color(m_mod_value, orange, grey);
+        change_text_color(m_mod_value, accent_clr(), grey);
         change_text_color(m_new_value, def_text_color(), grey);
     }
     else
     {
         change_text_color(m_text, grey, def_text_color());
         change_text_color(m_old_value, grey, def_text_color());
-        change_text_color(m_mod_value, grey, orange);
+        change_text_color(m_mod_value, grey, accent_clr());
         change_text_color(m_new_value, grey, def_text_color());
     }
     // update icons for the colors
@@ -1648,7 +1654,7 @@ FullCompareDialog::FullCompareDialog(const wxString &option_name, const wxString
                                           wxTE_MULTILINE | wxTE_READONLY | wxBORDER_DEFAULT | wxTE_RICH);
         wxGetApp().UpdateDarkUI(text);
         text->SetStyle(0, label.Len(),
-                       wxTextAttr(is_colored ? wxColour(orange) : wxNullColour, wxNullColour, this->GetFont()));
+                       wxTextAttr(is_colored ? wxColour(accent_clr()) : wxNullColour, wxNullColour, this->GetFont()));
 
         for (const wxString &str : diff_set)
         {
@@ -1656,7 +1662,7 @@ FullCompareDialog::FullCompareDialog(const wxString &option_name, const wxString
             if (pos == wxNOT_FOUND)
                 continue;
             text->SetStyle(pos, pos + (int) str.Len(),
-                           wxTextAttr(is_colored ? wxColour(orange) : wxNullColour, wxNullColour,
+                           wxTextAttr(is_colored ? wxColour(accent_clr()) : wxNullColour, wxNullColour,
                                       this->GetFont().Bold()));
         }
 

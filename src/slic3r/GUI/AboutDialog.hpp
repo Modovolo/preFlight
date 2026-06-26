@@ -19,6 +19,8 @@
 #include "GUI_Utils.hpp"
 #include "wxExtensions.hpp"
 
+class ScrollablePanel; // themed-scrollbar host for the About HTML (global namespace)
+
 namespace Slic3r
 {
 namespace GUI
@@ -70,6 +72,7 @@ class AboutDialog : public DPIDialog
 {
     ScalableBitmap m_logo_bitmap;
     wxHtmlWindow *m_html;
+    ScrollablePanel *m_html_panel{nullptr};
     wxStaticBitmap *m_logo;
     int m_copy_rights_btn_id{wxID_ANY};
     int m_copy_version_btn_id{wxID_ANY};

@@ -13,6 +13,7 @@
 #include <wx/display.h>
 #include "GUI_App.hpp"
 #include "wxExtensions.hpp"
+#include "Widgets/ScrollablePanel.hpp"
 #include "MainFrame.hpp"
 #include <wx/notebook.h>
 
@@ -356,9 +357,7 @@ wxPanel *KBShortcutsDialog::create_page(wxWindow *parent, const ShortcutsItem &s
     static const int max_items_per_column = 22;
     int columns_count = 1 + static_cast<int>(shortcuts.second.size()) / max_items_per_column;
 
-    wxScrolledWindow *scrollable_panel = new wxScrolledWindow(main_page);
-    wxGetApp().UpdateDarkUI(scrollable_panel);
-    scrollable_panel->SetScrollbars(2 * em, 2 * em, 5 * em, 5 * em);
+    auto *scrollable_panel = new ScrollablePanel(main_page);
     scrollable_panel->SetInitialSize(wxSize(85 * em, 45 * em));
 
     wxBoxSizer *scrollable_panel_sizer = new wxBoxSizer(wxVERTICAL);
@@ -373,11 +372,11 @@ wxPanel *KBShortcutsDialog::create_page(wxWindow *parent, const ShortcutsItem &s
             if (id < items_count)
             {
                 const auto &[shortcut, description] = shortcuts.second[id];
-                auto key = new wxStaticText(scrollable_panel, wxID_ANY, _(shortcut));
+                auto key = new wxStaticText(scrollable_panel->GetContentPanel(), wxID_ANY, _(shortcut));
                 key->SetFont(bold_font);
                 grid_sizer->Add(key, 0, wxALIGN_CENTRE_VERTICAL);
 
-                auto desc = new wxStaticText(scrollable_panel, wxID_ANY, _(description));
+                auto desc = new wxStaticText(scrollable_panel->GetContentPanel(), wxID_ANY, _(description));
                 desc->SetFont(font);
                 grid_sizer->Add(desc, 0, wxALIGN_CENTRE_VERTICAL);
             }
@@ -385,8 +384,10 @@ wxPanel *KBShortcutsDialog::create_page(wxWindow *parent, const ShortcutsItem &s
             {
                 if (columns_count > 1)
                 {
-                    grid_sizer->Add(new wxStaticText(scrollable_panel, wxID_ANY, ""), 0, wxALIGN_CENTRE_VERTICAL);
-                    grid_sizer->Add(new wxStaticText(scrollable_panel, wxID_ANY, ""), 0, wxALIGN_CENTRE_VERTICAL);
+                    grid_sizer->Add(new wxStaticText(scrollable_panel->GetContentPanel(), wxID_ANY, ""), 0,
+                                    wxALIGN_CENTRE_VERTICAL);
+                    grid_sizer->Add(new wxStaticText(scrollable_panel->GetContentPanel(), wxID_ANY, ""), 0,
+                                    wxALIGN_CENTRE_VERTICAL);
                 }
             }
         }

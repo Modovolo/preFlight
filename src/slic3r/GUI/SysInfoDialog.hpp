@@ -12,6 +12,8 @@
 #include "GUI_Utils.hpp"
 #include "wxExtensions.hpp"
 
+class ScrollablePanel; // themed-scrollbar host for the OpenGL-info HTML (global namespace)
+
 namespace Slic3r
 {
 namespace GUI
@@ -22,6 +24,7 @@ class SysInfoDialog : public DPIDialog
     ScalableBitmap m_logo_bmp;
     wxStaticBitmap *m_logo;
     wxHtmlWindow *m_opengl_info_html;
+    ScrollablePanel *m_opengl_info_panel{nullptr};
     wxHtmlWindow *m_html;
 
     wxButton *m_btn_copy_to_clipboard;

@@ -20,7 +20,9 @@
 #include <libslic3r/BuildVolume.hpp>
 
 #include <wx/dialog.h>
-#include <wx/choicebk.h>
+#include <wx/simplebook.h>
+
+class ComboBox;
 
 namespace Slic3r
 {
@@ -108,7 +110,8 @@ private:
     void load_texture();
     void load_model();
 
-    wxChoicebook *m_shape_options_book;
+    ::ComboBox *m_shape_combo{nullptr};
+    wxSimplebook *m_shape_pages{nullptr};
     std::vector<ConfigOptionsGroupShp> m_optgroups;
 
     friend class BedShapeDialog;

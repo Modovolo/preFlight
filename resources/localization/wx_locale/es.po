@@ -1,3 +1,4 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: wxWidgets 3.1\n"
@@ -10,9 +11,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-SourceCharset: utf-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.0.3\n"
+"X-Poedit-SourceCharset: utf-8\n"
 
 #: ../src/common/debugrpt.cpp:586
 msgid ""
@@ -499,7 +500,8 @@ msgstr "&Red"
 msgid "&New"
 msgstr "&Nuevo"
 
-#: ../src/aui/tabmdi.cpp:111 ../src/generic/mdig.cpp:100 ../src/msw/mdi.cpp:180
+#: ../src/aui/tabmdi.cpp:111 ../src/generic/mdig.cpp:100
+#: ../src/msw/mdi.cpp:180
 msgid "&Next"
 msgstr "&Siguiente"
 
@@ -573,7 +575,8 @@ msgstr "&Modo de colocar:"
 msgid "&Preferences"
 msgstr "&Preferencias"
 
-#: ../src/aui/tabmdi.cpp:112 ../src/generic/mdig.cpp:101 ../src/msw/mdi.cpp:181
+#: ../src/aui/tabmdi.cpp:112 ../src/generic/mdig.cpp:101
+#: ../src/msw/mdi.cpp:181
 msgid "&Previous"
 msgstr "&Anterior"
 
@@ -2714,11 +2717,11 @@ msgstr "Desarrolladores"
 
 #: ../src/msw/dialup.cpp:374
 msgid ""
-"Dial up functions are unavailable because the remote access service (RAS) is "
-"not installed on this machine. Please install it."
+"Dial up functions are unavailable because the remote access service (RAS) is"
+" not installed on this machine. Please install it."
 msgstr ""
-"Las funciones de marcado no están disponibles porque los servicios de acceso "
-"remoto (RAS) no están instalados. Por favor instálelos."
+"Las funciones de marcado no están disponibles porque los servicios de acceso"
+" remoto (RAS) no están instalados. Por favor instálelos."
 
 #: ../src/generic/tipdlg.cpp:211
 msgid "Did you know..."
@@ -3331,8 +3334,8 @@ msgstr "Error instalando el manejador de señal"
 
 #: ../src/unix/threadpsx.cpp:1167
 msgid ""
-"Failed to join a thread, potential memory leak detected - please restart the "
-"program"
+"Failed to join a thread, potential memory leak detected - please restart the"
+" program"
 msgstr ""
 "Error al sincronizar con un hilo de ejecución, pérdida potencial de memoría "
 "detectada - por favor reinicie el programa"
@@ -3509,7 +3512,8 @@ msgstr "Error al registrar el servidor DDE '%s'"
 #: ../src/common/fontmap.cpp:245
 #, c-format
 msgid "Failed to remember the encoding for the charset '%s'."
-msgstr "Error al recordar la codificación para el conjunto de caracteres '%s'."
+msgstr ""
+"Error al recordar la codificación para el conjunto de caracteres '%s'."
 
 #: ../src/common/debugrpt.cpp:227
 #, c-format
@@ -3884,7 +3888,8 @@ msgstr "Se llamó a GetPropertyCollection sobre un accedente genérico"
 
 #: ../include/wx/xtiprop.h:202
 msgid "GetPropertyCollection called w/o valid collection getter"
-msgstr "Se llamó a GetPropertyCollection sin un captador de colecciones válido"
+msgstr ""
+"Se llamó a GetPropertyCollection sin un captador de colecciones válido"
 
 #: ../src/html/helpwnd.cpp:660
 msgid "Go back"
@@ -4111,13 +4116,11 @@ msgstr ""
 
 #: ../src/generic/dbgrptg.cpp:324
 msgid ""
-"If you wish to suppress this debug report completely, please choose the "
-"\"Cancel\" button,\n"
+"If you wish to suppress this debug report completely, please choose the \"Cancel\" button,\n"
 "but be warned that it may hinder improving the program, so if\n"
 "at all possible please do continue with the report generation.\n"
 msgstr ""
-"Si desea eliminar este informe de depuración completamente, por favor, elija "
-"el botón \"Cancelar\",\n"
+"Si desea eliminar este informe de depuración completamente, por favor, elija el botón \"Cancelar\",\n"
 "pero sepa que ésto no ayuda a la mejora del programa, por tanto, si\n"
 "es posible, por favor, continue con la generación del informe.\n"
 
@@ -4128,7 +4131,8 @@ msgstr "Se ignora el valor «%s» de la clave «%s»."
 
 #: ../src/common/xtistrm.cpp:295
 msgid "Illegal Object Class (Non-wxEvtHandler) as Event Source"
-msgstr "Clase de objeto no permitida (Non-wxEvtHandler) como origen de sucesos"
+msgstr ""
+"Clase de objeto no permitida (Non-wxEvtHandler) como origen de sucesos"
 
 #: ../src/common/xti.cpp:513
 msgid "Illegal Parameter Count for ConstructObject Method"
@@ -4162,8 +4166,8 @@ msgstr "La imagen no es del tipo %s."
 
 #: ../src/msw/textctrl.cpp:488
 msgid ""
-"Impossible to create a rich edit control, using simple text control instead. "
-"Please reinstall riched32.dll"
+"Impossible to create a rich edit control, using simple text control instead."
+" Please reinstall riched32.dll"
 msgstr ""
 "Imposible crear control 'rich edit', se usará el control de texto simple. "
 "Por favor instale riched32.dll"
@@ -5105,8 +5109,7 @@ msgstr "No se han encontrado documentos."
 msgid ""
 "No font for displaying text in encoding '%s' found,\n"
 "but an alternative encoding '%s' is available.\n"
-"Do you want to use this encoding (otherwise you will have to choose another "
-"one)?"
+"Do you want to use this encoding (otherwise you will have to choose another one)?"
 msgstr ""
 "No hay un tipo de letra para la codificación «%s»,\n"
 "pero existe una codificación alternativa, «%s».\n"
@@ -5152,7 +5155,8 @@ msgstr "No hay ningún sonido"
 
 #: ../src/common/image.cpp:2277 ../src/common/image.cpp:2318
 msgid "No unused colour in image being masked."
-msgstr "No hay ningún color sin utilizar en la imagen que se está enmascarando"
+msgstr ""
+"No hay ningún color sin utilizar en la imagen que se está enmascarando"
 
 #: ../src/common/image.cpp:3374
 msgid "No unused colour in image."
@@ -5879,11 +5883,10 @@ msgstr "Impresión"
 
 #: ../src/common/debugrpt.cpp:560
 #, c-format
-msgid ""
-"Processing debug report has failed, leaving the files in \"%s\" directory."
+msgid "Processing debug report has failed, leaving the files in \"%s\" directory."
 msgstr ""
-"Falló el procesamiento del informe de depuración; se han dejado los archivos "
-"en el directorio «%s»."
+"Falló el procesamiento del informe de depuración; se han dejado los archivos"
+" en el directorio «%s»."
 
 #: ../src/common/prntbase.cpp:545
 msgid "Progress:"
@@ -5987,8 +5990,7 @@ msgid ""
 "deleting it will leave your system in unusable state:\n"
 "operation aborted."
 msgstr ""
-"La clave del registro '%s' se necesita para el funcionamiento normal del "
-"sistema,\n"
+"La clave del registro '%s' se necesita para el funcionamiento normal del sistema,\n"
 "si se elimina puede dejar el sistema en un estado inestable:\n"
 "operación abortada."
 
@@ -6771,13 +6773,11 @@ msgstr ""
 #: ../src/html/htmprint.cpp:271
 #, c-format
 msgid ""
-"The document \"%s\" doesn't fit on the page horizontally and will be "
-"truncated if printed.\n"
+"The document \"%s\" doesn't fit on the page horizontally and will be truncated if printed.\n"
 "\n"
 "Would you like to proceed with printing it nevertheless?"
 msgstr ""
-"El documento \"%s\" no cabe horizontalmente en la página y será truncado si "
-"se imprime.\n"
+"El documento \"%s\" no cabe horizontalmente en la página y será truncado si se imprime.\n"
 "\n"
 "¿Quiere imprimirlo de todas formas?"
 
@@ -6939,12 +6939,10 @@ msgstr "El intervalo que mostrar."
 
 #: ../src/generic/dbgrptg.cpp:322
 msgid ""
-"The report contains the files listed below. If any of these files contain "
-"private information,\n"
+"The report contains the files listed below. If any of these files contain private information,\n"
 "please uncheck them and they will be removed from the report.\n"
 msgstr ""
-"El informe contiene los archivos mostrados abajo. Si alguno de estos "
-"archivos contiene información privada,\n"
+"El informe contiene los archivos mostrados abajo. Si alguno de estos archivos contiene información privada,\n"
 "por favor desmárquelos y serán eliminados del informe.\n"
 
 #: ../src/common/cmdline.cpp:1254
@@ -7085,7 +7083,8 @@ msgstr "El desplazamiento vertical."
 
 #: ../src/richtext/richtextprint.cpp:619 ../src/html/htmprint.cpp:745
 msgid ""
-"There was a problem during page setup: you may need to set a default printer."
+"There was a problem during page setup: you may need to set a default "
+"printer."
 msgstr ""
 "Hubo un problema al configurar la página: se necesita una impresora "
 "predeterminada."
@@ -7207,7 +7206,8 @@ msgstr "Verdadero"
 #, c-format
 msgid "Trying to remove file '%s' from memory VFS, but it is not loaded!"
 msgstr ""
-"¡Intentando eliminar el archivo '%s' de VFS de memoria, pero no está abierto!"
+"¡Intentando eliminar el archivo '%s' de VFS de memoria, pero no está "
+"abierto!"
 
 #: ../src/common/fmapbase.cpp:156
 msgid "Turkish (ISO-8859-9)"
@@ -7239,9 +7239,7 @@ msgstr "El tipo debe tener conversión de enum a long"
 
 #: ../src/propgrid/propgridiface.cpp:401
 #, c-format
-msgid ""
-"Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT "
-"\"%s\"."
+msgid "Type operation \"%s\" failed: Property labeled \"%s\" is of type \"%s\", NOT \"%s\"."
 msgstr ""
 "La operación de tipos \"%s\" falló: la propiedad etiquetada \"%s\" es del "
 "tipo \"%s\", NO \"%s\"."
@@ -7998,13 +7996,11 @@ msgstr "una aplicación DDEML ha creado una condición acelerada prolongada."
 
 #: ../src/msw/dde.cpp:1129
 msgid ""
-"a DDEML function was called without first calling the DdeInitialize "
-"function,\n"
+"a DDEML function was called without first calling the DdeInitialize function,\n"
 "or an invalid instance identifier\n"
 "was passed to a DDEML function."
 msgstr ""
-"una función DDEML fue llamada sin llamar primero a la función "
-"DdeInitialize,\n"
+"una función DDEML fue llamada sin llamar primero a la función DdeInitialize,\n"
 "o se pasó un identificador de instancia no válido\n"
 "a una función DDEML."
 
@@ -8038,7 +8034,8 @@ msgstr "una petición para una transacción síncrona de revisión ha finalizado
 
 #: ../src/msw/dde.cpp:1168
 msgid "a request to end an advise transaction has timed out."
-msgstr "una petición para una transacción síncrona de auditoría ha finalizado."
+msgstr ""
+"una petición para una transacción síncrona de auditoría ha finalizado."
 
 #: ../src/msw/dde.cpp:1162
 msgid ""
@@ -8085,8 +8082,7 @@ msgid ""
 "the transaction identifier for that callback is no longer valid."
 msgstr ""
 "se pasó un identificador de transacción no válido a la función DDEML.\n"
-"Una vez que la aplicación haya retornado desde una llamada "
-"XTYP_XACT_COMPLETE,\n"
+"Una vez que la aplicación haya retornado desde una llamada XTYP_XACT_COMPLETE,\n"
 "el identificador de la transacción para esa llamada deja de ser válido."
 
 #: ../src/common/zipstrm.cpp:1483
@@ -8383,7 +8379,8 @@ msgstr "quinto"
 #: ../src/common/fileconf.cpp:579
 #, c-format
 msgid "file '%s', line %zu: '%s' ignored after group header."
-msgstr "archivo «%s», renglón %zu: «%s» ignorado después de cabecera de grupo."
+msgstr ""
+"archivo «%s», renglón %zu: «%s» ignorado después de cabecera de grupo."
 
 #: ../src/common/fileconf.cpp:608
 #, c-format

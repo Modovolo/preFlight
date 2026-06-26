@@ -101,9 +101,6 @@ class PreferencesDialog : public DPIDialog
     std::shared_ptr<ConfigOptionsGroup> m_optgroup_gui;
     std::shared_ptr<ConfigOptionsGroup> m_optgroup_other;
     std::shared_ptr<ConfigOptionsGroup> m_optgroup_cpu;
-#ifdef _WIN32
-    std::shared_ptr<ConfigOptionsGroup> m_optgroup_dark_mode;
-#endif //_WIN32
 #if ENABLE_ENVIRONMENT_MAP
     std::shared_ptr<ConfigOptionsGroup> m_optgroup_render;
 #endif // ENABLE_ENVIRONMENT_MAP
@@ -126,7 +123,6 @@ class PreferencesDialog : public DPIDialog
 
     bool isOSX{false};
     bool m_settings_layout_changed{false};
-    bool m_seq_top_layer_only_changed{false};
     bool m_recreate_GUI{false};
 
     int m_custom_toolbar_size{-1};
@@ -137,7 +133,6 @@ public:
     ~PreferencesDialog() = default;
 
     bool settings_layout_changed() const { return m_settings_layout_changed; }
-    bool seq_top_layer_only_changed() const { return m_seq_top_layer_only_changed; }
     bool recreate_GUI() const { return m_recreate_GUI; }
     void build();
     void update_ctrls_alignment();

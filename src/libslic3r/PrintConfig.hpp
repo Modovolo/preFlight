@@ -418,7 +418,11 @@ enum class GCodeThumbnailsFormat
 {
     PNG,
     JPG,
-    QOI
+    QOI,
+    // BTT_TFT: RGB565 hex-text preview consumed by BigTreeTech TFT touchscreens
+    BTT_TFT,
+    // COLPIC: Elegoo/Chitu palette-encoded preview consumed by Neptune-series firmware (;gimage:/;simage: markers)
+    COLPIC
 };
 
 enum TowerSpeeds : int
@@ -1019,12 +1023,11 @@ PRINT_CONFIG_CLASS_DEFINE(
         (ConfigOptionEnum<FuzzySkinPointPlacement>,
          fuzzy_skin_point_placement))((ConfigOptionEnum<FuzzySkinPaintedPerimeters>, fuzzy_skin_painted_perimeters))(
         (ConfigOptionBool, fuzzy_skin_on_top))((ConfigOptionEnum<FuzzySkinVisibilityDetection>,
-                                                fuzzy_skin_visibility_detection))((ConfigOptionBool, gap_fill_enabled))(
-        (ConfigOptionFloat, gap_fill_speed))((ConfigOptionEnum<PerimeterCompression>, perimeter_compression))(
-        (ConfigOptionPercent, max_perimeter_width))((ConfigOptionEnum<ThinWallPrecision>, thin_wall_precision))(
-        (ConfigOptionFloatOrPercent, infill_anchor))((ConfigOptionFloatOrPercent, infill_anchor_max))(
-        (ConfigOptionInt, infill_extruder))((ConfigOptionFloatOrPercent,
-                                             infill_extrusion_width))((ConfigOptionInt, infill_every_layers))(
+                                                fuzzy_skin_visibility_detection))(
+        (ConfigOptionEnum<PerimeterCompression>, perimeter_compression))((ConfigOptionPercent, max_perimeter_width))(
+        (ConfigOptionEnum<ThinWallPrecision>, thin_wall_precision))((ConfigOptionFloatOrPercent, infill_anchor))(
+        (ConfigOptionFloatOrPercent, infill_anchor_max))((ConfigOptionInt, infill_extruder))(
+        (ConfigOptionFloatOrPercent, infill_extrusion_width))((ConfigOptionInt, infill_every_layers))(
         (ConfigOptionFloatOrPercent, infill_overlap))((ConfigOptionFloatOrPercent, external_perimeter_overlap))(
         (ConfigOptionFloatOrPercent, perimeter_perimeter_overlap))((ConfigOptionFloatOrPercent, bridge_infill_overlap))(
         (ConfigOptionFloatOrPercent, bridge_infill_perimeter_overlap))((ConfigOptionFloat, infill_speed))(
@@ -1179,8 +1182,7 @@ PRINT_CONFIG_CLASS_DERIVED_DEFINE(
                                                         avoid_crossing_perimeters_max_detour))(
         (ConfigOptionPoints, bed_shape))((ConfigOptionInts, bed_temperature))((ConfigOptionFloat, bridge_acceleration))(
         (ConfigOptionInts, bridge_fan_speed))((ConfigOptionBools, enable_manual_fan_speeds))(
-        (ConfigOptionInts, manual_fan_speed_external_perimeter))((ConfigOptionInts, manual_fan_speed_gap_fill))(
-        (ConfigOptionInts, manual_fan_speed_internal_infill))(
+        (ConfigOptionInts, manual_fan_speed_external_perimeter))((ConfigOptionInts, manual_fan_speed_internal_infill))(
         (ConfigOptionInts, manual_fan_speed_interlocking_perimeter))((ConfigOptionInts, manual_fan_speed_ironing))(
         (ConfigOptionInts, manual_fan_speed_overhang_perimeter))((ConfigOptionInts, manual_fan_speed_perimeter))(
         (ConfigOptionInts, manual_fan_speed_skirt))((ConfigOptionInts, manual_fan_speed_solid_infill))(

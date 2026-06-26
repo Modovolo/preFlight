@@ -330,12 +330,6 @@ void Preset::normalize(DynamicPrintConfig &config)
                 static_cast<ConfigOptionStrings *>(opt)->values.resize(n, std::string());
         }
     }
-    if (const auto *gap_fill_speed = config.option<ConfigOptionFloat>("gap_fill_speed", false);
-        gap_fill_speed && gap_fill_speed->value <= 0.)
-    {
-        if (auto *gap_fill_enabled = config.option<ConfigOptionBool>("gap_fill_enabled", false); gap_fill_enabled)
-            gap_fill_enabled->value = false;
-    }
     // MVF is the primary volumetric limit; MVS is a legacy alias kept for scripting.
     // Legacy presets have MVS but no MVF - detected by MVF=0 with MVS>0 (safe because
     // the new UI always keeps both in sync, so this state only occurs from old presets).
@@ -630,8 +624,6 @@ static std::vector<std::string> s_Preset_print_options{
     "support_material_interface_speed",
     "bridge_speed",
     "over_bridge_speed",
-    "gap_fill_speed",
-    "gap_fill_enabled",
     "perimeter_compression",
     "max_perimeter_width",
     "thin_wall_precision",
@@ -801,12 +793,11 @@ static std::vector<std::string> s_Preset_filament_options{
     "manual_fan_speed_overhang_perimeter", "manual_fan_speed_interlocking_perimeter",
     "manual_fan_speed_external_perimeter", "manual_fan_speed_perimeter", "manual_fan_speed_top_solid_infill",
     "manual_fan_speed_solid_infill", "manual_fan_speed_internal_infill", "manual_fan_speed_ironing",
-    "manual_fan_speed_gap_fill", "manual_fan_speed_skirt", "manual_fan_speed_support_material",
-    "manual_fan_speed_support_interface", "disable_fan_first_layers", "full_fan_speed_layer", "fan_below_layer_time",
-    "slowdown_below_layer_time", "dont_slow_down_outer_wall", "min_print_speed", "custom_parameters_filament",
-    "start_filament_gcode", "end_filament_gcode", "enable_dynamic_fan_speeds", "chamber_temperature",
-    "chamber_minimal_temperature", "overhang_fan_speed_0", "overhang_fan_speed_1", "overhang_fan_speed_2",
-    "overhang_fan_speed_3",
+    "manual_fan_speed_skirt", "manual_fan_speed_support_material", "manual_fan_speed_support_interface",
+    "disable_fan_first_layers", "full_fan_speed_layer", "fan_below_layer_time", "slowdown_below_layer_time",
+    "dont_slow_down_outer_wall", "min_print_speed", "custom_parameters_filament", "start_filament_gcode",
+    "end_filament_gcode", "enable_dynamic_fan_speeds", "chamber_temperature", "chamber_minimal_temperature",
+    "overhang_fan_speed_0", "overhang_fan_speed_1", "overhang_fan_speed_2", "overhang_fan_speed_3",
     // Retract overrides
     "filament_retract_length", "filament_retract_lift", "filament_retract_lift_above", "filament_retract_lift_below",
     "filament_retract_speed", "filament_deretract_speed", "filament_retract_restart_extra",

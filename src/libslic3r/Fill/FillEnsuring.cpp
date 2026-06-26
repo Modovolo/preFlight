@@ -18,7 +18,7 @@
 
 #include "libslic3r/ClipperUtils.hpp"
 #include "libslic3r/ShortestPath.hpp"
-#include "libslic3r/Arachne/WallToolPaths.hpp"
+#include "libslic3r/Athena/WallToolPaths.hpp"
 #include "libslic3r/AABBTreeLines.hpp"
 #include "libslic3r/Algorithm/PathSorting.hpp"
 #include "libslic3r/BoundingBox.hpp"
@@ -29,7 +29,7 @@
 #include "libslic3r/Polygon.hpp"
 #include "libslic3r/Polyline.hpp"
 #include "libslic3r/libslic3r.h"
-#include "libslic3r/Arachne/utils/ExtrusionLine.hpp"
+#include "libslic3r/Athena/utils/ExtrusionLine.hpp"
 #include "libslic3r/Fill/FillBase.hpp"
 #include "libslic3r/Surface.hpp"
 
@@ -552,30 +552,41 @@ ThickPolylines make_fill_polylines(const Fill *fill, const Surface *surface, con
             BoundingBox ex_bb = ex_poly.contour.bounding_box();
             coord_t loops_count = (std::max(ex_bb.size().x(), ex_bb.size().y()) + scaled_spacing - 1) / scaled_spacing;
             Polygons polygons = to_polygons(ex_poly);
-            Arachne::WallToolPaths wall_tool_paths(polygons, scaled_spacing, scaled_spacing, loops_count, 0,
-                                                   params.layer_height, *fill->print_object_config,
-                                                   *fill->print_config);
-            if (std::vector<Arachne::VariableWidthLines> loops = wall_tool_paths.getToolPaths(); !loops.empty())
+            // Compute min_bead_width_factor from config so Athena accepts narrow gap beads
+            double gap_fill_mbw_factor;
             {
-                std::vector<const Arachne::ExtrusionLine *> all_extrusions;
-                for (Arachne::VariableWidthLines &loop : loops)
+                const auto &mbw_opt = fill->print_object_config->min_bead_width;
+                float min_nozzle = float(*std::min_element(fill->print_config->nozzle_diameter.values.begin(),
+                                                           fill->print_config->nozzle_diameter.values.end()));
+                coord_t config_mbw = mbw_opt.percent ? scaled<coord_t>(mbw_opt.value * 0.01 * min_nozzle)
+                                                     : scaled<coord_t>(mbw_opt.value);
+                gap_fill_mbw_factor = std::clamp(double(config_mbw) / double(scaled_spacing), 0.1, 1.0);
+            }
+            Athena::WallToolPaths wall_tool_paths(polygons, scaled_spacing, scaled_spacing, loops_count, 0,
+                                                  params.layer_height, *fill->print_object_config, *fill->print_config,
+                                                  scaled_spacing, scaled_spacing, scaled_spacing, scaled_spacing, 0, -1,
+                                                  gap_fill_mbw_factor);
+            wall_tool_paths.skip_thin_contour_regeneration();
+            if (std::vector<Athena::VariableWidthLines> loops = wall_tool_paths.getToolPaths(); !loops.empty())
+            {
+                std::vector<const Athena::ExtrusionLine *> all_extrusions;
+                for (Athena::VariableWidthLines &loop : loops)
                 {
                     if (loop.empty())
                         continue;
 
-                    for (const Arachne::ExtrusionLine &wall : loop)
+                    for (const Athena::ExtrusionLine &wall : loop)
                         all_extrusions.emplace_back(&wall);
                 }
 
-                for (const Arachne::ExtrusionLine *extrusion : all_extrusions)
+                for (const Athena::ExtrusionLine *extrusion : all_extrusions)
                 {
                     if (extrusion->junctions.size() < 2)
                         continue;
 
-                    ThickPolyline thick_polyline = Arachne::to_thick_polyline(*extrusion);
+                    ThickPolyline thick_polyline = Athena::to_thick_polyline(*extrusion);
                     if (extrusion->is_closed)
                     {
-                        // Arachne produces contour with clockwise orientation and holes with counterclockwise orientation.
                         if (const bool extrusion_reverse = params.prefer_clockwise_movements ? !extrusion->is_contour()
                                                                                              : extrusion->is_contour();
                             extrusion_reverse)

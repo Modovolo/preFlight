@@ -18,6 +18,7 @@
 #include "GUI_App.hpp"
 #include "MainFrame.hpp"
 #include "format.hpp"
+#include "Widgets/ScrollablePanel.hpp"
 
 #include <wx/clipbrd.h> // IWYU pragma: keep
 
@@ -225,7 +226,9 @@ AboutDialog::AboutDialog()
     wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
 
     auto main_sizer = new wxBoxSizer(wxVERTICAL);
-    main_sizer->Add(hsizer, 0, wxEXPAND | wxALL, em * 2);
+    // Proportion 1 so the logo/text row expands vertically: this gives the text's ScrollablePanel a
+    // constrained, growing viewport so its themed scrollbar appears when the content overflows.
+    main_sizer->Add(hsizer, 1, wxEXPAND | wxALL, em * 2);
 
     // logo
     m_logo = new wxStaticBitmap(this, wxID_ANY, *get_bmp_bundle(wxGetApp().logo_name(), 192));
@@ -258,10 +261,13 @@ AboutDialog::AboutDialog()
         vsizer->Add(version, 0, wxALIGN_LEFT | wxBOTTOM, em);
     }
 
-    // text
-    m_html = new wxHtmlWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO /*NEVER*/);
+    // text: host the HTML (native scrollbar disabled) in a ScrollablePanel so the scrollbar is our themed
+    // custom one instead of the native wxHtmlWindow scrollbar.
+    m_html_panel = new ScrollablePanel(this, wxID_ANY);
+    m_html_panel->sys_color_changed();
+    m_html = new wxHtmlWindow(m_html_panel->GetContentPanel(), wxID_ANY, wxDefaultPosition, wxSize(44 * em, 24 * em),
+                              wxHW_SCROLLBAR_NEVER);
     {
-        m_html->SetMinSize(wxSize(-1, 24 * wxGetApp().em_unit()));
         wxFont font = wxGetApp().normal_font(); // get_default_font(this);
         const auto text_clr = wxGetApp().get_label_clr_default();
         const auto text_clr_str = encode_color(ColorRGB(text_clr.Red(), text_clr.Green(), text_clr.Blue()));
@@ -301,8 +307,44 @@ AboutDialog::AboutDialog()
             bgr_clr_str, text_clr_str, text_clr_str, copyright_str, copyright_str, is_lecensed_str, license_str,
             based_on_str);
         m_html->SetPage(text);
-        vsizer->Add(m_html, 1, wxEXPAND | wxBOTTOM, em);
+
+        // Size the HTML to its full content height so the ScrollablePanel can scroll it.
+        int content_height = 24 * em;
+        if (auto *ir = m_html->GetInternalRepresentation())
+            content_height = ir->GetHeight() + 2 * (em / 5);
+        m_html->SetMinSize(wxSize(-1, content_height));
+
+        auto *html_sizer = new wxBoxSizer(wxVERTICAL);
+        html_sizer->Add(m_html, 1, wxEXPAND);
+        m_html_panel->SetSizer(html_sizer);
+        m_html_panel->SetMinSize(wxSize(-1, 24 * em));
+
         m_html->Bind(wxEVT_HTML_LINK_CLICKED, &AboutDialog::onLinkClicked, this);
+        // Forward the HTML widget's wheel events to the ScrollablePanel so it scrolls our content.
+        m_html->Bind(wxEVT_MOUSEWHEEL, [this](wxMouseEvent &evt) { wxPostEvent(m_html_panel, evt); });
+
+        // The HTML reflows with its actual width (and font). Re-measure its real content height on resize and
+        // feed it back as the min size so the ScrollablePanel knows the true height and shows the scrollbar
+        // when the content overflows (the construction-time measure is at a guessed width and can be wrong).
+        m_html->Bind(wxEVT_SIZE,
+                     [this](wxSizeEvent &evt)
+                     {
+                         evt.Skip();
+                         if (!m_html_panel)
+                             return;
+                         auto *ir = m_html->GetInternalRepresentation();
+                         if (!ir)
+                             return;
+                         const int h = ir->GetHeight() + 2 * (em_unit() / 5);
+                         const int diff = h - m_html->GetMinSize().y;
+                         if (diff > 1 || diff < -1)
+                         {
+                             m_html->SetMinSize(wxSize(-1, h));
+                             m_html_panel->UpdateScrollbar();
+                         }
+                     });
+
+        vsizer->Add(m_html_panel, 1, wxEXPAND | wxBOTTOM, em);
     }
 
     wxStdDialogButtonSizer *buttons = this->CreateStdDialogButtonSizer(wxCLOSE);
@@ -344,7 +386,17 @@ void AboutDialog::on_dpi_changed(const wxRect &suggested_rect)
 
     msw_buttons_rescale(this, em, {wxID_CLOSE, m_copy_rights_btn_id});
 
-    m_html->SetMinSize(wxSize(-1, 24 * em));
+    // Re-measure the reflowed HTML content height so the ScrollablePanel scrolls the full content.
+    int content_height = 24 * em;
+    if (auto *ir = m_html->GetInternalRepresentation())
+        content_height = ir->GetHeight() + 2 * (em / 5);
+    m_html->SetMinSize(wxSize(-1, content_height));
+    if (m_html_panel)
+    {
+        m_html_panel->SetMinSize(wxSize(-1, 24 * em));
+        m_html_panel->GetContentPanel()->Layout();
+        m_html_panel->UpdateScrollbar();
+    }
     m_html->Refresh();
 
     const wxSize &size = wxSize(70 * em, 36 * em);

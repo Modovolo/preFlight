@@ -66,7 +66,7 @@ def process(gcode: preFlight.GCode):
         layer_times.append((layer.id, layer.z, layer.time))
 
     # Print summary
-    total_time = gcode.time_estimate.normal
+    total_time = gcode.time_estimate_normal
     print("=" * 60)
     print("PRINT ANALYSIS")
     print("=" * 60)

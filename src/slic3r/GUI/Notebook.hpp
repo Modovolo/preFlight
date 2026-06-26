@@ -6,14 +6,41 @@
 #ifndef slic3r_Notebook_hpp_
 #define slic3r_Notebook_hpp_
 
-#ifdef _WIN32
+// preFlight: owner-drawn notebook used by the Preferences dialog. Painting the tab strip
+// ourselves lets it follow the active theme palette on every platform; native wxNotebook
+// tabs ignore our colours under GTK/Cocoa.
 
 #include <wx/bookctrl.h>
+#include <wx/panel.h>
+#include <wx/bmpbndl.h>
 
 class ScalableButton;
 
 // custom message the ButtonsListCtrl sends to its parent (Notebook) to notify a selection change:
 wxDECLARE_EVENT(wxCUSTOMEVT_NOTEBOOK_SEL_CHANGED, wxCommandEvent);
+
+#ifndef _WIN32
+// preFlight: owner-drawn tab button for Linux/macOS. wxButton ignores background colours
+// under GTK/Cocoa, so the tab is rendered manually from the active theme palette.
+class NotebookTabButton : public wxPanel
+{
+public:
+    NotebookTabButton(wxWindow *parent, const wxString &label, const std::string &bmp_name = "");
+    ~NotebookTabButton() {}
+
+    void sys_color_changed();
+    bool SetBitmap_(const std::string &bmp_name);
+    void SetLabel(const wxString &label) override;
+
+private:
+    void render();
+    void update_min_size();
+
+    wxString m_label;
+    std::string m_icon_name;
+    wxBitmapBundle m_bmp_bundle;
+};
+#endif // !_WIN32
 
 class ButtonsListCtrl : public wxControl
 {
@@ -35,7 +62,11 @@ private:
     wxWindow *m_parent;
     wxFlexGridSizer *m_buttons_sizer;
     wxBoxSizer *m_sizer;
+#ifdef _WIN32
     std::vector<ScalableButton *> m_pageButtons;
+#else
+    std::vector<NotebookTabButton *> m_pageButtons;
+#endif
     int m_selection{-1};
     int m_btn_margin;
     int m_line_margin;
@@ -349,5 +380,4 @@ private:
 
     ButtonsListCtrl *m_ctrl{nullptr};
 };
-#endif // _WIN32
 #endif // slic3r_Notebook_hpp_
