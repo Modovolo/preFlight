@@ -35,8 +35,8 @@ RUN apt-get update \
 WORKDIR /src/preFlight
 COPY . ./
 
-RUN ./build_deps.sh -preset default \
-    && ./build.sh -jobs "$(nproc)" \
+RUN bash ./build_deps.sh -preset default \
+    && bash ./build.sh -jobs "$(nproc)" \
     && mkdir -p /opt/preflight/bin /opt/preflight/resources \
     && cp build/src/preflight /opt/preflight/bin/preflight \
     && cp -a resources/. /opt/preflight/resources/
