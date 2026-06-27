@@ -3,6 +3,7 @@ name: preFlight Slicer Build Push Deploy
 on:
   push:
     branches:
+      - slice-container
       - develop
       - main
       - master
@@ -36,6 +37,7 @@ env:
   IMAGE_NAME: preflight-slicer
   BUILD_CONTEXT: .
   DOCKERFILE_PATH: Dockerfile.slicer
+  K8S_MANIFEST_PATH: k8s/preflight-slicer.yaml
   DEPLOYMENT_NAME: preflight-slicer
   CONTAINER_NAME: preflight-slicer
 
@@ -78,6 +80,7 @@ jobs:
         run: |
           set -euo pipefail
           test -f "$DOCKERFILE_PATH"
+          test -f "$K8S_MANIFEST_PATH"
           test -f slicer_service/app.py
 
       - name: Set up Docker Buildx
@@ -113,7 +116,9 @@ jobs:
           context: ${{ env.BUILD_CONTEXT }}
           file: ${{ env.DOCKERFILE_PATH }}
           push: true
-          tags: ${{ needs.build.outputs.registry_namespace }}/${{ env.IMAGE_NAME }}:${{ needs.build.outputs.image_tag }}
+          tags: |
+            ${{ needs.build.outputs.registry_namespace }}/${{ env.IMAGE_NAME }}:${{ needs.build.outputs.image_tag }}
+            ${{ needs.build.outputs.registry_namespace }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Capture image ref
         id: meta
@@ -128,6 +133,9 @@ jobs:
       - push
     if: github.event_name == 'push' || github.event.inputs.run_deploy == 'true'
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Set up kubectl
         uses: azure/setup-kubectl@v4
 
@@ -152,17 +160,22 @@ jobs:
 
           chmod 600 "$HOME/.kube/config"
 
-      - name: Roll preFlight slicer deployment
+      - name: Deploy preFlight slicer
         shell: bash
         run: |
           set -euo pipefail
           IMAGE_REF="${{ needs.push.outputs.image_ref }}"
           NAMESPACE="${{ needs.build.outputs.deploy_namespace }}"
 
-          if ! kubectl get deployment "$DEPLOYMENT_NAME" -n "$NAMESPACE" >/dev/null 2>&1; then
-            echo "deployment/${DEPLOYMENT_NAME} does not exist in namespace ${NAMESPACE}. Deploy fleet-orchestration Helm chart first."
-            exit 1
-          fi
+          kubectl create namespace "$NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
+          sed "s|namespace: fleet|namespace: ${NAMESPACE}|g" "$K8S_MANIFEST_PATH" | kubectl apply -f -
 
           kubectl set image "deployment/${DEPLOYMENT_NAME}" "${CONTAINER_NAME}=${IMAGE_REF}" -n "$NAMESPACE"
           kubectl rollout status "deployment/${DEPLOYMENT_NAME}" -n "$NAMESPACE" --timeout=600s
+
+      - name: Show preFlight slicer status
+        shell: bash
+        run: |
+          set -euo pipefail
+          NAMESPACE="${{ needs.build.outputs.deploy_namespace }}"
+          kubectl get deployment,service,pods -n "$NAMESPACE" -l app=preflight-slicer -o wide

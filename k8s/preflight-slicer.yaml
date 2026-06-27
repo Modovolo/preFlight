@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: preflight-slicer
+  namespace: fleet
+  labels:
+    app: preflight-slicer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: preflight-slicer
+  template:
+    metadata:
+      labels:
+        app: preflight-slicer
+    spec:
+      containers:
+        - name: preflight-slicer
+          image: jmarji/preflight-slicer:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8090
+              name: http
+          env:
+            - name: PORT
+              value: "8090"
+            - name: PREFLIGHT_API_PREFIX
+              value: /api/slicer
+            - name: PREFLIGHT_WORK_DIR
+              value: /work
+          resources:
+            requests:
+              cpu: "1"
+              memory: 2Gi
+            limits:
+              cpu: "4"
+              memory: 6Gi
+          readinessProbe:
+            httpGet:
+              path: /api/slicer/health
+              port: 8090
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /api/slicer/health
+              port: 8090
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 6
+          volumeMounts:
+            - name: preflight-work
+              mountPath: /work
+      volumes:
+        - name: preflight-work
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: preflight-slicer
+  namespace: fleet
+  labels:
+    app: preflight-slicer
+spec:
+  selector:
+    app: preflight-slicer
+  ports:
+    - name: http
+      port: 8090
+      targetPort: 8090
+      protocol: TCP
+  type: ClusterIP
