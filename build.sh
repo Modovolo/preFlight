@@ -161,8 +161,13 @@ else
     CMAKE_EXTRA_ARGS="-DSLIC3R_GTK=3"
 fi
 
-# Find Python 3.14 (required for ABI compatibility with bundled runtime)
-if command -v python3.14 >/dev/null 2>&1; then
+# Find Python 3.14 (required for ABI compatibility with bundled runtime).
+# Prefer the bundled runtime built by build_deps.sh so CI does not depend on
+# a system-installed python3.14 package.
+BUNDLED_PYTHON314="$DESTDIR/python-runtime/bin/python3.14"
+if [[ -x "$BUNDLED_PYTHON314" ]]; then
+    CMAKE_EXTRA_ARGS="$CMAKE_EXTRA_ARGS -DPython3_EXECUTABLE=$BUNDLED_PYTHON314"
+elif command -v python3.14 >/dev/null 2>&1; then
     CMAKE_EXTRA_ARGS="$CMAKE_EXTRA_ARGS -DPython3_EXECUTABLE=$(command -v python3.14)"
 fi
 

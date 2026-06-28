@@ -141,7 +141,7 @@ echo "** Building release deps (this will take a while) ..."
 if [[ $IS_WINDOWS -eq 1 ]]; then
     "$CMAKE_CMD" --build "$BUILD_DIR" --target deps -j 1
 else
-    "$CMAKE_CMD" --build "$BUILD_DIR" --target deps -j 1 -- -k
+    "$CMAKE_CMD" --build "$BUILD_DIR" --target deps -j 1
 fi
 
 # Build debug deps (Windows/MSVC only, optional)
