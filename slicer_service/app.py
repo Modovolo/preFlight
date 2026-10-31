@@ -116,6 +116,57 @@ def map_gcode_flavor(value: Any) -> str | None:
     return None
 
 
+# preFlight's filament_type choices (src/libslic3r/PrintConfig.cpp).
+FILAMENT_TYPES = {
+    "ABS", "ABS-CF", "ABS-GF", "ASA", "BVOH", "CHOCOLATE", "COPA", "CPE", "EDGE", "FLEX", "GLAZE", "HIPS",
+    "HTPLA", "IGLIDUR", "METAL", "NGEN", "NONE", "PA", "PA-CF", "PA-GF", "PA11-CF", "PA12", "PA12-CF",
+    "PA12-GF", "PAHT-CF", "PC", "PC-ABS", "PC-ABS-FR", "PC-CF", "PCTG", "PEBA", "PEEK", "PEI", "PET",
+    "PET-CF", "PETG", "PETG-CF", "PLA", "PLA+", "PLA-CF", "PP", "PPE-PS", "PVA", "PVB", "PVDF",
+}
+
+
+def clamped_int(value: Any, low: int, high: int, default: int) -> int:
+    try:
+        return max(low, min(high, int(round(float(value)))))
+    except (TypeError, ValueError):
+        return default
+
+
+def add_filament_settings(config: dict[str, str], params: dict[str, Any], extruder_count: Any) -> None:
+    """Cooling, retraction and filament type, applied only when the client sends them
+    so older clients keep preFlight's defaults. All are per-extruder lists."""
+    count = clamped_int(extruder_count, 1, 64, 1)
+
+    def repeat(value: Any) -> str:
+        return repeated_number(value, count, 0)
+
+    def repeat_text(value: str) -> str:
+        return ",".join([value] * count)
+
+    filament_type = str(params.get("filament_type") or "").upper()
+    if filament_type in FILAMENT_TYPES:
+        config["filament_type"] = ";".join([filament_type] * count)
+
+    if any(key in params for key in ("min_fan_speed", "max_fan_speed", "bridge_fan_speed", "disable_fan_first_layers")):
+        min_fan = clamped_int(params.get("min_fan_speed"), 0, 100, 35)
+        max_fan = max(min_fan, clamped_int(params.get("max_fan_speed"), 0, 100, 100))
+        config["cooling"] = repeat_text("1")
+        config["fan_always_on"] = repeat_text("1" if min_fan > 0 else "0")
+        config["min_fan_speed"] = repeat(min_fan)
+        config["max_fan_speed"] = repeat(max_fan)
+        config["bridge_fan_speed"] = repeat(clamped_int(params.get("bridge_fan_speed"), 0, 100, 100))
+        config["disable_fan_first_layers"] = repeat(clamped_int(params.get("disable_fan_first_layers"), 0, 100, 1))
+
+    if "retract_length" in params:
+        config["retract_length"] = repeat(max(0.0, float(number(params.get("retract_length"), 0.8))))
+    if "retract_speed" in params:
+        speed = max(1.0, float(number(params.get("retract_speed"), 35)))
+        config["retract_speed"] = repeat(speed)
+        config["deretract_speed"] = repeat(speed)
+    if "retract_lift" in params:
+        config["retract_lift"] = repeat(max(0.0, float(number(params.get("retract_lift"), 0))))
+
+
 def generate_preflight_config(params: dict[str, Any], profile: dict[str, Any]) -> str:
     build_volume = profile.get("buildVolume") or {}
     nozzle_diameter = profile.get("nozzleDiameter") or profile.get("nozzle_diameter") or 0.4
@@ -160,6 +211,8 @@ def generate_preflight_config(params: dict[str, Any], profile: dict[str, Any]) -
         config["brim_width"] = number(params.get("brim_width"), 5)
     else:
         config["brim_width"] = "0"
+
+    add_filament_settings(config, params, extruder_count)
 
     gcode_flavor = map_gcode_flavor(profile.get("gcodeFlavor") or profile.get("gcode_flavor"))
     if gcode_flavor:
