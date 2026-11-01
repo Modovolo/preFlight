@@ -1,6 +1,10 @@
 FROM ubuntu:24.04 AS builder
 
-ENV DEBIAN_FRONTEND=noninteractive
+# A UTF-8 locale is required: CMake can't extract dependency archives with
+# non-ASCII file names (such as Boost 1.90) under the image's default POSIX locale.
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -44,6 +48,8 @@ RUN bash ./build_deps.sh -preset default \
 FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8 \
     PORT=8090 \
     PREFLIGHT_API_PREFIX=/api/slicer \
     PREFLIGHT_BIN=/opt/preflight/bin/preflight \
