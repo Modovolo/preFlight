@@ -9,6 +9,7 @@ import math
 import os
 import re
 import shutil
+import secrets
 import time
 import uuid
 from dataclasses import dataclass, field
@@ -22,6 +23,9 @@ API_PREFIX = os.environ.get("PREFLIGHT_API_PREFIX", "/api/slicer").rstrip("/")
 PREFLIGHT_BIN = Path(os.environ.get("PREFLIGHT_BIN", "/opt/preflight/bin/preflight"))
 WORK_DIR = Path(os.environ.get("PREFLIGHT_WORK_DIR", "/work"))
 JOB_TTL_SECONDS = int(os.environ.get("PREFLIGHT_JOB_TTL_SECONDS", "3600"))
+WORKER_TOKEN = os.environ.get("SLICER_WORKER_TOKEN", "")
+MAX_QUEUED = int(os.environ.get("SLICER_MAX_QUEUED", "8"))
+
 SLICE_TIMEOUT_SECONDS = int(os.environ.get("PREFLIGHT_SLICE_TIMEOUT_SECONDS", "1800"))
 
 
@@ -39,11 +43,26 @@ class SliceJob:
     error: str | None = None
     details: str | None = None
     gcode_path: Path | None = None
+    revision: int = 0
+    slot: asyncio.Semaphore = field(default_factory=lambda: asyncio.Semaphore(1))
+    task: asyncio.Task | None = None
     process: asyncio.subprocess.Process | None = None
     websockets: set[web.WebSocketResponse] = field(default_factory=set)
 
 
 jobs: dict[str, SliceJob] = {}
+
+
+@web.middleware
+async def worker_auth(request, handler):
+    if request.path.endswith("/health") or request.path == "/health":
+        return await handler(request)
+    if not WORKER_TOKEN or not secrets.compare_digest(request.headers.get("X-Service-Token", ""), WORKER_TOKEN):
+        return web.json_response({"error": "Worker authentication required"}, status=401)
+    try:
+        return await handler(request)
+    except (ValueError, TypeError, KeyError) as error:
+        return web.json_response({"error": str(error)}, status=422)
 
 
 def now_ms() -> int:
@@ -373,7 +392,7 @@ async def run_preflight(job: SliceJob, mesh_paths: list[Path], config_path: Path
 
     job.gcode_path = actual_gcode_path
     await update_job(job, progress=95, stage="generating", message="Finalizing G-code...")
-    job.result = parse_gcode_result(actual_gcode_path)
+    job.result = {**parse_gcode_result(actual_gcode_path), "engine": "preflight", "engine_version": os.environ.get("PREFLIGHT_VERSION", "source"), "project_revision": job.revision, "warnings": []}
     job.status = "complete"
     job.progress = 100
     job.stage = "complete"
@@ -392,7 +411,10 @@ async def run_preflight(job: SliceJob, mesh_paths: list[Path], config_path: Path
 
 async def run_job_task(job: SliceJob, mesh_paths: list[Path], config_path: Path, output_path: Path) -> None:
     try:
-        await run_preflight(job, mesh_paths, config_path, output_path)
+        async with job.slot:
+            if job.status == "cancelled":
+                return
+            await run_preflight(job, mesh_paths, config_path, output_path)
     except Exception as error:
         if job.status == "cancelled":
             return
@@ -419,6 +441,9 @@ async def health(_request: web.Request) -> web.Response:
     payload = {
         "status": "healthy" if binary_ready else "unavailable",
         "engine": "preflight",
+        "version": os.environ.get("PREFLIGHT_VERSION", "source"),
+        "features": ["planar"],
+        "source": "https://github.com/oozebot/preFlight/tree/v1.4.1",
         "binary": str(PREFLIGHT_BIN),
     }
     return web.json_response(payload, status=200 if binary_ready else 503)
@@ -429,44 +454,75 @@ async def engines(_request: web.Request) -> web.Response:
 
 
 async def create_slice(request: web.Request) -> web.Response:
+    async with request.app["admission"]:
+        return await _create_slice(request)
+
+
+async def _create_slice(request: web.Request) -> web.Response:
+    if sum(job.status in {"queued", "processing"} for job in jobs.values()) >= MAX_QUEUED:
+        return web.json_response({"error": "Slicer queue is full"}, status=429)
     if not (PREFLIGHT_BIN.exists() and os.access(PREFLIGHT_BIN, os.X_OK)):
         return web.json_response({"error": f"preFlight binary is not executable at {PREFLIGHT_BIN}"}, status=503)
 
     reader = await request.multipart()
+    total_upload = 0
+    async def read_field(field):
+        nonlocal total_upload
+        data = bytearray()
+        while True:
+            chunk = await field.read_chunk()
+            if not chunk: break
+            total_upload += len(chunk)
+            if total_upload > 100 * 1024**2:
+                raise web.HTTPRequestEntityTooLarge(max_size=100*1024**2, actual_size=total_upload)
+            data.extend(chunk)
+        return data
     job_id = f"pf-{now_ms()}-{uuid.uuid4().hex[:8]}"
     job_dir = WORK_DIR / job_id
     job_dir.mkdir(parents=True, exist_ok=False)
 
-    params: dict[str, Any] = {}
-    profile: dict[str, Any] = {}
-    mesh_paths: list[Path] = []
-    mesh_index = 0
+    try:
+        params: dict[str, Any] = {}
+        profile: dict[str, Any] = {}
+        project = {}
+        mesh_paths: list[Path] = []
+        mesh_index = 0
 
-    async for field in reader:
-        if field.name == "meshes":
-            filename = Path(field.filename or f"model_{mesh_index}.stl").name
-            suffix = Path(filename).suffix or ".stl"
-            mesh_path = job_dir / f"model_{mesh_index}{suffix}"
-            mesh_path.write_bytes(await field.read())
-            mesh_paths.append(mesh_path)
-            mesh_index += 1
-        elif field.name == "params":
-            params = json.loads((await field.read()).decode("utf-8") or "{}")
-        elif field.name == "printer_profile_config":
-            profile = json.loads((await field.read()).decode("utf-8") or "{}")
+        async for field in reader:
+            if field.name == "meshes":
+                filename = Path(field.filename or f"model_{mesh_index}.stl").name
+                suffix = Path(filename).suffix or ".stl"
+                mesh_path = job_dir / f"model_{mesh_index}{suffix}"
+                mesh_path.write_bytes(await read_field(field))
+                mesh_paths.append(mesh_path)
+                mesh_index += 1
+            elif field.name == "project":
+                project = json.loads((await read_field(field)).decode("utf-8") or "{}")
+            elif field.name == "params":
+                params = json.loads((await read_field(field)).decode("utf-8") or "{}")
+            elif field.name == "printer_profile_config":
+                profile = json.loads((await read_field(field)).decode("utf-8") or "{}")
 
-    if not mesh_paths:
-        shutil.rmtree(job_dir, ignore_errors=True)
-        return web.json_response({"error": "At least one mesh is required"}, status=400)
+        if not mesh_paths:
+            shutil.rmtree(job_dir, ignore_errors=True)
+            return web.json_response({"error": "At least one mesh is required"}, status=400)
 
-    config_path = job_dir / "preflight.ini"
-    output_path = job_dir / "output.gcode"
-    config_path.write_text(generate_preflight_config(params, profile), encoding="utf-8")
+        if params.get("nonplanar_layers") or any(o.get("cutPlanes") for o in project.get("objects", [])):
+            shutil.rmtree(job_dir, ignore_errors=True)
+            return web.json_response({"error": "Preflight does not support curved layers or cut planes; select Unlayered"}, status=422)
 
-    job = SliceJob(id=job_id, dir=job_dir)
-    jobs[job_id] = job
-    asyncio.create_task(run_job_task(job, mesh_paths, config_path, output_path))
-    return web.json_response({"job_id": job_id, "status": "queued", "message": "Slice job queued"})
+        config_path = job_dir / "preflight.ini"
+        output_path = job_dir / "output.gcode"
+        config_path.write_text(generate_preflight_config(params, profile), encoding="utf-8")
+
+        job = SliceJob(id=job_id, dir=job_dir, revision=int(project.get("revision", 0)), slot=request.app["slot"])
+        jobs[job_id] = job
+        job.task = asyncio.create_task(run_job_task(job, mesh_paths, config_path, output_path))
+        return web.json_response({"job_id": job_id, "status": "queued", "message": "Slice job queued"})
+    except BaseException:
+        if job_id not in jobs:
+            shutil.rmtree(job_dir, ignore_errors=True)
+        raise
 
 
 async def get_job(request: web.Request) -> web.Response:
@@ -481,13 +537,19 @@ async def cancel_job(request: web.Request) -> web.Response:
     if not job:
         return web.json_response({"error": "Job not found"}, status=404)
 
-    if job.process and job.process.returncode is None:
-        job.process.terminate()
+    if job.status in {"complete", "error", "cancelled"}:
+        return web.json_response({"message": "Job already finished"})
+    job.status = "cancelled"
+    process = job.process
+    if job.task:
+        job.task.cancel()
+    if process and process.returncode is None:
+        process.terminate()
         try:
-            await asyncio.wait_for(job.process.wait(), timeout=5)
+            await asyncio.wait_for(process.wait(), timeout=5)
         except asyncio.TimeoutError:
-            job.process.kill()
-            await job.process.wait()
+            process.kill()
+            await process.wait()
 
     job.status = "cancelled"
     job.progress = 100
@@ -558,6 +620,8 @@ def add_prefixed_routes(app: web.Application, prefix: str) -> None:
 
 async def on_startup(app: web.Application) -> None:
     WORK_DIR.mkdir(parents=True, exist_ok=True)
+    app["admission"] = asyncio.Lock()
+    app["slot"] = asyncio.Semaphore(1)
     app["cleanup_task"] = asyncio.create_task(cleanup_jobs(app))
 
 
@@ -565,10 +629,16 @@ async def on_cleanup(app: web.Application) -> None:
     task = app.get("cleanup_task")
     if task:
         task.cancel()
+    for job in jobs.values():
+        if job.task:
+            job.task.cancel()
+        if job.process and job.process.returncode is None:
+            job.process.kill()
+            await job.process.wait()
 
 
 def create_app() -> web.Application:
-    app = web.Application(client_max_size=1024**3)
+    app = web.Application(client_max_size=100 * 1024**2, middlewares=[worker_auth])
     add_prefixed_routes(app, "")
     if API_PREFIX:
         add_prefixed_routes(app, API_PREFIX)

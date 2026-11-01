@@ -109,6 +109,30 @@ brew install cmake ninja pkg-config
 | `-arch A` | Architecture override (macOS: `arm64` / `x86_64`) |
 
 
+## Fleet HTTP worker
+
+`Dockerfile.slicer` packages the checksum-verified upstream Linux amd64 v1.4.1
+AppImage without FUSE or C++ compilation. It keeps the bundled runtime/resources,
+runs as an unprivileged user, and executes real PLA/PETG CLI smoke slices during
+the image build. Wrapper changes reuse the release and runtime-package layers.
+
+Set `SLICER_WORKER_TOKEN` from a Secret. Requests other than health checks require
+`X-Service-Token`; expose the worker only through Fleet Manager's authenticated
+facade. It admits eight jobs, runs one slice at a time, bounds uploads to 100 MB,
+supports cancellation/timeouts, and returns engine version and project revision.
+
+The manually triggered source workflow uses `Dockerfile.slicer-source`: a separate
+dependency image and headless engine build for future engine changes. It is not
+the routine packaging path. Both workflows retain registry build caches.
+
+```
+docker build -f Dockerfile.slicer -t fleet-preflight:local .
+python3 -m pytest slicer_service/test_config.py
+```
+
+The complete Fleet deployment and secret setup are documented in the sibling
+`fleet-orchestration/SLICER-INTEGRATION.md`.
+
 ## License
 
 preFlight is licensed under the **GNU Affero General Public License, version 3**. See [LICENSE](LICENSE) for details.<br>

@@ -23,6 +23,11 @@ spec:
             - containerPort: 8090
               name: http
           env:
+            - name: SLICER_WORKER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: fleet-slicer-secrets
+                  key: worker-token
             - name: PORT
               value: "8090"
             - name: PREFLIGHT_API_PREFIX
