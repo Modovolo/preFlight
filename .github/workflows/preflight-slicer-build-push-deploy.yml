@@ -42,11 +42,12 @@ env:
   CONTAINER_NAME: preflight-slicer
 
 jobs:
-  build:
+  # Builds and pushes in one job: the C++ build is too long to run twice, and
+  # a failed build stops before anything is pushed or deployed.
+  build-push:
     runs-on: ubuntu-latest
     outputs:
-      image_tag: ${{ steps.meta.outputs.image_tag }}
-      registry_namespace: ${{ steps.meta.outputs.registry_namespace }}
+      image_ref: ${{ steps.meta.outputs.image_ref }}
       deploy_namespace: ${{ steps.meta.outputs.deploy_namespace }}
     steps:
       - name: Checkout
@@ -71,9 +72,11 @@ jobs:
             DEPLOY_NAMESPACE="fleet"
           fi
 
-          echo "image_tag=$TAG" >> "$GITHUB_OUTPUT"
-          echo "registry_namespace=$REGISTRY_NAMESPACE" >> "$GITHUB_OUTPUT"
-          echo "deploy_namespace=$DEPLOY_NAMESPACE" >> "$GITHUB_OUTPUT"
+          {
+            echo "registry_namespace=$REGISTRY_NAMESPACE"
+            echo "deploy_namespace=$DEPLOY_NAMESPACE"
+            echo "image_ref=$REGISTRY_NAMESPACE/$IMAGE_NAME:$TAG"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Validate files
         shell: bash
@@ -82,24 +85,6 @@ jobs:
           test -f "$DOCKERFILE_PATH"
           test -f "$K8S_MANIFEST_PATH"
           test -f slicer_service/app.py
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build image
-        shell: bash
-        run: |
-          set -euo pipefail
-          docker build -f "$DOCKERFILE_PATH" -t "local/${IMAGE_NAME}:${{ steps.meta.outputs.image_tag }}" "$BUILD_CONTEXT"
-
-  push:
-    runs-on: ubuntu-latest
-    needs: build
-    outputs:
-      image_ref: ${{ steps.meta.outputs.image_ref }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -117,20 +102,12 @@ jobs:
           file: ${{ env.DOCKERFILE_PATH }}
           push: true
           tags: |
-            ${{ needs.build.outputs.registry_namespace }}/${{ env.IMAGE_NAME }}:${{ needs.build.outputs.image_tag }}
-            ${{ needs.build.outputs.registry_namespace }}/${{ env.IMAGE_NAME }}:latest
-
-      - name: Capture image ref
-        id: meta
-        shell: bash
-        run: |
-          echo "image_ref=${{ needs.build.outputs.registry_namespace }}/${IMAGE_NAME}:${{ needs.build.outputs.image_tag }}" >> "$GITHUB_OUTPUT"
+            ${{ steps.meta.outputs.image_ref }}
+            ${{ steps.meta.outputs.registry_namespace }}/${{ env.IMAGE_NAME }}:latest
 
   deploy:
     runs-on: ubuntu-latest
-    needs:
-      - build
-      - push
+    needs: build-push
     if: github.event_name == 'push' || github.event.inputs.run_deploy == 'true'
     steps:
       - name: Checkout
@@ -164,8 +141,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          IMAGE_REF="${{ needs.push.outputs.image_ref }}"
-          NAMESPACE="${{ needs.build.outputs.deploy_namespace }}"
+          IMAGE_REF="${{ needs.build-push.outputs.image_ref }}"
+          NAMESPACE="${{ needs.build-push.outputs.deploy_namespace }}"
 
           kubectl create namespace "$NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
           sed "s|namespace: fleet|namespace: ${NAMESPACE}|g" "$K8S_MANIFEST_PATH" | kubectl apply -f -
@@ -177,5 +154,5 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          NAMESPACE="${{ needs.build.outputs.deploy_namespace }}"
+          NAMESPACE="${{ needs.build-push.outputs.deploy_namespace }}"
           kubectl get deployment,service,pods -n "$NAMESPACE" -l app=preflight-slicer -o wide
