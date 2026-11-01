@@ -102,6 +102,7 @@ jobs:
           file: ${{ env.DOCKERFILE_PATH }}
           push: true
           platforms: linux/amd64
+          build-args: SOURCE_REV=${{ github.sha }}
           cache-from: type=registry,ref=${{ steps.meta.outputs.registry_namespace }}/preflight-slicer:buildcache
           cache-to: type=registry,ref=${{ steps.meta.outputs.registry_namespace }}/preflight-slicer:buildcache,mode=max
           tags: |

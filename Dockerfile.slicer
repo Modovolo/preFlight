@@ -13,9 +13,6 @@ RUN curl --fail --location --retry 3 -o release.AppImage "https://github.com/ooz
     && chmod +x release.AppImage && ./release.AppImage --appimage-extract >/dev/null && rm release.AppImage && chmod -R a+rX squashfs-root
 FROM ubuntu:24.04
 ARG PREFLIGHT_VERSION
-ARG SOURCE_REV=local
-LABEL org.opencontainers.image.source="https://github.com/Modovolo/preFlight" \
-    org.opencontainers.image.revision=${SOURCE_REV}
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 PORT=8090 PREFLIGHT_API_PREFIX=/api/slicer \
     PREFLIGHT_BIN=/opt/preflight/squashfs-root/AppRun PREFLIGHT_WORK_DIR=/work PREFLIGHT_VERSION=${PREFLIGHT_VERSION}
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -30,5 +27,8 @@ RUN useradd -m -u 10001 preflight && mkdir /work && chown preflight:preflight /w
 USER preflight
 WORKDIR /app
 RUN python3 /app/smoke_slice.py
+ARG SOURCE_REV=local
+LABEL org.opencontainers.image.source="https://github.com/Modovolo/preFlight" \
+    org.opencontainers.image.revision=${SOURCE_REV}
 EXPOSE 8090
 CMD ["python3", "/app/app.py"]
