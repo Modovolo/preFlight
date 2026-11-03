@@ -172,16 +172,27 @@ jobs:
 
       - name: Deploy preFlight slicer
         shell: bash
+        env:
+          IMAGE_REF: ${{ needs.build-push.outputs.image_ref }}
+          NAMESPACE: ${{ needs.build-push.outputs.deploy_namespace }}
         run: |
           set -euo pipefail
-          IMAGE_REF="${{ needs.build-push.outputs.image_ref }}"
-          NAMESPACE="${{ needs.build-push.outputs.deploy_namespace }}"
 
           kubectl create namespace "$NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
-          sed "s|namespace: fleet|namespace: ${NAMESPACE}|g" "$K8S_MANIFEST_PATH" | kubectl apply -f -
+          # Apply the final image once. Creating :latest and then changing its
+          # image starts two rollouts and needlessly occupies a second pod slot.
+          sed -e "s|namespace: fleet|namespace: ${NAMESPACE}|g" \
+              -e "s|image: jmarji/preflight-slicer:latest|image: ${IMAGE_REF}|" \
+              "$K8S_MANIFEST_PATH" | kubectl apply -f -
 
-          kubectl set image "deployment/${DEPLOYMENT_NAME}" "${CONTAINER_NAME}=${IMAGE_REF}" -n "$NAMESPACE"
-          kubectl rollout status "deployment/${DEPLOYMENT_NAME}" -n "$NAMESPACE" --timeout=600s
+          if ! kubectl rollout status "deployment/${DEPLOYMENT_NAME}" -n "$NAMESPACE" --timeout=600s; then
+            echo "Preflight rollout failed; collecting scheduling, readiness and container diagnostics."
+            kubectl get deployment,replicaset,pods -n "$NAMESPACE" -l app=preflight-slicer -o wide || true
+            kubectl describe deployment "$DEPLOYMENT_NAME" -n "$NAMESPACE" || true
+            kubectl describe pods -n "$NAMESPACE" -l app=preflight-slicer || true
+            kubectl logs -n "$NAMESPACE" -l app=preflight-slicer --all-containers --tail=100 --prefix=true || true
+            exit 1
+          fi
 
       - name: Show preFlight slicer status
         shell: bash

@@ -7,6 +7,9 @@ metadata:
     app: preflight-slicer
 spec:
   replicas: 1
+  # One worker fits the cluster budget; stop it before scheduling its replacement.
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: preflight-slicer
@@ -34,13 +37,14 @@ spec:
               value: /api/slicer
             - name: PREFLIGHT_WORK_DIR
               value: /work
+          # Nodes have two vCPUs and ~3.9 GiB; leave room beside Fleet's other pods.
           resources:
             requests:
-              cpu: "1"
-              memory: 2Gi
+              cpu: 500m
+              memory: 1Gi
             limits:
-              cpu: "4"
-              memory: 6Gi
+              cpu: "2"
+              memory: 3Gi
           readinessProbe:
             httpGet:
               path: /api/slicer/health
