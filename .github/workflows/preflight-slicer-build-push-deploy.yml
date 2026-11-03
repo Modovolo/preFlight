@@ -123,7 +123,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build-push
-    if: (github.event_name == 'push' && github.ref != 'refs/heads/fleet-slicer-integration') || github.event.inputs.run_deploy == 'true'
+    if: github.event_name == 'push' || github.event.inputs.run_deploy == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -151,6 +151,24 @@ jobs:
           fi
 
           chmod 600 "$HOME/.kube/config"
+
+      # Fleet Manager and both slicer workers share this token. Whichever worker
+      # deploys first generates it inside the cluster; an existing token is kept.
+      - name: Ensure shared worker token
+        shell: bash
+        run: |
+          set -euo pipefail
+          NAMESPACE="${{ needs.build-push.outputs.deploy_namespace }}"
+          kubectl create namespace "$NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
+          if ! kubectl -n "$NAMESPACE" get secret fleet-slicer-secrets >/dev/null 2>&1; then
+            kubectl -n "$NAMESPACE" create secret generic fleet-slicer-secrets \
+              --from-literal=worker-token="$(openssl rand -hex 32)"
+            # Fleet Manager reads the optional token only at pod start.
+            if kubectl -n "$NAMESPACE" get deployment fleet-manager >/dev/null 2>&1; then
+              kubectl -n "$NAMESPACE" rollout restart deployment/fleet-manager
+              kubectl -n "$NAMESPACE" rollout status deployment/fleet-manager --timeout=600s
+            fi
+          fi
 
       - name: Deploy preFlight slicer
         shell: bash
