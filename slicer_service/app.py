@@ -18,6 +18,8 @@ from typing import Any
 
 from aiohttp import WSMsgType, web
 
+import extruders
+
 
 API_PREFIX = os.environ.get("PREFLIGHT_API_PREFIX", "/api/slicer").rstrip("/")
 PREFLIGHT_BIN = Path(os.environ.get("PREFLIGHT_BIN", "/opt/preflight/bin/preflight"))
@@ -232,6 +234,8 @@ def generate_preflight_config(params: dict[str, Any], profile: dict[str, Any]) -
         config["brim_width"] = "0"
 
     add_filament_settings(config, params, extruder_count)
+    if "print_extruder" in params:
+        config.update(extruders.region_settings(params, clamped_int(extruder_count, 1, 64, 1)))
 
     gcode_flavor = map_gcode_flavor(profile.get("gcodeFlavor") or profile.get("gcode_flavor"))
     if gcode_flavor:
@@ -442,7 +446,7 @@ async def health(_request: web.Request) -> web.Response:
         "status": "healthy" if binary_ready else "unavailable",
         "engine": "preflight",
         "version": os.environ.get("PREFLIGHT_VERSION", "source"),
-        "features": ["planar"],
+        "features": ["planar", "extruder_selection"],
         "source": "https://github.com/oozebot/preFlight/tree/v1.4.1",
         "binary": str(PREFLIGHT_BIN),
     }
@@ -513,7 +517,16 @@ async def _create_slice(request: web.Request) -> web.Response:
 
         config_path = job_dir / "preflight.ini"
         output_path = job_dir / "output.gcode"
-        config_path.write_text(generate_preflight_config(params, profile), encoding="utf-8")
+        try:
+            config_text = generate_preflight_config(params, profile)
+            # Per-layer extruders reach preFlight only through a 3MF project.
+            changes = extruders.tool_changes(params, clamped_int(profile.get("extruderCount"), 1, 64, 1))
+            if changes:
+                mesh_paths = [extruders.write_project(mesh_paths, changes, job_dir / "plate.3mf")]
+        except ValueError as error:
+            shutil.rmtree(job_dir, ignore_errors=True)
+            return web.json_response({"error": str(error)}, status=422)
+        config_path.write_text(config_text, encoding="utf-8")
 
         job = SliceJob(id=job_id, dir=job_dir, revision=int(project.get("revision", 0)), slot=request.app["slot"])
         jobs[job_id] = job
