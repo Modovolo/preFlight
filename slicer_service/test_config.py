@@ -45,3 +45,42 @@ def test_older_clients_without_these_settings_keep_preflight_defaults():
     config = parse(generate_preflight_config({"layer_height": 0.2}, PROFILE))
     for key in ("filament_type", "cooling", "min_fan_speed", "retract_length", "retract_speed", "retract_lift"):
         assert key not in config
+
+
+def unescape_cstyle(text):
+    """Python port of preFlight's unescape_string_cstyle (src/libslic3r/Config.cpp)."""
+    out, i = [], 0
+    while i < len(text):
+        c = text[i]
+        if c == "\\":
+            i += 1
+            c = {"r": "\r", "n": "\n"}.get(text[i], text[i])
+        out.append(c)
+        i += 1
+    return "".join(out)
+
+
+def test_start_and_end_gcode_survive_the_ini_round_trip():
+    start = 'G28\nSTART_PRINT EXTRUDER_TEMP=[first_layer_temperature] BED_TEMP=[first_layer_bed_temperature]\n; path C:\\temp\\x\n{if layer_height > 0.2}M117 coarse{endif}\n'
+    text = generate_preflight_config({}, {**PROFILE, "startGcode": start, "endGcode": "END_PRINT\r\n"})
+    config = parse(text)
+    assert unescape_cstyle(config["start_gcode"]) == start
+    assert unescape_cstyle(config["end_gcode"]) == "END_PRINT\n", "Windows line endings are normalized"
+
+
+def test_a_macro_cannot_inject_other_settings():
+    text = generate_preflight_config({}, {**PROFILE, "startGcode": "G28\nperimeters = 99\npost_process = /bin/sh"})
+    keys = [line.split(" = ", 1)[0] for line in text.strip().splitlines()]
+    assert "post_process" not in keys and keys.count("perimeters") == 1
+    assert parse(text)["perimeters"] != "99"
+
+
+def test_blank_macros_keep_preflight_defaults_and_bad_ones_are_rejected():
+    config = parse(generate_preflight_config({}, {**PROFILE, "startGcode": "  \n", "endGcode": ""}))
+    assert "start_gcode" not in config and "end_gcode" not in config
+    for bad in ({"startGcode": 5}, {"endGcode": "x" * 20001}, {"startGcode": "G28\0"}):
+        try:
+            generate_preflight_config({}, {**PROFILE, **bad})
+        except ValueError:
+            continue
+        raise AssertionError(f"accepted {bad}")

@@ -188,6 +188,25 @@ def add_filament_settings(config: dict[str, str], params: dict[str, Any], extrud
         config["retract_lift"] = repeat(max(0.0, float(number(params.get("retract_lift"), 0))))
 
 
+MAX_GCODE_MACRO = 20000
+
+
+def ini_string(value: str) -> str:
+    """A multi-line value as one preFlight INI line: preFlight unescapes \\n, \\r and \\\\
+    (unescape_string_cstyle), so a macro can't end the line and inject other settings."""
+    return value.replace("\\", "\\\\").replace("\r", "\\r").replace("\n", "\\n")
+
+
+def add_gcode_macros(config: dict[str, str], profile: dict[str, Any]) -> None:
+    """Custom start/end G-code from the printer profile; blank keeps preFlight's default."""
+    for key, option in (("startGcode", "start_gcode"), ("endGcode", "end_gcode")):
+        value = profile.get(key) or ""
+        if not isinstance(value, str) or len(value) > MAX_GCODE_MACRO or "\0" in value:
+            raise ValueError(f"Invalid {option.replace('_', ' ')}")
+        if value.strip():
+            config[option] = ini_string(value.replace("\r\n", "\n"))
+
+
 def generate_preflight_config(params: dict[str, Any], profile: dict[str, Any]) -> str:
     build_volume = profile.get("buildVolume") or {}
     nozzle_diameter = profile.get("nozzleDiameter") or profile.get("nozzle_diameter") or 0.4
@@ -234,6 +253,7 @@ def generate_preflight_config(params: dict[str, Any], profile: dict[str, Any]) -
         config["brim_width"] = "0"
 
     add_filament_settings(config, params, extruder_count)
+    add_gcode_macros(config, profile)
     if "print_extruder" in params:
         config.update(extruders.region_settings(params, clamped_int(extruder_count, 1, 64, 1)))
 
@@ -446,7 +466,7 @@ async def health(_request: web.Request) -> web.Response:
         "status": "healthy" if binary_ready else "unavailable",
         "engine": "preflight",
         "version": os.environ.get("PREFLIGHT_VERSION", "source"),
-        "features": ["planar", "extruder_selection"],
+        "features": ["planar", "extruder_selection", "gcode_macros"],
         "source": "https://github.com/oozebot/preFlight/tree/v1.4.1",
         "binary": str(PREFLIGHT_BIN),
     }

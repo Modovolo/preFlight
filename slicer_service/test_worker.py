@@ -70,7 +70,7 @@ async def test_extruder_layer_ranges_slice_a_3mf_and_bad_ranges_are_rejected(mon
         return data
     async with TestClient(TestServer(app.create_app())) as client:
         headers = {"X-Service-Token": "fixture-token"}
-        assert "extruder_selection" in (await (await client.get("/health")).json())["features"]
+        assert {"extruder_selection", "gcode_macros"} <= set((await (await client.get("/health")).json())["features"])
         bad = await client.post("/api/slicer/slice", data=request({"extruder_layer_ranges": [{"from_layer": 1, "to_layer": 2, "extruder": 3}]}), headers=headers)
         assert bad.status == 422 and "extruder" in (await bad.json())["error"]
         assert list(app.WORK_DIR.iterdir()) == []
